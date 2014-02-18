@@ -1,0 +1,22 @@
+{
+  "name": "ttlogn-tool",
+  "version": "0.0.0",
+  "description": "timetracker helper tool",
+  "main": "./lib/main.js",
+  "bin": {
+    "ttlogn-tool": "ttlogn.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lognllc/ttlogn-tool.git"
+  },
+  "author": "Daniel Solis",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lognllc/ttlogn-tool/issues"
+  },
+  "homepage": "https://github.com/lognllc/ttlogn-tool"
+}
