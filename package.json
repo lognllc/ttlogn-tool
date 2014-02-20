@@ -2,7 +2,7 @@
   "name": "ttlogn-tool",
   "version": "0.0.0",
   "description": "timetracker helper tool",
-  "main": "./lib/main.js",
+  "main": "./main.js",
   "bin": {
     "ttlogn-tool": "ttlogn.js"
   },
