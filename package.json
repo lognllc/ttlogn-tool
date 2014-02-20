@@ -1,10 +1,10 @@
 {
-  "name": "ttlogn-tool",
+  "name": "ttlogn",
   "version": "0.0.0",
   "description": "timetracker helper tool",
   "main": "./main.js",
   "bin": {
-    "ttlogn-tool": "ttlogn.js"
+    "ttlogn": "./bin/ttlogn.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

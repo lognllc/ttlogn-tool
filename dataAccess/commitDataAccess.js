@@ -3,7 +3,6 @@ var git  = require('gift'),
 	_ = require('underscore');
 	commit = require(path.resolve(__dirname,'../models/commit.js'));
 
-
 /* ppath: path of the directory
 return the directory */
 var getRepository = function (ppath)
@@ -16,37 +15,36 @@ var commitDataAccess = {
 	/* ppath: path of the directory
 	pbranch: name of the branch
 	pnumber: the number of commits
-	return the last commits of a branch */
-	getLastCommits: function(ppath, pbranch, pnumber, pdateLimit, pgitName){
+	pskip: number of commits skips
+	pdateLimit: -d -w -m
+	pgitName: name of the user
+	return commits of a branch */
+	getCommitsList: function(ppath, pbranch, pnumber, pskip){
 		var repo = getRepository(ppath);
-		repo.commits(pbranch, pnumber, function(err, commits){
-			commit.printCommitsList(commits, pdateLimit, pgitName);
+		repo.commits(pbranch, pnumber, pskip, function(err, commits){
 			if(err){
 				console.log(err);
+			}
+			else{
+				commit.printCommitsList(ppath, commits, pnumber, pbranch);
 			}
 		});
 	},
 
 	/* ppath: path of the directory
-	pbranch: name of the branch
-	return the last 10 commits of branch */
-	getCommitsBranch: function(ppath, pbranch){
-		var repo = getRepository(ppath);
-		repo.commits(pbranch, function(err, commits){
-	//		printCommits(commits);
-			if(err){
-				console.log(err);
-			}
-		});
-	},
-
-	getBranches: function(ppath, pdateLimit, pgitName){
+	pdateLimit: -d -w -m
+	pgitName: name of the user
+	return the branches */
+	getBranches: function(ppath){
 		var repo = getRepository(ppath);
 		repo.branches(function(err, branches){
 			if(err){
 				console.log(err);
 			}
-			commit.printBranches(ppath, branches,pdateLimit, pgitName);
+			else{
+				commit.printBranches(ppath, branches);
+			}
+			
 		});
 	}
 
