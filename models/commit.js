@@ -24,7 +24,7 @@ var setDateLimit = function (pdate){
 		limitDate = new Date(limitDate.getFullYear(),limitDate.getMonth(), limitDate.getDate());
 
 		if(pdate === '-w'){
-			limitDate.setDate(limitDate.getDate() - limitDate.getDay() + 1);
+			limitDate.setDate(limitDate.getDate() - limitDate.getDay());
 		}
 		else if(pdate === '-m'){
 			limitDate.setDate(limitDate.getDate() - limitDate.getDate() + 1);
@@ -85,7 +85,6 @@ var commit = {
 			if(	value.author.name === gitName && value.committed_date >= limitDate && FORMATHOUR.test(value.message)){
 				console.log(value.author.name);
 				console.log(value.committed_date);
-				console.log(limitDate);
 				console.log(value.message);
 				console.log('-----------------------');
 			}

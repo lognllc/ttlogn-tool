@@ -23,7 +23,6 @@ var configPath = function getUserHome() {
 	*/
 var saveFile = function (pdata){
 	var relativePath = configPath();
-	console.log(relativePath);
 	fs.writeFile(relativePath, pdata, 'utf8',function(err){
             if(err) {
                 console.error("Error saving file", err);
