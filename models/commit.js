@@ -1,4 +1,5 @@
 var path = require('path'),
+	colog = require('colog'),
 	dataAccess = require(path.resolve(__dirname,'../dataAccess/commitDataAccess.js')),
 	_ = require('underscore');
 
@@ -57,7 +58,7 @@ var commit = {
 			dataAccess.getBranches(ppath);
 		}
 		else{
-			console.log('ttlogn ls [-d/-w/-m]');
+			colog.log(colog.colorRed('Error: ttlogn ls [-d/-w/-m]'));
 		}
 	},
 
@@ -83,10 +84,10 @@ var commit = {
 		_.each(parray,function(value,index){
 
 			if(	value.author.name === gitName && value.committed_date >= limitDate && FORMATHOUR.test(value.message)){
-				console.log(value.author.name);
-				console.log(value.committed_date);
-				console.log(value.message);
-				console.log('-----------------------');
+				//console.log(value.author.name);
+				colog.log(colog.apply(value.repo.dot_git, ['bold', 'underline']));
+				colog.log(colog.colorBlue(value.message));
+				colog.log(colog.colorBlue(value.committed_date + '\n'));
 			}
 		});
 

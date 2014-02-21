@@ -1,5 +1,6 @@
 var path = require('path'),
-	fs = require('fs');
+	colog = require('colog'),
+	fs = require('fs'),
 	dataAccess = require('../dataAccess/configDataAccess.js');
 
 var USER = true,
@@ -58,6 +59,7 @@ var addRepoJson = function(pdataFile, ptype){
 	var jsonData,
 		data;
 	data = process.cwd();
+	colog.log(colog.colorBlue('adding repository ' + data +' to configuration file'));
 	jsonData = ptype ? addConfigField(data, pdataFile, REPOSITORY) : addNewConfigField(data, REPOSITORY);
 	return jsonData;
 };
@@ -70,6 +72,9 @@ var config = {
 	*/
 	registerUser: function(pdata){
 		var dataFile;
+
+		colog.log(colog.colorBlue('adding user'));
+		colog.log(colog.colorBlue('email: ' + pdata[0] + ' gitUser: ' + pdata[1]));
 
 		if(dataAccess.existConfig()){
 			dataFile = dataAccess.readConfig();
@@ -132,13 +137,19 @@ var config = {
 
 			data = dataAccess.readConfig();
 			data = JSON.parse(data);
-			data = data.gitUser;
 			return data;
 		
 		}
 		else{
 			return [];
 		}
+	},
+
+	/* 
+	return the user of the configuration
+	*/
+	existConfig: function(){
+		return dataAccess.existConfig();
 	}
 
 };

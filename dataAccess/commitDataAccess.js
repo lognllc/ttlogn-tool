@@ -1,5 +1,6 @@
 var git  = require('gift'),
 	path = require('path'),
+	colog = require('colog'),
 	_ = require('underscore');
 	commit = require(path.resolve(__dirname,'../models/commit.js'));
 
@@ -23,7 +24,7 @@ var commitDataAccess = {
 		var repo = getRepository(ppath);
 		repo.commits(pbranch, pnumber, pskip, function(err, commits){
 			if(err){
-				console.log(err);
+				colog.log(colog.colorRed(err));
 			}
 			else{
 				commit.printCommitsList(ppath, commits, pnumber, pbranch);
@@ -39,7 +40,7 @@ var commitDataAccess = {
 		var repo = getRepository(ppath);
 		repo.branches(function(err, branches){
 			if(err){
-				console.log(err);
+				colog.log(colog.colorRed(err));
 			}
 			else{
 				commit.printBranches(ppath, branches);

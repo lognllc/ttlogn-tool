@@ -1,7 +1,7 @@
 ttlogn-tool
 ===========
 
-## ttlogin
+## ttlogin 
 Sets a user in the config file. If the config file doesn't exists, it is created. The user information is obtained by the parameters.
 
 ### Parameters

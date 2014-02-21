@@ -1,5 +1,5 @@
-var //_ = require('underscore'),
-	path = require('path'),
+var path = require('path'),
+	colog = require('colog'),
 	fs = require('fs');
 
 var CONFIGPATH = '.ttlogn';
@@ -25,10 +25,14 @@ var saveFile = function (pdata){
 	var relativePath = configPath();
 	fs.writeFile(relativePath, pdata, 'utf8',function(err){
             if(err) {
+				colog.log(colog.colorRed('Error: saving file'));
                 console.error("Error saving file", err);
                 process.exit(1);
             }
-            console.log('file saved!');
+            else{
+				colog.log(colog.colorGreen('Success: configuration file saved'));
+			}
+
         });
 };
 

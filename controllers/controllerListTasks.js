@@ -1,5 +1,6 @@
 var _ = require('underscore'),
 	path = require('path'),
+	colog = require('colog'),
 	config = require(path.resolve(__dirname,'../models/config.js'));
 	commit = require(path.resolve(__dirname,'../models/commit.js'));
 
@@ -12,14 +13,19 @@ var controllerListTasks = {
 	
 	listTasks: function(pdate){
 		var repos,
-			name;
-
-		name = config.getConfigUser();
-		repos = config.getConfigRepos();
+			user;
+		if(config.existConfig){
+			user = config.getConfigUser();
+			repos = config.getConfigRepos();
+			
+			_.each(repos,function(value,index){
+				commit.displayCommits(value, pdate, user.gitUser);
+			});
+		}
+		else{
+			colog.log(colog.colorRed("Error: Configuration file doesn't exist"));
+		}
 		
-		_.each(repos,function(value,index){
-			commit.displayCommits(value, pdate, name);
-		});
 	}
 
 };
