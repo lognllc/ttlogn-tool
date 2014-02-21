@@ -59,7 +59,7 @@ var addRepoJson = function(pdataFile, ptype){
 	var jsonData,
 		data;
 	data = process.cwd();
-	colog.log(colog.colorBlue('adding repository ' + data +' to configuration file'));
+	colog.log(colog.colorBlue('Adding repository ' + data +' to configuration file'));
 	jsonData = ptype ? addConfigField(data, pdataFile, REPOSITORY) : addNewConfigField(data, REPOSITORY);
 	return jsonData;
 };
@@ -73,8 +73,8 @@ var config = {
 	registerUser: function(pdata){
 		var dataFile;
 
-		colog.log(colog.colorBlue('adding user'));
-		colog.log(colog.colorBlue('email: ' + pdata[0] + ' gitUser: ' + pdata[1]));
+		colog.log(colog.colorBlue('Adding user'));
+		colog.log(colog.colorBlue('Email: ' + pdata[0] + ' git User: ' + pdata[1]));
 
 		if(dataAccess.existConfig()){
 			dataFile = dataAccess.readConfig();
