@@ -3,8 +3,8 @@ var path = require('path'),
 	fs = require('fs'),
 	dataAccess = require('../dataAccess/configDataAccess.js');
 
-var USER = true,
-	REPOSITORY = false,
+var USER = 1,
+	REPOSITORY = 0,
 	CREATED = true,
 	UNCREATED = false;
 
@@ -14,7 +14,7 @@ pdata: data to introduce
 ptype: user or repository
 returns the string of the json
 */
-var addNewConfigField = function(pdata,ptype){
+var addNewConfigField = function(pdata, ptype){
 
 	var jsonData;
 
@@ -120,7 +120,6 @@ var config = {
 			data = JSON.parse(data);
 			data = data.repositories;
 			return data;
-		
 		}
 		else{
 			return [];

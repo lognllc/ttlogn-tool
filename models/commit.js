@@ -1,24 +1,32 @@
 var path = require('path'),
 	colog = require('colog'),
-	dataAccess = require(path.resolve(__dirname,'../dataAccess/commitDataAccess.js')),
-	_ = require('underscore');
+	_ = require('underscore'),
+	git  = require('gift'),
+	dataAccess = require(path.resolve(__dirname,'../dataAccess/commitDataAccess.js'));
 
-var NUMBER_COMMITS = 2,
+var NUMBER_COMMITS = 10,
 	FORMATHOUR = /[^(]+\(\d+h\)/g,
 	DIGITOS = /\d+/g;
 
+
 var limitDate,
 	gitName;
-
 
 
 //----------------
 // hacer los if de error, buscar lo de promesas
 //-------------
 
-	/* pdate: -d/-w/-m
-	pgitName: git name of the user
-	prints the information of the commits */
+/* ppath: path of the directory
+return the directory */
+var getRepository = function (ppath)
+{
+	return git(ppath);
+};
+
+/* pdate: -d/-w/-m
+pgitName: git name of the user
+prints the information of the commits */
 var setDateLimit = function (pdate){
 
 		limitDate = new Date();
@@ -32,14 +40,18 @@ var setDateLimit = function (pdate){
 		}
 };
 
-	/* pmessage: message of the commit 
-	return a string with the number of hours worked
-	*/
+// returns the limit date
+var getDateLimit = function(){
+	return limitDate;
+};
+
+/* pmessage: message of the commit 
+return a string with the number of hours worked
+*/
 var getWork = function(pmessage){
 	
 	var test = FORMATHOUR.exec(pmessage);
 	test = DIGITOS.exec(test[0]);
-	//test = parseFloat(test[0]);
 	return test[0];
 	
 };
@@ -51,56 +63,107 @@ var commit = {
 	pdate: -d/-w/-m
 	pgitName: git name of the user
 	prints the information of the commits */
-	displayCommits: function(ppath, pdate, pgitName){
-		if(pdate === '-w' || pdate === '-m' || pdate === '-d' || typeof pdate === 'undefined'){
-			setDateLimit(pdate);
-			gitName = pgitName;
-			dataAccess.getBranches(ppath);
-		}
-		else{
-			colog.log(colog.colorRed('Error: ttlogn ls [-d/-w/-m]'));
-		}
+	getRepo: function(ppath, pdate, pgitName, cb){
+		setDateLimit(pdate);
+		gitName = pgitName;
+		dataAccess.getBranches(ppath, cb);
 	},
 
 	/* ppath: repository path
 	parray: array of branches
 	prints the information of the commits */
-	printBranches: function(ppath, parray){
+	/*getCommits: function(ppath, parray){
 		_.each(parray,function(value,index){
-			dataAccess.getCommitsList(ppath, value.name, NUMBER_COMMITS, 0);
+			dataAccess.getCommitsList(ppath, value.name, NUMBER_COMMITS, 0, commit.printCommitsList);
+		});
+	},*/
+
+	/* ppath: path of the repository
+	get the config of the repo*/
+	getRepoConfig: function(ppath, pfunction){
+		var repo = getRepository(ppath);
+		var jsonData;
+
+		repo.config(function(err, config){
+			if(err){
+				colog.log(colog.colorRed(err));
+			}
+			else{
+				pfunction(config);
+			}
+		});
+	},
+
+	/* ppath: path of the directory
+	pbranch: name of the branch
+	pnumber: the number of commits
+	pskip: number of commits skips
+	return commits of a branch */
+	getCommits: function(ppath, pbranch, pnumber, pskip, pfunction){
+		var date,
+			numberCommits,
+			numberArray,
+			commitsList,
+			repo = getRepository(ppath);
+
+
+		repo.commits(pbranch, pnumber, pskip, function(err, commits){
+			if(err){
+				colog.log(colog.colorRed(err));
+			}
+			else{
+				pfunction(ppath, commits, pnumber, pbranch);
+			}
+
+			numberArray = parray.length - 1;
+			date = parray[numberArray].committed_date;
+			numberCommits = pnumber + NUMBER_COMMITS;
+
+			if(date >= limitDate && numberArray === NUMBER_COMMITS - 1){
+				dataAccess.getCommitsList(ppath, pbranch, numberCommits, pnumber, commit.printCommitsList);
+			}
+			else(cb());
+		});
+	},
+
+	/* ppath: path of the directory
+	return the branches */
+	getBranches: function(ppath, pfunction){
+		var repo = getRepository(ppath);
+		repo.branches(function(err, branches){
+			if(err){
+				colog.log(colog.colorRed(err));
+			}
+			else{
+				//dataAccess.getCommitsList(ppath, value.name, NUMBER_COMMITS, 0, commit.printCommitsList);
+				pfunction(branches);
+			}
+			
 		});
 	},
 
 	/* ppath: repository path
 	parray: array of commits
 	pnumber: number of commits to begin with
+	pbranch: the branch
 	prints the information of the commits 
 	if the last commit has a high date than the limitDate,
 	and array has NUMBER_COMMITS - 1 elements, print the branch again */
-	printCommitsList: function(ppath, parray, pnumber, pbranch){
+/*	continueCommitsList: function(ppath, parray, pnumber, pbranch, pcb){
 		var date,
-			numberCommits,
-			numberArray;
-		_.each(parray,function(value,index){
-
-			if(	value.author.name === gitName && value.committed_date >= limitDate && FORMATHOUR.test(value.message)){
-				//console.log(value.author.name);
-				colog.log(colog.apply(value.repo.dot_git, ['bold', 'underline']));
-				colog.log(colog.colorBlue(value.message));
-				colog.log(colog.colorBlue(value.committed_date + '\n'));
-			}
-		});
+		numberCommits,
+		numberArray;
 
 		numberArray = parray.length - 1;
 		date = parray[numberArray].committed_date;
 		numberCommits = pnumber + NUMBER_COMMITS;
 
 		if(date >= limitDate && numberArray === NUMBER_COMMITS - 1){
-			dataAccess.getCommitsList(ppath, pbranch, numberCommits, pnumber);
+			dataAccess.getCommitsList(ppath, pbranch, numberCommits, pnumber, commit.printCommitsList);
 		}
-	}
+		else(cb());
+	}*/
+
 };
 
 module.exports = commit;
-
-
