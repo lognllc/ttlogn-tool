@@ -1,6 +1,7 @@
 var _ = require('underscore'),
 	path = require('path'),
 	colog = require('colog'),
+	RSVP = require('rsvp'),
 	config = require(path.resolve(__dirname,'../models/config.js')),
 	commit = require(path.resolve(__dirname,'../models/commit.js'));
 
@@ -8,12 +9,14 @@ var NUMBER_COMMITS = 10,
 	FORMATHOUR = /[^(]+\(\d+h\)/g,
 	DIGITOS = /\d+/g;
 
-var results,
-	successes = 0;
+var getCommits = function(pparameter){
 
-var callb = function(branches){
-	successes++;
-	results['repoName'] = branches;
+	//console.log(pparameter);
+	commit.getBranchCommits(pparameter);
+};
+
+var getBranches = function(pparameter){
+	commit.getBranches(pparameter, getCommits);
 };
 
 
@@ -49,38 +52,39 @@ var	printCommits = function(parray){
 
 
 
+
+
 var controllerListTasks = {
 
 	/* 
 	print the tasks realized by an user
 	pdate: maximum date d/w/m
 	*/
+
 	listTasks: function(pdate){
 		var repos,
 			user,
-			successes = 0;
+			reposArray;
+			//successes = 0;
 
 		if(pdate === '-w' || pdate === '-m' || pdate === '-d' || typeof pdate === 'undefined'){
 
 			if(config.existConfig){
-				user = config.getConfigUser();
-				repos = config.getConfigRepos();
+
 				commit.setDateLimit(pdate);
 
-				colog.log(colog.colorBlue('Loading...'));
+				//console.log(commit.getDateLimit());
+				
+				user = config.getConfigUser();
+				repos = config.getConfigRepos();
 
-				_.each(repos,function(value,index){
-					commit.getRepoConfig(value);
-					commit.getRepo(value, pdate, user.gitUser, callb);
-				});
+				colog.log(colog.colorGreen('Loading...'));
 
-				while(successes < repos.length){
-					//time <= (startTime+timeout_time) 
-				}
+//				commit.getRepoName(repos, function (callback){
 
-				/*each(function(value,index)){
-					printCommits(value, index);
-				}*/
+				//});
+				commit.getRepoName(repos, getBranches);
+				//commit.getBranches(repos, getCommits);
 
 			}
 			else{
@@ -96,3 +100,23 @@ var controllerListTasks = {
 };
 
 module.exports = controllerListTasks;
+
+
+/*_.each(repos,function(value,index){
+				//	commit.getRepoConfig(value);
+					console.log('llamar getBranches ' + value);
+					commit.getBranches(value, callb);
+				});*/
+				
+				//commit.getBranches(repos, callb);
+				
+
+			/*	while(successes < repos.length){
+					//console.log('while loop:' + successes);
+					//console.log(successes + 'largo' + repos.length);
+					//time <= (startTime+timeout_time) 
+				}
+*/
+				/*_.each(results, function(value,index){
+					console.log(value + index );
+				});*/

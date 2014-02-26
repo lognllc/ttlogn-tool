@@ -50,12 +50,14 @@ var commitDataAccess = {
 	return the branches */
 	getBranches: function(ppath, pfunction){
 		var repo = getRepository(ppath);
+		//console.log('llegue branch');
+		//		pfunction();
 		repo.branches(function(err, branches){
 			if(err){
 				colog.log(colog.colorRed(err));
 			}
 			else{
-				pfunction(branches);
+				pfunction().bind();
 			}
 			
 		});

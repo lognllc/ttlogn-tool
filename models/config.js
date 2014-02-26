@@ -1,7 +1,7 @@
 var path = require('path'),
 	colog = require('colog'),
 	fs = require('fs'),
-	dataAccess = require('../dataAccess/configDataAccess.js');
+	dataAccess = require('../dataAccess/config_data_access.js');
 
 var USER = 1,
 	REPOSITORY = 0,
