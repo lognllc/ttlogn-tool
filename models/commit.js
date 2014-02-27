@@ -7,21 +7,14 @@ var path = require('path'),
 	dataAccess = require(path.resolve(__dirname,'../dataAccess/commit_data_access.js'));
 
 
-var NUMBER_COMMITS = 3,
+var NUMBER_COMMITS = 10,
 	FORMATHOUR = /[^(]+\(\d+h\)/g,
-	DIGITOS = /\d+/g,
-	PATH = 0,
-	BRANCH_NAME= 0,
-	BRANCH_COMMITS= 1,
-	REPO_NAME = 1,
-	BRANCHES = 2,
-	COMMITS = 3;
+	DIGITOS = /\d+/g;
 
 
-var limitDate,
-	gitName,
-	repoArray,
-	success,
+var limitDate = new Date(),
+	gitName = '',
+	repoArray = [],
 	promises = [];
 
 /* ppath: path of the directory
@@ -49,13 +42,14 @@ var commit = {
 		return limitDate;
 	},
 
-	/* ppath: path of the repository
-	get the config of the repo*/
+	/* parray: the array of repositories
+	pfunction: function to send the result array
+	return an array with the config of the repos */
 	getRepoName: function(parray, pfunction){
 		
-		var repo,
+		var repo = [],
 			configList = [],
-			objectRepo;
+			objectRepo = {};
 
 		async.each(parray, function(item, callback){
 				repo = getRepository(item);
@@ -69,7 +63,6 @@ var commit = {
 							name: config.items['remote.origin.url'],
 							branches: []
 						};
-						//configList.push([item, config.items['remote.origin.url']]);
 						configList.push(objectRepo);
 					}
 					callback();
@@ -77,24 +70,22 @@ var commit = {
 			},
 
 			function(err){
-				//return configList;
 				pfunction(configList);
 			}
 		);
 	},
 
-	/* ppath: path of the directory
-	return the branches */
+	/* pparray: the array of repositories
+	pfunction: function to send the result array
+	get the branches of the repositories */
 	getBranches: function(parray, pfunction){
 
-		var repo,
-			//branchesList,
-			objectBrach;
+		var repo = [],
+			objectBrach = {};
 			
 		async.each(parray, function(item, callback){
 				repo = getRepository(item.path);
 				repo.branches(function (err, branches){
-					//branchesList = [];
 					_.each(branches, function(value,index){
 						objectBrach = {
 							name: value.name,
@@ -107,41 +98,29 @@ var commit = {
 				});
 			},
 			function(err){
-				// All tasks are done now
 				pfunction(parray);
-				//console.log(parray);
-				//console.log(parray[0].branches[0].name);
-				//console.log(parray[1].branches[0].name);
 			}
 		);
-
 	},
 
-	/* ppath: path of the directory
-	pbranch: name of the branch
-	pnumber: the number of commits
-	pskip: number of commits skips
-	return commits of a branch */
+	/* pindexRepo: the index of the repository 
+	pindexBranch: the index of the branch
+	get commits of a branch */
 
 	getCommits: function(pindexRepo, pindexBranch){
 		
 		var promise = new RSVP.Promise(function(resolve, reject) {
-			var date,
-				numberCommits,
+			var date = new Date(),
+				numberCommits = 0,
 				skip = 0,
-				count,
-				numberArray;
-
-			var self = this,
+				numberArray = 0,
+				self = this,
 				continueWhile = true;
-
-				repo = getRepository(repoArray[pindexRepo].path);
-				branch = repoArray[pindexRepo].branches[pindexBranch].name;
-
+						
 				async.doWhilst(
 					function (callback) {
-						//console.log('antes de branch');
-						//console.log(repo);
+						repo = getRepository(repoArray[pindexRepo].path);
+						branch = repoArray[pindexRepo].branches[pindexBranch].name;
 
 						repo.commits(branch, NUMBER_COMMITS, skip, function(err, commits){
 							if(err){
@@ -152,9 +131,6 @@ var commit = {
 								numberArray = commits.length - 1;
 								date = commits[numberArray].committed_date;
 								skip += NUMBER_COMMITS;
-								
-								console.log('iteracion');
-								//console.log(repoArray[pindexRepo].branches[pindexBranch]);
 
 								if(date < limitDate || numberArray !== (NUMBER_COMMITS - 1)) continueWhile = false;
 							}
@@ -172,7 +148,6 @@ var commit = {
 							reject(self);
 							return false;
 						}
-						//console.log('llamando a promesa');
 						resolve(self);
 					}
 				);
@@ -180,25 +155,19 @@ var commit = {
 		return promise;
 	},
 
-	/* ppath: path of the directory
-	pbranch: name of the branch
-	pnumber: the number of commits
-	pskip: number of commits skips
-	return commits of a branch */
+	/* pparray: the array of repositories
+	pfunction: function to send the result array
+	gets commits of a branch */
 	getBranchCommits: function(parray, pfunction){
 		repoArray = parray;
-		success = 0;
 
 		_.each(repoArray, function(repository, indexRepo){
 			_.each(repository.branches, function(branch, indexBranch){
 				promises.push(commit.getCommits(indexRepo, indexBranch));
-				//console.log('aqui');
 			});
 		});
 
-		//console.log(promises);
 		RSVP.all(promises).then(function(posts) {
-			//console.log('aqui2');
 			pfunction(repoArray);
 		}).catch(function(reason){
 			colog.log(colog.colorRed(reason));
@@ -223,66 +192,3 @@ var commit = {
 };
 
 module.exports = commit;
-
-		/*repo.commits(pbranch, pnumber, pskip, function(err, commits){
-			if(err){
-				colog.log(colog.colorRed(err));
-			}
-			else{
-				pfunction(ppath, commits, pnumber, pbranch);
-			}
-
-			numberArray = parray.length - 1;
-			date = parray[numberArray].committed_date;
-			numberCommits = pnumber + NUMBER_COMMITS;
-
-			if(date >= limitDate && numberArray === NUMBER_COMMITS - 1){
-				dataAccess.getCommitsList(ppath, pbranch, numberCommits, pnumber, commit.printCommitsList);
-			}
-			else(pfunction());
-		});*/
-
-
-		/*var repo,
-			configList = [];
-
-		_.each(parray, function(value, index){
-			repo = getRepository(value);
-
-			repo.config(function (err, config){
-				if(err){
-					colog.log(colog.colorRed(err));
-				}
-				else{
-					configList.push([value, config.items['remote.origin.url']]);
-				}
-
-				if (index === parray.length - 1){
-					callback(configList);
-				}
-			});
-		});*/
-	
-
-//--------------------------
-
-/*var repo,
-			configList = [];
-
-		async.each(parray, function(item, callback){
-				repo = getRepository(item);
-				repo.config(function (err, config){
-					if(err){
-						colog.log(colog.colorRed(err));
-					}
-					else{
-						configList.push([item, config.items['remote.origin.url']]);
-					}
-					callback();
-				});
-			},
-
-			function(err){
-				pfunction(configList);
-			}
-		);*/
