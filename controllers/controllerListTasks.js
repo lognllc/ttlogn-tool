@@ -15,6 +15,8 @@ var NUMBER_COMMITS = 3,
 	BRANCHES = 2,
 	COMMITS = 3;
 
+var gitName = '';
+
 var getCommits = function(pparameter){
 	commit.getBranchCommits(pparameter, printCommits);
 };
@@ -41,22 +43,24 @@ var	printCommits = function(parray){
 
 	limitDate = commit.getDateLimit();
 
+	// console.log(parray);
+
 	_.each(parray, function(repository){
-		console.log(repository[REPO_NAME]);
-		_.each(repository[BRANCHES], function(branch){
-			console.log(branch[BRANCH_NAME]);
-			console.log(branch);
-			_.each(branch[BRANCH_COMMITS], function(value){
-				//if(	true ){//value.author.name === gitName && value.committed_date >= limitDate && FORMATHOUR.test(value.message)){
-					// console.log(value.author.name);
-					// console.log(value.committed_date);
-					// console.log(value.message);
-					console.log('-----------------------');
-					//console.log(value.author.name);
-					//colog.log(colog.apply(value.repo.dot_git, ['bold', 'underline']));
-					//colog.log(colog.colorBlue(value));
-					//console.log(value.message);
-					//colog.log(colog.colorBlue(value.committed_date + '\n'));
+		console.log(repository.name);
+		_.each(repository.branches, function(branch){
+			console.log(branch.name);
+			//console.log(branch);
+			_.each(branch.commits, function(value){
+				console.log('---------------------------------------- \n');
+				//if(value.author.name === gitName && value.committed_date >= limitDate && FORMATHOUR.test(value.message)){
+					colog.log(colog.colorBlue(FORMATHOUR.test(value.message)));
+					colog.log(colog.colorBlue(value.message));
+					message = value.message.split('\n');
+					message = message[0];
+					colog.log(colog.colorBlue(value.author.name + 'git '+  gitName));
+					colog.log(colog.colorBlue(value.committed_date + 'fecha '+  limitDate));
+					colog.log(colog.colorBlue(message));
+					colog.log(colog.colorBlue(value.committed_date + '\n'));
 				//}
 			});
 		});
@@ -96,6 +100,7 @@ var controllerListTasks = {
 				commit.setDateLimit(pdate);
 				
 				user = config.getConfigUser();
+				gitName = user.gitUser;
 				repos = config.getConfigRepos();
 
 				colog.log(colog.colorGreen('Loading...'));

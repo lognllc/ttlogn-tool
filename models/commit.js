@@ -31,7 +31,6 @@ var getRepository = function (ppath)
 	return git(ppath);
 };
 
-
 /* pmessage: message of the commit 
 return a string with the number of hours worked
 */
@@ -40,7 +39,6 @@ var getWork = function(pmessage){
 	var test = FORMATHOUR.exec(pmessage);
 	test = DIGITOS.exec(test[0]);
 	return test[0];
-	
 };
 
 
@@ -56,7 +54,8 @@ var commit = {
 	getRepoName: function(parray, pfunction){
 		
 		var repo,
-			configList = [];
+			configList = [],
+			objectRepo;
 
 		async.each(parray, function(item, callback){
 				repo = getRepository(item);
@@ -65,7 +64,13 @@ var commit = {
 						colog.log(colog.colorRed(err));
 					}
 					else{
-						configList.push([item, config.items['remote.origin.url']]);
+						objectRepo = {
+							path: item,
+							name: config.items['remote.origin.url'],
+							branches: []
+						};
+						//configList.push([item, config.items['remote.origin.url']]);
+						configList.push(objectRepo);
 					}
 					callback();
 				});
@@ -83,23 +88,30 @@ var commit = {
 	getBranches: function(parray, pfunction){
 
 		var repo,
-			branchesList;
+			//branchesList,
+			objectBrach;
 			
 		async.each(parray, function(item, callback){
-				repo = getRepository(item[PATH]);
+				repo = getRepository(item.path);
 				repo.branches(function (err, branches){
-					branchesList = [];
+					//branchesList = [];
 					_.each(branches, function(value,index){
-						branchesList.push([value.name,[]]);
-						//console.log(value.commit.tree())
+						objectBrach = {
+							name: value.name,
+							repository: item.name,
+							commits: []
+						};
+						item.branches.push(objectBrach);
 					});
-					item.push(branchesList);
 					callback();
 				});
 			},
 			function(err){
 				// All tasks are done now
 				pfunction(parray);
+				//console.log(parray);
+				//console.log(parray[0].branches[0].name);
+				//console.log(parray[1].branches[0].name);
 			}
 		);
 
@@ -112,46 +124,37 @@ var commit = {
 	return commits of a branch */
 
 	getCommits: function(pindexRepo, pindexBranch){
-	//function(ppath, pbranch, pnumber, pskip, pfunction){
 		
 		var promise = new RSVP.Promise(function(resolve, reject) {
 			var date,
 				numberCommits,
-				skip,
+				skip = 0,
 				count,
 				numberArray;
 
-				var self = this, continueWhile = true;
+			var self = this,
+				continueWhile = true;
 
-				count = -1;
-
-				repo = getRepository(repoArray[pindexRepo][PATH]);
-				branch = repoArray[pindexRepo][BRANCHES][BRANCH_NAME][0];
-				skip = 0;
-				numberCommits = NUMBER_COMMITS;
+				repo = getRepository(repoArray[pindexRepo].path);
+				branch = repoArray[pindexRepo].branches[pindexBranch].name;
 
 				async.doWhilst(
 					function (callback) {
-						console.log('antes de branch');
-						console.log(branch);
+						//console.log('antes de branch');
+						//console.log(repo);
 
 						repo.commits(branch, NUMBER_COMMITS, skip, function(err, commits){
 							if(err){
 								colog.log(colog.colorRed(err));
 							}
 							else{
-								count++;
-								console.log('');
-								repoArray[pindexRepo][BRANCHES][pindexBranch][BRANCH_COMMITS] = repoArray[pindexRepo][BRANCHES][pindexBranch][BRANCH_COMMITS].concat(commits);
+								repoArray[pindexRepo].branches[pindexBranch].commits = repoArray[pindexRepo].branches[pindexBranch].commits.concat(commits);
 								numberArray = commits.length - 1;
 								date = commits[numberArray].committed_date;
 								skip += NUMBER_COMMITS;
-							
+								
 								console.log('iteracion');
-								//console.log(date < limitDate || numberArray != NUMBER_COMMITS - 1);
-								console.log(date < limitDate || numberArray !== (NUMBER_COMMITS - 1));
-
-								console.log(count);
+								//console.log(repoArray[pindexRepo].branches[pindexBranch]);
 
 								if(date < limitDate || numberArray !== (NUMBER_COMMITS - 1)) continueWhile = false;
 							}
@@ -161,8 +164,6 @@ var commit = {
 					function () {
 						var ret = true;
 						if(!continueWhile){
-							
-							
 							ret = false;
 						}
 						return ret; },
@@ -170,22 +171,14 @@ var commit = {
 						if(err){
 							reject(self);
 							return false;
-
 						}
-						console.log('llamando a promesa');
+						//console.log('llamando a promesa');
 						resolve(self);
 					}
 				);
 			});
-		
 		return promise;
-
 	},
-
-
-
-
-		
 
 	/* ppath: path of the directory
 	pbranch: name of the branch
@@ -196,42 +189,21 @@ var commit = {
 		repoArray = parray;
 		success = 0;
 
-		_.each(parray, function(repository, indexRepo){
-			_.each(repository[BRANCHES], function(branch, indexBranch){
+		_.each(repoArray, function(repository, indexRepo){
+			_.each(repository.branches, function(branch, indexBranch){
 				promises.push(commit.getCommits(indexRepo, indexBranch));
-			//	console.log(promises);
-				console.log('aqui');
+				//console.log('aqui');
 			});
 		});
-		
 
-		console.log(promises);
+		//console.log(promises);
 		RSVP.all(promises).then(function(posts) {
-			console.log('aqui2');
+			//console.log('aqui2');
 			pfunction(repoArray);
 		}).catch(function(reason){
 			colog.log(colog.colorRed(reason));
 		});
-
-/*
-		repo.commits(pbranch, pnumber, pskip, function(err, commits){
-			if(err){
-				colog.log(colog.colorRed(err));
-			}
-			else{
-				pfunction(ppath, commits, pnumber, pbranch);
-			}
-
-			numberArray = parray.length - 1;
-			date = parray[numberArray].committed_date;
-			numberCommits = pnumber + NUMBER_COMMITS;
-
-			if(date >= limitDate && numberArray === NUMBER_COMMITS - 1){
-				dataAccess.getCommitsList(ppath, pbranch, numberCommits, pnumber, commit.printCommitsList);
-			}
-			else(pfunction());
-		});
-*/	},
+	},
 
 	/* pdate: -d/-w/-m
 	prints the information of the commits */
@@ -252,31 +224,6 @@ var commit = {
 
 module.exports = commit;
 
-
-
-
-			/*do {
-				hasCommits = false;
-				repo.commits(branch, numberCommits, skip, function(err, commits){
-					if(err){
-						colog.log(colog.colorRed(err));
-					}
-					else{
-						console.log(repoArray[BRANCHES]);//[BRANCH_COMMITS].push(commits);
-						numberArray = commits.length - 1;
-						date = commits[numberArray].committed_date;
-						skip = numberCommits;
-						numberCommits = numberCommits + NUMBER_COMMITS;
-
-						if(date >= limitDate && numberArray === NUMBER_COMMITS - 1){
-							hasCommits = true;	
-						}
-					}
-				});
-			}
-			while (hasCommits);
-*/
-
 		/*repo.commits(pbranch, pnumber, pskip, function(err, commits){
 			if(err){
 				colog.log(colog.colorRed(err));
@@ -294,25 +241,6 @@ module.exports = commit;
 			}
 			else(pfunction());
 		});*/
-
-/*var promise = new RSVP.Promise(function(resolve, reject){
-
-			_.each(parray, function(item){
-					repo = getRepository(item);
-					repo.config(function (err, config){
-						if(err){
-							colog.log(colog.colorRed(err));
-							reject(error);
-						}
-						else{
-							configList.push([item, config.items['remote.origin.url']]);
-							resolve(value);
-						}
-					});
-				}
-			);
-			return promise;
-		}*/
 
 
 		/*var repo,
@@ -358,50 +286,3 @@ module.exports = commit;
 				pfunction(configList);
 			}
 		);*/
-
-// ----------------
-
-/*printRepoName: function(pconfig){
-		colog.log(pconfig.items['remote.origin.url']);
-	}
-*/
-
-
-/*var repo = getRepository(ppath);
-
-		repo.branches(function(err, branches){
-			console.log('algo');
-			if(err){
-				colog.log(colog.colorRed(err));
-			}
-			else{
-				console.log(branches);
-				pfunction();
-			}
-			
-		});*/
-
-
-/*	continueCommitsList: function(ppath, parray, pnumber, pbranch, pcb){
-		var date,
-		numberCommits,
-		numberArray;
-
-		numberArray = parray.length - 1;
-		date = parray[numberArray].committed_date;
-		numberCommits = pnumber + NUMBER_COMMITS;
-
-		if(date >= limitDate && numberArray === NUMBER_COMMITS - 1){
-			dataAccess.getCommitsList(ppath, pbranch, numberCommits, pnumber, commit.printCommitsList);
-		}
-		else(cb());
-	}*/
-
-	/* ppath: repository path
-	parray: array of branches
-	prints the information of the commits */
-	/*getCommits: function(ppath, parray){
-		_.each(parray,function(value,index){
-			dataAccess.getCommitsList(ppath, value.name, NUMBER_COMMITS, 0, commit.printCommitsList);
-		});
-	},*/
