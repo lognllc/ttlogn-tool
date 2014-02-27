@@ -5,14 +5,18 @@ var _ = require('underscore'),
 	config = require(path.resolve(__dirname,'../models/config.js')),
 	commit = require(path.resolve(__dirname,'../models/commit.js'));
 
-var NUMBER_COMMITS = 10,
+var NUMBER_COMMITS = 3,
 	FORMATHOUR = /[^(]+\(\d+h\)/g,
-	DIGITOS = /\d+/g;
+	DIGITOS = /\d+/g,
+	PATH = 0,
+	BRANCH_NAME= 0,
+	BRANCH_COMMITS= 1,
+	REPO_NAME = 1,
+	BRANCHES = 2,
+	COMMITS = 3;
 
 var getCommits = function(pparameter){
-
-	//console.log(pparameter);
-	commit.getBranchCommits(pparameter);
+	commit.getBranchCommits(pparameter, printCommits);
 };
 
 var getBranches = function(pparameter){
@@ -37,8 +41,29 @@ var	printCommits = function(parray){
 
 	limitDate = commit.getDateLimit();
 
+	_.each(parray, function(repository){
+		console.log(repository[REPO_NAME]);
+		_.each(repository[BRANCHES], function(branch){
+			console.log(branch[BRANCH_NAME]);
+			console.log(branch);
+			_.each(branch[BRANCH_COMMITS], function(value){
+				//if(	true ){//value.author.name === gitName && value.committed_date >= limitDate && FORMATHOUR.test(value.message)){
+					// console.log(value.author.name);
+					// console.log(value.committed_date);
+					// console.log(value.message);
+					console.log('-----------------------');
+					//console.log(value.author.name);
+					//colog.log(colog.apply(value.repo.dot_git, ['bold', 'underline']));
+					//colog.log(colog.colorBlue(value));
+					//console.log(value.message);
+					//colog.log(colog.colorBlue(value.committed_date + '\n'));
+				//}
+			});
+		});
+	});
 
-	_.each(parray,function(value,index){
+
+	/*_.each(parray,function(value,index){
 
 		if(	value.author.name === gitName && value.committed_date >= limitDate && FORMATHOUR.test(value.message)){
 			message = value.message.split('\n');
@@ -47,11 +72,8 @@ var	printCommits = function(parray){
 			colog.log(colog.colorBlue(value.committed_date + '\n'));
 			console.log('---------------------------------------- \n');
 		}
-	});
+	});*/
 };
-
-
-
 
 
 var controllerListTasks = {
@@ -72,19 +94,12 @@ var controllerListTasks = {
 			if(config.existConfig){
 
 				commit.setDateLimit(pdate);
-
-				//console.log(commit.getDateLimit());
 				
 				user = config.getConfigUser();
 				repos = config.getConfigRepos();
 
 				colog.log(colog.colorGreen('Loading...'));
-
-//				commit.getRepoName(repos, function (callback){
-
-				//});
 				commit.getRepoName(repos, getBranches);
-				//commit.getBranches(repos, getCommits);
 
 			}
 			else{

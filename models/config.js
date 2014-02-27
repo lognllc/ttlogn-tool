@@ -122,6 +122,7 @@ var config = {
 			return data;
 		}
 		else{
+			colog.log(colog.colorRed('Add a repository'));
 			return [];
 		}
 	},
@@ -140,6 +141,7 @@ var config = {
 		
 		}
 		else{
+			colog.log(colog.colorRed('Add a user'));
 			return [];
 		}
 	},
