@@ -12,11 +12,16 @@ var POST_TIME_ENTRY = '/time_entries/createUpdate?created=',
 
 var time_entry = {
 	
-	postTimeEntry: function(puser){
-		var message	= POST_TIME_ENTRY + '' + DEVELOPER + '' + PROJECT + '' + DESCRIPTION + '' + TIME + '' + HOUR_TYPE + '';
-		dataAccess.post(message,'function');
-	}
+	/* pentry: object with the information need to post the time entry
+	pfunction: funtion to send the projects
+	get the projects of an user
+	*/
+	postTimeEntry: function(pentry, pfunction){
+		var message	= POST_TIME_ENTRY + pentry.dateCreated + DEVELOPER + pentry.developer + PROJECT + pentry.project;
+			message += DESCRIPTION + pentry.message + TIME + pentry.time + HOUR_TYPE + pentry.hourType;
 
+		dataAccess.post(message, pfunction);
+	}
 };
 
 module.exports = time_entry;

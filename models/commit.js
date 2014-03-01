@@ -3,8 +3,7 @@ var path = require('path'),
 	_ = require('underscore'),
 	git  = require('gift'),
 	async = require('async'),
-	RSVP = require('rsvp'),
-	dataAccess = require(path.resolve(__dirname,'../dataAccess/commit_data_access.js'));
+	RSVP = require('rsvp');
 
 
 var NUMBER_COMMITS = 10,
@@ -42,25 +41,27 @@ var commit = {
 		return limitDate;
 	},
 
-	/* parray: the array of repositories
+	/* prepos: the array of repositories
 	pfunction: function to send the result array
 	return an array with the config of the repos */
-	getRepoName: function(parray, pfunction){
+	getRepoName: function(prepos, pfunction){
 		
 		var repo = [],
 			configList = [],
 			objectRepo = {};
 
-		async.each(parray, function(item, callback){
-				repo = getRepository(item);
+		async.each(prepos, function(item, callback){
+				repo = getRepository(item.path);
 				repo.config(function (err, config){
 					if(err){
 						colog.log(colog.colorRed(err));
 					}
 					else{
 						objectRepo = {
-							path: item,
+							path: item.path,
 							name: config.items['remote.origin.url'],
+							project: item.projectName,
+							projectId: item.projectId,
 							branches: []
 						};
 						configList.push(objectRepo);
@@ -75,15 +76,15 @@ var commit = {
 		);
 	},
 
-	/* pparray: the array of repositories
+	/* pprepos: the array of repositories
 	pfunction: function to send the result array
 	get the branches of the repositories */
-	getBranches: function(parray, pfunction){
+	getBranches: function(prepos, pfunction){
 
 		var repo = [],
 			objectBrach = {};
 			
-		async.each(parray, function(item, callback){
+		async.each(prepos, function(item, callback){
 				repo = getRepository(item.path);
 				repo.branches(function (err, branches){
 					_.each(branches, function(value,index){
@@ -92,13 +93,14 @@ var commit = {
 							repository: item.name,
 							commits: []
 						};
+
 						item.branches.push(objectBrach);
 					});
 					callback();
 				});
 			},
 			function(err){
-				pfunction(parray);
+				pfunction(prepos);
 			}
 		);
 	},
@@ -106,7 +108,6 @@ var commit = {
 	/* pindexRepo: the index of the repository 
 	pindexBranch: the index of the branch
 	get commits of a branch */
-
 	getCommits: function(pindexRepo, pindexBranch){
 		
 		var promise = new RSVP.Promise(function(resolve, reject) {
@@ -155,11 +156,11 @@ var commit = {
 		return promise;
 	},
 
-	/* pparray: the array of repositories
+	/* prepos: the array of repositories
 	pfunction: function to send the result array
 	gets commits of a branch */
-	getBranchCommits: function(parray, pfunction){
-		repoArray = parray;
+	getBranchCommits: function(prepos, pfunction){
+		repoArray = prepos;
 
 		_.each(repoArray, function(repository, indexRepo){
 			_.each(repository.branches, function(branch, indexBranch){

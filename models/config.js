@@ -1,66 +1,24 @@
 var path = require('path'),
 	colog = require('colog'),
 	fs = require('fs'),
+	sha1 = require('sha1'),
 	dataAccess = require('../dataAccess/config_data_access.js');
 
-var USER = 1,
-	REPOSITORY = 0,
-	CREATED = true,
-	UNCREATED = false;
 
 /* 
-add a field to a new jason file of configuration
-pdata: data to introduce
-ptype: user or repository
-returns the string of the json
+get the json to save the information
 */
-var addNewConfigField = function(pdata, ptype){
+var getJson = function(){
 
-	var jsonData;
+	var jsonData = {};
 
-	jsonData = ptype ? { emails: pdata[0], password: pdata[1], gitUser: pdata[2] ,repositories:[] } :  {emails: '', password: '', gitUser: '', repositories: [pdata]};
-	jsonData = JSON.stringify(jsonData);
-	return jsonData;
-};
-
-/* 
-add a new field to the jason field of configuration
-pdata: data to introduce
-pdataFile: the data in the file
-ptype: user or repository
-returns the string of the json
-*/
-
-var addConfigField = function(pdata, pdataFile, ptype){
-
-	var jsonData;
-	jsonData = JSON.parse(pdataFile);
-	
-	if(ptype){
-		jsonData.emails = pdata[0];
-		jsonData.password = pdata[1];
-		jsonData.gitUser = pdata[2];
+	if(config.existConfig()){
+		dataFile = dataAccess.readConfig();
+		jsonData = JSON.parse(dataFile);
 	}
-	else {
-		jsonData.repositories.push(pdata);
+	else{
+		jsonData = { email: '', password: '', gitUser: '', repositories:[] };
 	}
-	jsontext = JSON.stringify(jsonData);
-	return jsontext;
-};
-
-/* 
-add a new repo to the jason field of configuration
-pdataFile: the data in the file
-ptype: if the configuration file is CREATED or UNCREATED
-returns the string of the json
-*/
-var addRepoJson = function(pdataFile, ptype){
-
-	var jsonData,
-		data;
-	data = process.cwd();
-	colog.log(colog.colorBlue('Adding repository ' + data +' to configuration file'));
-	jsonData = ptype ? addConfigField(data, pdataFile, REPOSITORY) : addNewConfigField(data, REPOSITORY);
 	return jsonData;
 };
 
@@ -71,79 +29,65 @@ var config = {
 	pdata: data to save
 	*/
 	registerUser: function(pdata){
-		var dataFile;
+		var dataFile = {},
+			pass = '';
 
 		colog.log(colog.colorBlue('Adding user'));
-		colog.log(colog.colorBlue('Email: ' + pdata[0] + ' git User: ' + pdata[1]));
+		colog.log(colog.colorBlue('Email: ' + pdata[0] + ', Git User: ' + pdata[2]));
 
-		if(dataAccess.existConfig()){
-			dataFile = dataAccess.readConfig();
-			pdata = addConfigField(pdata, dataFile, USER);
-			dataAccess.saveConfig(pdata);
-		}
-		else{
-			pdata = addNewConfigField(pdata, USER);
-			dataAccess.saveConfig(pdata);
-		}
+		dataFile = getJson();
+
+		pass = sha1('RtB8gDm'+ pdata[1]);
+	
+		dataFile.email = pdata[0];
+		dataFile.password = pass;
+		dataFile.gitUser = pdata[2];
+
+		dataFile = JSON.stringify(dataFile);
+		dataAccess.saveConfig(dataFile);
 	},
 
 	/* 
 	register a repository in the configuration file
 	ppath: path of the configuration file
 	*/
-	registerRepo: function(){
-		var data,
-			dataFile;
+	registerRepo: function(pproject){
+		var data = '',
+			dataFile = {},
+			dataRepo = {};
 
-		if(dataAccess.existConfig()){
-
-			dataFile = dataAccess.readConfig();
-			data = addRepoJson(dataFile, CREATED);
-			dataAccess.saveConfig(data);
+		dataFile = getJson();
+		data = process.cwd();
+		colog.log(colog.colorBlue('Adding repository: ' + data +', and project: '+ pproject.name +' to configuration file'));
 		
-		}
-		else{
-			data = addRepoJson('', UNCREATED);
-			dataAccess.saveConfig(data);
-		}
+		dataRepo = {
+			path: data,
+			projectName: pproject.name,
+			projectId: pproject.id
+		};
+
+		dataFile.repositories.push(dataRepo);
+		dataFile = JSON.stringify(dataFile);
+		dataAccess.saveConfig(dataFile);
 	},
 
 	/* 
 	return the repositories of the configuration
 	*/
-	getConfigRepos: function(){
-		var data;
+	getConfig: function(){
+		var data = {};
+
+		data = getJson();
 
 		if(dataAccess.existConfig()){
 
 			data = dataAccess.readConfig();
 			data = JSON.parse(data);
-			data = data.repositories;
-			return data;
 		}
 		else{
-			colog.log(colog.colorRed('Add a repository'));
-			return [];
+			colog.log(colog.colorRed('Error: Make a configuration file'));
 		}
-	},
-
-	/* 
-	return the user of the configuration
-	*/
-	getConfigUser: function(){
-		var data;
-
-		if(dataAccess.existConfig()){
-
-			data = dataAccess.readConfig();
-			data = JSON.parse(data);
-			return data;
-		
-		}
-		else{
-			colog.log(colog.colorRed('Add a user'));
-			return [];
-		}
+		return data;
 	},
 
 	/* 

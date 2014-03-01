@@ -2,23 +2,16 @@ var //_ = require('underscore'),
 	path = require('path'),
 	fs = require('fs'),
 	dataAccess = require('../dataAccess/apitt_data_access.js');
-	utils = require('../lib/utils.js');
 
-var USER_LOGIN = '/login/create?email=',
-	PASSWORD = 'password';
+var USER_LOGIN = '/login/create.json?email=',
+	PASSWORD = '&password=';
 
 var user = {
 
-	login: function(puser){
-		var message	= USER_LOGIN + puser.email + PASSWORD + puserPassword;
-		dataAccess.post(message,'function');
-
+	login: function(puser, ppassword, pfunction){
+		var message	= USER_LOGIN + puser + PASSWORD + ppassword;
+		dataAccess.post(message, pfunction);
 	}
 
-	/*getUserId: function(puser){
-
-	}*/
-
 };
-
 module.exports = user;
