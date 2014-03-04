@@ -4,9 +4,9 @@ var //_ = require('underscore'),
 
 var configPath;
 
-var detail_time = {
+var detailTime = {
 
 
 };
 
-module.exports = detail_time;
+module.exports = detailTime;

@@ -7,6 +7,9 @@ var HOST = 'http://10.0.1.80:3000';
 
 var apiTTDataAccess = {
 
+/*	pparameters: parameters for the get
+	pfunction: function to execute later
+	makes a get and send the info receive to pfunction*/
 	get: function(pparameters, pfunction){
 			var dataServer = {},
 				client = new clientTT();
@@ -20,6 +23,10 @@ var apiTTDataAccess = {
 			});
 	},
 
+/*	ppost: post method
+	pparameters: parameters for the post
+	pfunction: function to execute later
+	makes a post and send the info receive to pfunction*/
 	post: function(ppost, pparameters, pfunction){
 			var client = new clientTT(),
 				dataServer = {},
@@ -37,6 +44,9 @@ var apiTTDataAccess = {
 			});
 	},
 
+/*	ppost: post method
+	pparameters: parameters for the get
+	makes a post, work with promises */
 	waitPost: function(ppost, pparameters){
 		var promise = new RSVP.Promise(function(resolve, reject) {
 			var client = new clientTT(),

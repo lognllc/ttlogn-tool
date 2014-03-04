@@ -5,11 +5,9 @@ var path = require('path'),
 	async = require('async'),
 	RSVP = require('rsvp');
 
-
 var NUMBER_COMMITS = 10,
 	FORMATHOUR = /[^(]+\(\d+h\)/g,
 	DIGITOS = /\d+/g;
-
 
 var limitDate = new Date(),
 	gitName = '',

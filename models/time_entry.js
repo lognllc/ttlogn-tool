@@ -7,10 +7,10 @@ var TIME_ENTRY = '/time_entries/createUpdate.json';
 var time_entry = {
 	
 	/* pentry: object with the information need to post the time entry
-	pfunction: funtion to send the projects
-	get the projects of an user
+	post the time entry of an user's project 
 	*/
 	postTimeEntry: function(pentry){
+		//console.log(pentry);
 		return dataAccess.waitPost(TIME_ENTRY, pentry);
 	}
 };

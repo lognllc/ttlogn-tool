@@ -6,9 +6,9 @@ var HOUR_TYPE = '/hour_types.json';
 
 var hourType = {
 
-	/* puserId: id of the user
+	/* 
 	pfunction: funtion to send the projects
-	get the projects of an user
+	get the hour types
 	*/
 	getHourType: function(pfunction){
 		var message	=  HOUR_TYPE;

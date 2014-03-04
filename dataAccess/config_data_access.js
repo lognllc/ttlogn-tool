@@ -5,7 +5,7 @@ var path = require('path'),
 var CONFIGPATH = '.ttlogn';
 
 /* 
-get the user's path
+	get the user's home path
 */
 var configPath = function getUserHome() {
 	var pathResult;

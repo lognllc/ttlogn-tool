@@ -1,5 +1,4 @@
-var //_ = require('underscore'),
-	path = require('path'),
+var path = require('path'),
 	fs = require('fs');
 
 var configPath;

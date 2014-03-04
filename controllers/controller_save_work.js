@@ -4,13 +4,13 @@ var _ = require('underscore'),
 	RSVP = require('rsvp'),
 	moment = require('moment'),
 	config = require(path.resolve(__dirname,'../models/config.js')),
-	time_entry = require(path.resolve(__dirname,'../models/time_entry.js')),
+	timeEntry = require(path.resolve(__dirname,'../models/time_entry.js')),
 	user = require(path.resolve(__dirname,'../models/user.js')),
 	hourType = require(path.resolve(__dirname,'../models/hour_type.js')),
 	commit = require(path.resolve(__dirname,'../models/commit.js'));
 
-var FORMATHOUR = /\((\d+|\d+\.\d+)h\)/m,
-	DIGITOS = /(\d+|\d+\.\d+)/m;
+var FORMATHOUR = /\(\d+(|\.\d+)h\)/i;
+	DIGITOS = /[^\(\)h]+/i;
 
 var userId = 0,
 	userType = '',
@@ -21,62 +21,9 @@ var userId = 0,
 return a string with the number of hours worked
 */
 var getWork = function(pmessage){
-	
 	var test = FORMATHOUR.exec(pmessage);
-	console.log('Primero: ' + test);
 	test = DIGITOS.exec(test[0]);
-	console.log('Segundo: ' + test[0]);
 	return test[0];
-};
-
-/* prepos: array of the repositories and branches
-get the commits
-*/
-var getBillable = function(phours){
-	var BILLABlE = 'Billable';
-	var billableHour = _.find(phours, function(hour){ return hour.name === BILLABlE; });
-	saveCommits(billableHour);
-};
-
-/* prepos: array of the repositories and branches
-get the commits
-*/
-var getHourType = function(prepos){
-	arrayRepositories = prepos;
-//	console.log('antes de commits por branches');
-	hourType.getHourType(getBillable);
-};
-
-/* prepos: array of the repositories and branches
-get the commits
-*/
-var getCommits = function(prepos){
-
-//	console.log('antes de billable');
-	commit.getBranchCommits(prepos, getHourType);
-};
-
-/* pconfig: array of the repositories
-get the branches
-*/
-var getBranches = function(pconfig){
-//	console.log('antes de commits');
-	commit.getBranches(pconfig, getCommits);
-};
-
-/* pconfig: array of the repositories
-get the branches
-*/
-var getRepos = function(puser){
-
-//	console.log('antes de branches');
-	var	configuration = config.getConfig(),
-		repos = configuration.repositories;
-	
-	userId = puser.result.id;
-	userType = puser.result.devtype;
-	//console.log(puser.result);
-	commit.getRepoName(repos, getBranches);
 };
 
 /* prepos: array of commits
@@ -101,28 +48,29 @@ var	saveCommits = function(phourType){
 					timeIn = '',
 					timeOut = '',
 					hour = 0,
-					minute = 0;
+					minute = 0,
+					work = 0;
 
 				if(value.author.name === gitName && value.committed_date >= limitDate && FORMATHOUR.test(value.message)){
 					commitMessage = value.message.split('\n');
 					commitMessage = commitMessage[0];
-			
+					work = getWork(commitMessage);
 					colog.log(colog.colorBlue('Saving commit: ' +  commitMessage));
 
-					if(userType === 'non_exempt'){
+					if(userType !== 'non_exempt'){
 						commitToInsert = {
 							created:  date,
 							developer_id: userId,
 							project_id: repository.projectId,
 							description: commitMessage,
-							time: getWork(commitMessage),
-							hour_type_id: phourType
+							time: work,
+							hour_type_id: phourType.id
 						};
 					}
 					else{
 
-						hour = parseFloat(getWork(commitMessage));
-						minute = (parseFloat(getWork(commitMessage)) % 1) * 60;
+						hour = parseFloat(work);
+						minute = (parseFloat(work) % 1) * 60;
 
 						timeIn = moment(value.committed_date);
 						timeOut = moment(value.committed_date);
@@ -132,19 +80,18 @@ var	saveCommits = function(phourType){
 						timeIn = timeIn.format('MM-DD-YYYY hh:mm:ss');
 						timeOut = timeOut.format('MM-DD-YYYY hh:mm:ss');
 
-						console.log(timeIn + '++++' + timeOut);
-
 						commitToInsert = {
 							created:  date,
 							developer_id: userId,
 							project_id: repository.projectId,
 							description: commitMessage,
-						//	time: getWork(commitMessage),
-							hour_type_id: phourType,
+							time: getWork(commitMessage),
+							hour_type_id: phourType.id,
 							time_in: timeIn,
 							time_out: timeOut
 						};
 					}
+					promises.push(timeEntry.postTimeEntry(commitToInsert));
 				}
 			});
 		});
@@ -156,9 +103,53 @@ var	saveCommits = function(phourType){
 		});
 };
 
+/* prepos: array of type of hours
+get the id of billable, 
+*/
+var getBillable = function(phours){
+	var BILLABlE = 'Billable';
+	var billableHour = _.find(phours, function(hour){ return hour.name === BILLABlE; });
+	saveCommits(billableHour);
+};
+
+/* prepos: array of the repositories, branches and commits
+get hour types
+*/
+var getHourType = function(prepos){
+	arrayRepositories = prepos;
+	hourType.getHourType(getBillable);
+};
+
+/* prepos: array of the repositories and branches
+get the commits
+*/
+var getCommits = function(prepos){
+	commit.getBranchCommits(prepos, getHourType);
+};
+
+/* pconfig: array of the repositories
+get the branches
+*/
+var getBranches = function(pconfig){
+	commit.getBranches(pconfig, getCommits);
+};
+
+/* pconfig: array of the repositories
+get the branches
+*/
+var getRepos = function(puser){
+	var	configuration = config.getConfig(),
+		repos = configuration.repositories;
+	
+	userId = puser.result.id;
+	userType = puser.result.devtype;
+	commit.getRepoName(repos, getBranches);
+};
 
 var controllerSaveWork = {
 
+	/*pdate: sets the limit date [-d|-w|-m]
+	saves the commits of an user in the TT*/
 	saveWork: function(pdate){
 		var repos = [],
 			configuration = config.getConfig();

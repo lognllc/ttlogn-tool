@@ -6,25 +6,10 @@ var _ = require('underscore'),
 	config = require(path.resolve(__dirname,'../models/config.js')),
 	commit = require(path.resolve(__dirname,'../models/commit.js'));
 
-var FORMATHOUR = /\(\d+h\)/m,
+var FORMATHOUR = /\(\d+(|\.\d+)h\)/i,
 	DATEFORMAT = 'l';
 
 var gitName = '';
-
-/* pprepos: array of the repositories and branches
-get the commits
-*/
-var getCommits = function(prepos){
-	commit.getBranchCommits(prepos, printCommits);
-};
-
-/* pconfig: array of the repositories
-get the branches
-*/
-var getBranches = function(pconfig){
-	commit.getBranches(pconfig, getCommits);
-};
-
 
 /* parray: array of commits
 prints the information of the commits 
@@ -53,6 +38,19 @@ var	printCommits = function(parray){
 	});
 };
 
+/* pprepos: array of the repositories and branches
+get the commits
+*/
+var getCommits = function(prepos){
+	commit.getBranchCommits(prepos, printCommits);
+};
+
+/* pconfig: array of the repositories
+get the branches
+*/
+var getBranches = function(pconfig){
+	commit.getBranches(pconfig, getCommits);
+};
 
 var controllerListTasks = {
 

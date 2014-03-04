@@ -6,10 +6,9 @@ var path = require('path'),
 	user = require(path.resolve(__dirname,'../models/user.js')),
 	project = require(path.resolve(__dirname,'../models/project.js'));
 
-
-
+/*pproyects: projects of the user to display
+waits the user to choose a project, then save the repository*/
 var saveRepo = function(pproyects){
-	
 	colog.log(colog.colorBlue('Select a project: '));
 	_.each(pproyects.result, function(projects, index){
 		colog.log(colog.colorBlue(index + ': ' + projects.name));
@@ -22,6 +21,8 @@ var saveRepo = function(pproyects){
 	});
 };
 
+/*puser: object puser 
+uses the id of the user to search for he's projects */
 var getUserProject = function(puser){
 	project.getProjects(puser.result.id, saveRepo);
 };
