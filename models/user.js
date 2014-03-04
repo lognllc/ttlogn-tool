@@ -3,14 +3,17 @@ var //_ = require('underscore'),
 	fs = require('fs'),
 	dataAccess = require('../dataAccess/apitt_data_access.js');
 
-var USER_LOGIN = '/login/create.json?email=',
-	PASSWORD = '&password=';
+var USER_LOGIN = '/login/create.json';
+//	PASSWORD = '&password=';
 
 var user = {
 
 	login: function(puser, ppassword, pfunction){
-		var message	= USER_LOGIN + puser + PASSWORD + ppassword;
-		dataAccess.post(message, pfunction);
+		var message	= {
+				email: puser,
+				password: ppassword
+			};
+		dataAccess.post(USER_LOGIN, message, pfunction);
 	}
 
 };

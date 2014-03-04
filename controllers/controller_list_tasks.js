@@ -6,8 +6,8 @@ var _ = require('underscore'),
 	config = require(path.resolve(__dirname,'../models/config.js')),
 	commit = require(path.resolve(__dirname,'../models/commit.js'));
 
-var FORMATHOUR = /[^(]+\(\d+h\)/g,
-	DIGITOS = /\d+/g;
+var FORMATHOUR = /\(\d+h\)/m,
+	DATEFORMAT = 'l';
 
 var gitName = '';
 
@@ -39,14 +39,13 @@ var	printCommits = function(parray){
 
 	_.each(parray, function(repository){
 		_.each(repository.branches, function(branch){
-			colog.log(colog.apply('Proyecto: ' + repository.project, ['underline', 'blue', 'bold']));
+			colog.log(colog.apply('Proyecto: ' + repository.project + '\n', ['underline', 'blue', 'bold']));
 			_.each(branch.commits, function(value){
 				if(value.author.name === gitName && value.committed_date >= limitDate && FORMATHOUR.test(value.message)){
 					message = value.message.split('\n');
 					message = message[0];
-					date = moment(value.committed_date).format('MM-DD-YYYY');
+					date = moment(value.committed_date).format(DATEFORMAT);
 					colog.log(colog.colorBlue(message + ' Date: ' + date ));
-				//	colog.log(colog.colorBlue(value.committed_date + date +'\n'));
 					console.log('---------------------------------------- \n');
 				}
 			});

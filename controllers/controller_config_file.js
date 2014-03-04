@@ -8,22 +8,22 @@ var path = require('path'),
 
 
 
-var saveRepo = function(pdata){
+var saveRepo = function(pproyects){
 	
 	colog.log(colog.colorBlue('Select a project: '));
-	_.each(pdata.result, function(projects, index){
+	_.each(pproyects.result, function(projects, index){
 		colog.log(colog.colorBlue(index + ': ' + projects.name));
 	});
 
 	prompt.start();
 
 	prompt.get(['project'], function (err, resultPrompt) {
-		config.registerRepo(pdata.result[resultPrompt.project]);
+		config.registerRepo(pproyects.result[resultPrompt.project]);
 	});
 };
 
-var getUserProject = function(pdata){
-	project.getProjects(pdata.result.id, saveRepo);
+var getUserProject = function(puser){
+	project.getProjects(puser.result.id, saveRepo);
 };
 
 

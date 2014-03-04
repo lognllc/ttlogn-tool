@@ -13,8 +13,7 @@ var NUMBER_COMMITS = 10,
 
 var limitDate = new Date(),
 	gitName = '',
-	repoArray = [],
-	promises = [];
+	repoArray = [];
 
 /* ppath: path of the directory
 return the directory */
@@ -22,17 +21,6 @@ var getRepository = function (ppath)
 {
 	return git(ppath);
 };
-
-/* pmessage: message of the commit 
-return a string with the number of hours worked
-*/
-var getWork = function(pmessage){
-	
-	var test = FORMATHOUR.exec(pmessage);
-	test = DIGITOS.exec(test[0]);
-	return test[0];
-};
-
 
 var commit = {
 
@@ -160,6 +148,8 @@ var commit = {
 	pfunction: function to send the result array
 	gets commits of a branch */
 	getBranchCommits: function(prepos, pfunction){
+		var promises = [];
+
 		repoArray = prepos;
 
 		_.each(repoArray, function(repository, indexRepo){

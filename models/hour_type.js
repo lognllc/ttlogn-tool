@@ -2,19 +2,19 @@ var //_ = require('underscore'),
 	path = require('path'),
 	dataAccess = require(path.resolve(__dirname,'../dataAccess/apitt_data_access.js'));
 
-var PROJECT = '/users/projects.json?id=';
+var HOUR_TYPE = '/hour_types.json';
 
-var project = {
+var hourType = {
 
 	/* puserId: id of the user
 	pfunction: funtion to send the projects
 	get the projects of an user
 	*/
-	getProjects: function(puserId, pfunction){
-		var message	=  PROJECT + puserId;
+	getHourType: function(pfunction){
+		var message	=  HOUR_TYPE;
 		dataAccess.get(message, pfunction);
 	}
 
 };
 
-module.exports = project;
+module.exports = hourType;
