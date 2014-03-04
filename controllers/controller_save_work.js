@@ -48,7 +48,6 @@ var	saveCommits = function(phourType){
 					timeIn = '',
 					timeOut = '',
 					hour = 0,
-					minute = 0,
 					work = 0;
 
 				if(value.author.name === gitName && value.committed_date >= limitDate && FORMATHOUR.test(value.message)){
@@ -68,24 +67,21 @@ var	saveCommits = function(phourType){
 						};
 					}
 					else{
-
 						hour = parseFloat(work);
-						minute = (parseFloat(work) % 1) * 60;
-
+						
 						timeIn = moment(value.committed_date);
 						timeOut = moment(value.committed_date);
 						timeOut.add((hour),'hours');
-						timeOut.add((minute),'minutes');
 
-						timeIn = timeIn.format('MM-DD-YYYY hh:mm:ss');
-						timeOut = timeOut.format('MM-DD-YYYY hh:mm:ss');
-
+						timeIn = timeIn.format('HH.mm');
+						timeOut = timeOut.format('HH.mm');
+						
 						commitToInsert = {
 							created:  date,
 							developer_id: userId,
 							project_id: repository.projectId,
 							description: commitMessage,
-							time: getWork(commitMessage),
+							time: work,
 							hour_type_id: phourType.id,
 							time_in: timeIn,
 							time_out: timeOut
