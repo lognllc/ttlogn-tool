@@ -23,8 +23,8 @@ var	printCommits = function(parray){
 	limitDate = commit.getDateLimit();
 
 	_.each(parray, function(repository){
+		colog.log(colog.apply('Proyecto: ' + repository.project + '\n', ['underline', 'blue', 'bold']));
 		_.each(repository.branches, function(branch){
-			colog.log(colog.apply('Proyecto: ' + repository.project + '\n', ['underline', 'blue', 'bold']));
 			_.each(branch.commits, function(value){
 				if(value.author.name === gitName && value.committed_date >= limitDate && FORMATHOUR.test(value.message)){
 					message = value.message.split('\n');

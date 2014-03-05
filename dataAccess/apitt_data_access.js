@@ -13,8 +13,9 @@ var apiTTDataAccess = {
 	get: function(pparameters, pfunction){
 			var dataServer = {},
 				client = new clientTT();
-			
+			//console.log(pparameters);
 			client.get(HOST+pparameters, function(data, response){
+			//	console.log(data);
 				dataServer = JSON.parse(data);
 				pfunction(dataServer);
 

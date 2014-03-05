@@ -6,17 +6,27 @@ var path = require('path'),
 	user = require(path.resolve(__dirname,'../models/user.js')),
 	project = require(path.resolve(__dirname,'../models/project.js'));
 
-/*pproyects: projects of the user to display
+/*pprojects: projects of the user to display
 waits the user to choose a project, then save the repository*/
-var saveRepo = function(pproyects){
+var saveRepo = function(pprojects){
 	colog.log(colog.colorBlue('Select a project: '));
-	_.each(pproyects.result, function(projects, index){
+	_.each(pprojects.result, function(projects, index){
 		colog.log(colog.colorBlue(index + ': ' + projects.name));
 	});
 
 	prompt.start();
 
-	prompt.get(['project'], function (err, resultPrompt) {
+	prompt.get({
+		properties: {
+			project: {
+				description: "Number of the project: ".magenta,
+				required: true
+			}
+		}
+	}, function (err, resultPrompt) {
+		if(err){
+			colog.log(colog.colorRed(err));
+		}
 		config.registerRepo(pproyects.result[resultPrompt.project]);
 	});
 };

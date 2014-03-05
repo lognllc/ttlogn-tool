@@ -9,8 +9,8 @@ var _ = require('underscore'),
 	hourType = require(path.resolve(__dirname,'../models/hour_type.js')),
 	commit = require(path.resolve(__dirname,'../models/commit.js'));
 
-var FORMATHOUR = /\(\d+(|\.\d+)h\)/i;
-	DIGITOS = /[^\(\)h]+/i;
+var FORMATHOUR = /\(\d+(|\.\d+)h\)/i,
+	DIGITS = /[^\(\)h]+/i;
 
 var userId = 0,
 	userType = '',
@@ -22,13 +22,12 @@ return a string with the number of hours worked
 */
 var getWork = function(pmessage){
 	var test = FORMATHOUR.exec(pmessage);
-	test = DIGITOS.exec(test[0]);
+	test = DIGITS.exec(test[0]);
 	return test[0];
 };
 
-/* prepos: array of commits
-prints the information of the commits 
-if the last commit has a high date than the limitDate
+/* phourType: hour type
+saves the commits in the TT
 */
 var	saveCommits = function(phourType){
 
@@ -56,8 +55,7 @@ var	saveCommits = function(phourType){
 					work = getWork(commitMessage);
 					colog.log(colog.colorBlue('Saving commit: ' +  commitMessage));
 
-					if(userType !== 'non_exempt'){
-						commitToInsert = {
+					commitToInsert = {
 							created:  date,
 							developer_id: userId,
 							project_id: repository.projectId,
@@ -65,9 +63,8 @@ var	saveCommits = function(phourType){
 							time: work,
 							hour_type_id: phourType.id
 						};
-					}
-					else{
-						hour = parseFloat(work);
+
+					if(userType === 'non_exempt'){
 						
 						timeIn = moment(value.committed_date);
 						timeOut = moment(value.committed_date);
@@ -76,16 +73,8 @@ var	saveCommits = function(phourType){
 						timeIn = timeIn.format('HH.mm');
 						timeOut = timeOut.format('HH.mm');
 						
-						commitToInsert = {
-							created:  date,
-							developer_id: userId,
-							project_id: repository.projectId,
-							description: commitMessage,
-							time: work,
-							hour_type_id: phourType.id,
-							time_in: timeIn,
-							time_out: timeOut
-						};
+						commitToInsert.time_in = timeIn;
+						commitToInsert.time_out = timeOut;
 					}
 					promises.push(timeEntry.postTimeEntry(commitToInsert));
 				}
@@ -99,8 +88,8 @@ var	saveCommits = function(phourType){
 		});
 };
 
-/* prepos: array of type of hours
-get the id of billable, 
+/* phours: array of type of hours
+get billable type, 
 */
 var getBillable = function(phours){
 	var BILLABlE = 'Billable';
