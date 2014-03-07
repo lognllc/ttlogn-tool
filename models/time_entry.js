@@ -3,7 +3,8 @@ var //_ = require('underscore'),
 	dataAccess = require(path.resolve(__dirname,'../dataAccess/apitt_data_access.js'));
 
 var TIME_ENTRY = '/time_entries/createUpdate.json',
-	USER_TIME_ENTRIES = '/users/get_this_period_entries.json?id=';
+	USER_TIME_ENTRIES = '/users/get_this_period_entries.json?id=',
+	DELETE_TIME_ENTRIES = '/users/delete_time_entry.json';
 
 var time_entry = {
 	
@@ -11,9 +12,16 @@ var time_entry = {
 	post the time entry of an user's project 
 	*/
 	postTimeEntry: function(pentry){
+		return dataAccess.waitPost(DELETE_TIME_ENTRIES, pentry);
+	},
+	/* pentry: object with the information need to delete the time entry
+	delete a time entry of an user
+	*/
+	deleteTimeEntry: function(pentry){
 		return dataAccess.waitPost(TIME_ENTRY, pentry);
 	},
-	/* pentry: object with the information need to post the time entry
+	/* puserId: user's id
+	pfunction: function to do after
 	post the time entry of an user's project 
 	*/
 	getUserPeriodTimeEntry: function(puserId, pfunction){
@@ -23,3 +31,6 @@ var time_entry = {
 };
 
 module.exports = time_entry;
+
+//12067
+//http://10.0.1.80:3000/time_entries/12067.json

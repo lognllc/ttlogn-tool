@@ -13,7 +13,11 @@
     "colog": "~1.0.3",
     "async": "~0.2.10",
     "rsvp": "~3.0.6",
-    "sha1": "~1.1.0"
+    "sha1": "~1.1.0",
+    "node-rest-client": "~0.7.12",
+    "moment": "~2.5.1",
+    "prompt": "~0.2.12",
+    "moment-timezone": "0.0.3"
   },
   "devDependencies": {},
   "scripts": {

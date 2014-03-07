@@ -58,7 +58,9 @@ var apiTTDataAccess = {
 					headers: {"Content-Type": "application/json"}
 				};
 
+			//console.log(pparameters);
 			client.post(HOST + ppost, args, function(data,response) {
+			//	console.log(data);
 				resolve(self);
 
 			}).on('error',function(err){
@@ -71,8 +73,3 @@ var apiTTDataAccess = {
 };
 
 module.exports = apiTTDataAccess;
-
-
-// /users/projects.json?id=169
-// /time_entries/createUpdate?created=2011-06-21T13:42:22.000Z&developer_id=169&project_id=3&description=pruebaTT2dos&time=2.0&hour_type_id=1
-// /login/create?email=' + pemail + 'password=' + ppassword;
