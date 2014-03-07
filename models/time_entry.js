@@ -12,13 +12,13 @@ var time_entry = {
 	post the time entry of an user's project 
 	*/
 	postTimeEntry: function(pentry){
-		return dataAccess.waitPost(DELETE_TIME_ENTRIES, pentry);
+		return dataAccess.waitPost(TIME_ENTRY, pentry);
 	},
 	/* pentry: object with the information need to delete the time entry
 	delete a time entry of an user
 	*/
 	deleteTimeEntry: function(pentry){
-		return dataAccess.waitPost(TIME_ENTRY, pentry);
+		return dataAccess.waitPost(DELETE_TIME_ENTRIES, pentry);
 	},
 	/* puserId: user's id
 	pfunction: function to do after
@@ -31,6 +31,3 @@ var time_entry = {
 };
 
 module.exports = time_entry;
-
-//12067
-//http://10.0.1.80:3000/time_entries/12067.json

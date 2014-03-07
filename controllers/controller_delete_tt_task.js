@@ -7,16 +7,10 @@ var _ = require('underscore'),
 	config = require(path.resolve(__dirname,'../models/config.js')),
 	timeEntry = require(path.resolve(__dirname,'../models/time_entry.js')),
 	user = require(path.resolve(__dirname,'../models/user.js')),
-	project = require(path.resolve(__dirname,'../models/project.js')),
-	hourType = require(path.resolve(__dirname,'../models/hour_type.js'));
+	project = require(path.resolve(__dirname,'../models/project.js'));
 
-var FORMATHOUR = /^\d+(|\.\d+)h$/i,
-	DIGITS = /[^h]+/i,
-	PROJECT = /^\d+$/,
-	FIELD = /^[0-6]$/,
-	CREATED = /^\d\d$/,
-	TIME_IN = /^[0-2]\d\:[0-6]\d$/,
-	DATE_FORMAT = 'YYYY-MM-DD hh:mm:ss';
+var DIGITS = /[^h]+/i,
+	NUMBER = /^\d+$/;
 
 var userId = 0,
 	userType = '',
@@ -32,7 +26,7 @@ var deleteTimeEntry = function(pentries){
 			entry: {
 				description: "Number of the entry".magenta,
 				required: true,
-				pattern: PROJECT
+				pattern: NUMBER
 			}
 		}
 	}, function (err, resultPrompt) {
@@ -42,9 +36,8 @@ var deleteTimeEntry = function(pentries){
 				devtype: userType,
 				user_id: userId
 			};
-		console.log(entryToDelete);
-		timeEntry.postTimeEntry(entryToDelete).then(function(){
-			colog.log(colog.colorGreen('Time entry saved'));
+		timeEntry.deleteTimeEntry(entryToDelete).then(function(){
+			colog.log(colog.colorGreen('Time entry deleted'));
 		});
 	});
 };
@@ -59,7 +52,7 @@ var printTimeEntries = function(pentries){
 			project: {
 				description: "Number of the project".magenta,
 				required: true,
-				pattern: PROJECT
+				pattern: NUMBER
 			}
 		}
 	}, function (err, resultPrompt) {
@@ -68,7 +61,7 @@ var printTimeEntries = function(pentries){
 
 		colog.log(colog.colorMagenta('Select a time entry: '));
 		_.each(timeEntries, function(value, index){
-			date = moment.utc(value.created); //.format('DD-MM-YYYY hh:mm:ss');
+			date = moment.utc(value.created);
 			date = date.format('l');
 			colog.log(colog.colorBlue(index + ': ' + value.tskDescription + '. Date: ' + date));
 		});
@@ -85,7 +78,6 @@ var getTimeEntries = function(){
 /*pprojects: projects of the user to display
 prints the projects, get hour type*/
 var printProjects = function(pprojects){
-	//console.log(pentries.result.not_confirmed_dates);
 	colog.log(colog.colorMagenta('Select a project: '));
 	_.each(pprojects.result, function(value, index){
 		colog.log(colog.colorBlue(index + ': ' + value.name));

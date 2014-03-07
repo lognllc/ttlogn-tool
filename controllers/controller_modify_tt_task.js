@@ -16,6 +16,7 @@ var FORMATHOUR = /^\d+(|\.\d+)h$/i,
 	FIELD = /^[0-6]$/,
 	CREATED = /^\d\d$/,
 	TIME_IN = /^[0-2]\d\:[0-6]\d$/,
+	ZONE = 'America/Costa_Rica',
 	DATE_FORMAT = 'YYYY-MM-DD hh:mm:ss';
 
 var userId = 0,
@@ -209,11 +210,10 @@ var modifyHourType = function(phours){
 /*prints the time entry
 */
 var printTimeEntry = function(){
-	
 
 	console.log(entryToModify);
 
-	var date = moment.tz(entryToModify.created,"America/Costa_Rica").format(DATE_FORMAT);
+	var date = moment.tz(entryToModify.created, ZONE).format(DATE_FORMAT);
 
 	colog.log(colog.colorMagenta('Select a field: ' + entryToModify.id));
 	colog.log(colog.colorBlue('0: Created: ' + date));
@@ -329,7 +329,6 @@ var getTimeEntries = function(){
 /*pprojects: projects of the user to display
 prints the projects, get hour type*/
 var printProjects = function(pprojects){
-	//console.log(pentries.result.not_confirmed_dates);
 	colog.log(colog.colorMagenta('Select a project: '));
 	_.each(pprojects.result, function(value, index){
 		colog.log(colog.colorBlue(index + ': ' + value.name));
