@@ -90,7 +90,7 @@ var saveTask = function(ptask){
 			}
 		}
 	}, function (err, resultPrompt) {
-		ptask.project_id = projects[resultPrompt.project].id;
+		ptask.project_id = projects[resultPrompt.project - 1].id;
 		ptask.description = resultPrompt.description;
 		ptask.time = getWork(resultPrompt.time);
 
@@ -146,6 +146,7 @@ prints the projects, get hour type*/
 var printProject = function(pprojects){
 	colog.log(colog.colorMagenta('Select a project: '));
 	_.each(pprojects.result, function(value, index){
+		index ++;
 		colog.log(colog.colorBlue(index + ': ' + value.name));
 	});
 	projects = pprojects.result;

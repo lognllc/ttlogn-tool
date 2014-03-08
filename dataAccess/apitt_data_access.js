@@ -57,7 +57,6 @@ var apiTTDataAccess = {
 					data: pparameters,
 					headers: {"Content-Type": "application/json"}
 				};
-
 			//console.log(pparameters);
 			client.post(HOST + ppost, args, function(data,response) {
 			//	console.log(data);

@@ -93,7 +93,7 @@ get billable type,
 */
 var getBillable = function(phours){
 	var BILLABlE = 'Billable';
-	var billableHour = _.find(phours, function(hour){ return hour.name === BILLABlE; });
+	var billableHour = _.find(phours.result, function(hour){ return hour.name === BILLABlE; });
 	saveCommits(billableHour);
 };
 
@@ -102,7 +102,7 @@ get hour types
 */
 var getHourType = function(prepos){
 	arrayRepositories = prepos;
-	hourType.getHourType(getBillable);
+	hourType.getHourType(userId, getBillable);
 };
 
 /* prepos: array of the repositories and branches

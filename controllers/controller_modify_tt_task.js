@@ -165,6 +165,7 @@ var modifyProject = function(){
 	
 	colog.log(colog.colorMagenta('Select a project: '));
 	_.each(projects, function(value, index){
+		index++;
 		colog.log(colog.colorBlue(index + ': ' + value.name));
 	});
 
@@ -177,7 +178,7 @@ var modifyProject = function(){
 			}
 		}
 	}, function (err, resultPrompt) {
-		entryToModify.project = projects[resultPrompt.project];
+		entryToModify.project = projects[resultPrompt.project - 1];
 		printTimeEntry();
 	});
 };
@@ -189,6 +190,7 @@ var modifyHourType = function(phours){
 	
 	colog.log(colog.colorMagenta('Select a project: '));
 	_.each(phours.result, function(value, index){
+		index ++;
 		colog.log(colog.colorBlue(index + ': ' + value.name));
 	});
 
@@ -201,7 +203,7 @@ var modifyHourType = function(phours){
 			}
 		}
 	}, function (err, resultPrompt) {
-		entryToModify.hour_type = phours.result[resultPrompt.hours];
+		entryToModify.hour_type = phours.result[resultPrompt.hours - 1];
 		printTimeEntry();
 	});
 };
@@ -211,21 +213,21 @@ var modifyHourType = function(phours){
 */
 var printTimeEntry = function(){
 
-	console.log(entryToModify);
+	//console.log(entryToModify);
 
 	var date = moment.tz(entryToModify.created, ZONE).format(DATE_FORMAT);
 
 	colog.log(colog.colorMagenta('Select a field: ' + entryToModify.id));
-	colog.log(colog.colorBlue('0: Created: ' + date));
-	colog.log(colog.colorBlue('1: Description: ' + entryToModify.tskDescription));
-	colog.log(colog.colorBlue('2: Time: ' + entryToModify.time));
-	colog.log(colog.colorBlue('3: Hour Type: ' + entryToModify.hour_type.name));
-	colog.log(colog.colorBlue('4: Proyect: ' + entryToModify.project.name));
+	colog.log(colog.colorBlue('1: Created: ' + date));
+	colog.log(colog.colorBlue('2: Description: ' + entryToModify.tskDescription));
+	colog.log(colog.colorBlue('3: Time: ' + entryToModify.time));
+	colog.log(colog.colorBlue('4: Hour Type: ' + entryToModify.hour_type.name));
+	colog.log(colog.colorBlue('5: Proyect: ' + entryToModify.project.name));
 	if(userType === 'non_exempt'){
-		colog.log(colog.colorBlue('5: Begin of task: ' + entryToModify.detail_hours.time_in));
+		colog.log(colog.colorBlue('6: Begin of task: ' + entryToModify.detail_hours.time_in));
 	}
-	colog.log(colog.colorBlue('6: Save '));
-	colog.log(colog.colorBlue('7: Cancel '));
+	colog.log(colog.colorBlue('7: Save '));
+	colog.log(colog.colorBlue('8: Cancel '));
 
 	prompt.get({
 		properties: {
@@ -237,22 +239,22 @@ var printTimeEntry = function(){
 		}
 	}, function (err, resultPrompt) {
 		switch(resultPrompt.field){
-			case '0':
+			case '1':
 				modifyCreated();
 				break;
-			case '1':
+			case '2':
 				modifyDescription();
 				break;
-			case '2':
+			case '3':
 				modifyTime();
 				break;
-			case '3':
+			case '4':
 				hourType.getHourType(userId, modifyHourType);
 				break;
-			case '4':
+			case '5':
 				modifyProject();
 				break;
-			case '5':
+			case '6':
 				if(userType === 'non_exempt'){
 					modifyTimeIn();
 				}
@@ -260,10 +262,10 @@ var printTimeEntry = function(){
 					colog.log(colog.colorBlue('Error: not valid option'));
 				}
 				break;
-			case '6':
+			case '7':
 				saveTimeEntry();
 				break;
-			case '7':
+			case '8':
 	//			return '';
 			break;
 			default:
@@ -286,7 +288,7 @@ var setTimeEntry = function(pentries){
 			}
 		}
 	}, function (err, resultPrompt) {
-		entryToModify = pentries[resultPrompt.entry];
+		entryToModify = pentries[resultPrompt.entry - 1];
 		entryToModify.created = moment.utc(entryToModify.created).format(DATE_FORMAT);
 		printTimeEntry();
 
@@ -307,11 +309,12 @@ var printTimeEntries = function(pentries){
 			}
 		}
 	}, function (err, resultPrompt) {
-		var timeEntries = _.filter(pentries.result.not_confirmed_dates, function(entries){ return entries.project.id === projects[resultPrompt.project].id; }),
+		var timeEntries = _.filter(pentries.result.not_confirmed_dates, function(entries){ return entries.project.id === projects[resultPrompt.project - 1].id; }),
 			date = moment();
 
 		colog.log(colog.colorMagenta('Select a time entry: '));
 		_.each(timeEntries, function(value, index){
+			index++;
 			date = moment.utc(value.created);
 			date = date.format('l');
 			colog.log(colog.colorBlue(index + ': ' + value.tskDescription + '. Date: ' + date));
@@ -331,6 +334,7 @@ prints the projects, get hour type*/
 var printProjects = function(pprojects){
 	colog.log(colog.colorMagenta('Select a project: '));
 	_.each(pprojects.result, function(value, index){
+		index++;
 		colog.log(colog.colorBlue(index + ': ' + value.name));
 	});
 	projects = pprojects.result;

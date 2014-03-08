@@ -62,8 +62,10 @@ var config = {
 		
 		dataRepo = {
 			path: data,
-			projectName: pproject.name,
-			projectId: pproject.id
+			project: {
+				name: pproject.name,
+				id: pproject.id
+			}
 		};
 
 		dataFile.repositories.push(dataRepo);

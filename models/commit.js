@@ -46,8 +46,8 @@ var commit = {
 						objectRepo = {
 							path: item.path,
 							name: config.items['remote.origin.url'],
-							project: item.projectName,
-							projectId: item.projectId,
+							project: item.project,
+							//projectId: item.projectId,
 							branches: []
 						};
 						configList.push(objectRepo);
@@ -77,6 +77,8 @@ var commit = {
 						objectBrach = {
 							name: value.name,
 							repository: item.name,
+							project: item.project.name,
+							projectId: item.project.id,
 							commits: []
 						};
 

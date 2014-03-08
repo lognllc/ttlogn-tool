@@ -32,7 +32,7 @@ var deleteTimeEntry = function(pentries){
 	}, function (err, resultPrompt) {
 
 		var entryToDelete = {
-				entry_id: pentries[resultPrompt.entry].id,
+				entry_id: pentries[resultPrompt.entry - 1].id,
 				devtype: userType,
 				user_id: userId
 			};
@@ -56,13 +56,14 @@ var printTimeEntries = function(pentries){
 			}
 		}
 	}, function (err, resultPrompt) {
-		var timeEntries = _.filter(pentries.result.not_confirmed_dates, function(entries){ return entries.project.id === projects[resultPrompt.project].id; }),
+		var timeEntries = _.filter(pentries.result.not_confirmed_dates, function(entries){ return entries.project.id === projects[resultPrompt.project - 1].id; }),
 			date = moment();
 
 		colog.log(colog.colorMagenta('Select a time entry: '));
 		_.each(timeEntries, function(value, index){
 			date = moment.utc(value.created);
 			date = date.format('l');
+			index++;
 			colog.log(colog.colorBlue(index + ': ' + value.tskDescription + '. Date: ' + date));
 		});
 		deleteTimeEntry(timeEntries);
@@ -80,6 +81,7 @@ prints the projects, get hour type*/
 var printProjects = function(pprojects){
 	colog.log(colog.colorMagenta('Select a project: '));
 	_.each(pprojects.result, function(value, index){
+		index++;
 		colog.log(colog.colorBlue(index + ': ' + value.name));
 	});
 	projects = pprojects.result;

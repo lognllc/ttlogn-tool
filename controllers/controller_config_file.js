@@ -11,6 +11,7 @@ waits the user to choose a project, then save the repository*/
 var saveRepo = function(pprojects){
 	colog.log(colog.colorBlue('Select a project: '));
 	_.each(pprojects.result, function(projects, index){
+		index++;
 		colog.log(colog.colorBlue(index + ': ' + projects.name));
 	});
 
@@ -27,7 +28,7 @@ var saveRepo = function(pprojects){
 		if(err){
 			colog.log(colog.colorRed(err));
 		}
-		config.registerRepo(pproyects.result[resultPrompt.project]);
+		config.registerRepo(pprojects.result[resultPrompt.project - 1]);
 	});
 };
 
