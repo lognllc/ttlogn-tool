@@ -3,6 +3,7 @@ var path = require('path'),
 	_ = require('underscore'),
 	git  = require('gift'),
 	async = require('async'),
+	moment = require('moment'),
 	RSVP = require('rsvp');
 
 var NUMBER_COMMITS = 10,
@@ -169,14 +170,13 @@ var commit = {
 	prints the information of the commits */
 	setDateLimit: function (pdate){
 
-		limitDate = new Date();
-		limitDate = new Date(limitDate.getFullYear(),limitDate.getMonth(), limitDate.getDate());
+		limitDate = moment().startOf('day');
 
 		if(pdate === '-w'){
-			limitDate.setDate(limitDate.getDate() - limitDate.getDay());
+			limitDate = moment().startOf('week');
 		}
 		else if(pdate === '-m'){
-			limitDate.setDate(limitDate.getDate() - limitDate.getDate() + 1);
+			limitDate = moment().startOf('month');
 		}
 	}
 

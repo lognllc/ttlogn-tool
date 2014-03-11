@@ -2,7 +2,7 @@ var _ = require('underscore'),
 	path = require('path'),
 	colog = require('colog'),
 	RSVP = require('rsvp'),
-	moment = require('moment-timezone'),
+	moment = require('moment'),
 	prompt = require('prompt'),
 	config = require(path.resolve(__dirname,'../models/config.js')),
 	timeEntry = require(path.resolve(__dirname,'../models/time_entry.js')),
@@ -16,8 +16,7 @@ var FORMATHOUR = /^\d+(|\.\d+)h$/i,
 	FIELD = /^[0-6]$/,
 	CREATED = /^\d\d$/,
 	TIME_IN = /^[0-2]\d\:[0-6]\d$/,
-	ZONE = 'America/Costa_Rica',
-	DATE_FORMAT = 'YYYY-MM-DD hh:mm:ss';
+	DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
 var userId = 0,
 	userType = '',
@@ -214,10 +213,9 @@ var modifyHourType = function(phours){
 var printTimeEntry = function(){
 
 	//console.log(entryToModify);
+	var date = moment(entryToModify.created).format(DATE_FORMAT);
 
-	var date = moment.tz(entryToModify.created, ZONE).format(DATE_FORMAT);
-
-	colog.log(colog.colorMagenta('Select a field: ' + entryToModify.id));
+	colog.log(colog.colorMagenta('Select a field: '));
 	colog.log(colog.colorBlue('1: Created: ' + date));
 	colog.log(colog.colorBlue('2: Description: ' + entryToModify.tskDescription));
 	colog.log(colog.colorBlue('3: Time: ' + entryToModify.time));
@@ -260,6 +258,7 @@ var printTimeEntry = function(){
 				}
 				else{
 					colog.log(colog.colorBlue('Error: not valid option'));
+					printTimeEntry();
 				}
 				break;
 			case '7':

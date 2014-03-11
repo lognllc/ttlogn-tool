@@ -4,6 +4,7 @@ var prettyjson = require('prettyjson'),
 	clientTT = require('node-rest-client').Client;
 
 var HOST = 'http://10.0.1.80:3000';
+//var HOST = 'http://192.168.0.120:3000';
 
 var apiTTDataAccess = {
 

@@ -2,7 +2,7 @@ var _ = require('underscore'),
 	path = require('path'),
 	colog = require('colog'),
 	RSVP = require('rsvp'),
-	moment = require('moment-timezone'),
+	moment = require('moment'),
 	prompt = require('prompt'),
 	config = require(path.resolve(__dirname,'../models/config.js')),
 	timeEntry = require(path.resolve(__dirname,'../models/time_entry.js')),
@@ -14,8 +14,8 @@ var FORMATHOUR = /^\d+(|\.\d+)h$/i,
 	DIGITS = /[^h]+/i,
 	PROJECT = /^\d+$/,
 	TIME_IN = /^[0-2]\d\:[0-6]\d$/,
-	ZONE = 'America/Costa_Rica',
-	DATE_FORMAT = 'YYYY-MM-DD hh:mm:ss';
+	//ZONE = '-06:00',
+	DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
 var userId = 0,
 	userType = '',
@@ -114,7 +114,7 @@ if the last commit has a high date than the limitDate
 */
 var	getTaskDate = function(phourType){
 
-	var date = moment().tz(ZONE).format(DATE_FORMAT);
+	var date = moment().format(DATE_FORMAT);
 	
 	var taskToInsert = {};
 
