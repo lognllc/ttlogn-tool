@@ -107,40 +107,39 @@ var commit = {
 				self = this,
 				continueWhile = true;
 						
-				async.doWhilst(
-					function (callback) {
-						repo = getRepository(repoArray[pindexRepo].path);
-						branch = repoArray[pindexRepo].branches[pindexBranch].name;
+			async.doWhilst(
+				function (callback) {
+					repo = getRepository(repoArray[pindexRepo].path);
+					branch = repoArray[pindexRepo].branches[pindexBranch].name;
 
-						repo.commits(branch, NUMBER_COMMITS, skip, function(err, commits){
-							if(err){
-								colog.log(colog.colorRed(err));
-							}
-							else{
-								repoArray[pindexRepo].branches[pindexBranch].commits = repoArray[pindexRepo].branches[pindexBranch].commits.concat(commits);
-								numberArray = commits.length - 1;
-								date = commits[numberArray].committed_date;
-								skip += NUMBER_COMMITS;
-
-								if(date < limitDate || numberArray !== (NUMBER_COMMITS - 1)) continueWhile = false;
-							}
-							callback(err);
-						});
-					},
-					function () {
-						var ret = true;
-						if(!continueWhile){
-							ret = false;
-						}
-						return ret; },
-					function (err) {
+					repo.commits(branch, NUMBER_COMMITS, skip, function(err, commits){
 						if(err){
-							reject(self);
-							return false;
+							colog.log(colog.colorRed(err));
 						}
-						resolve(self);
+						else{
+							repoArray[pindexRepo].branches[pindexBranch].commits = repoArray[pindexRepo].branches[pindexBranch].commits.concat(commits);
+							numberArray = commits.length - 1;
+							date = commits[numberArray].committed_date;
+							skip += NUMBER_COMMITS;
+
+							if(date < limitDate || numberArray !== (NUMBER_COMMITS - 1)) continueWhile = false;
+						}
+						callback(err);
+					});
+				},
+				function () {
+					var ret = true;
+					if(!continueWhile){
+						ret = false;
 					}
-				);
+					return ret; },
+				function (err) {
+					if(err){
+						reject(self);
+						return false;
+					}
+					resolve(self);
+				});
 			});
 		return promise;
 	},
@@ -178,8 +177,29 @@ var commit = {
 		else if(pdate === '-m'){
 			limitDate = moment().startOf('month');
 		}
-	}
+	},
 
+	/* pprepo: path of the repository
+	pfunction: function to send the result array
+	get the branches of the repositories */
+	getRepoBranches: function(prepo, pfunction){
+
+		var repo = [],
+			objectBrach = {};
+			
+		repo = getRepository(prepo);
+		repo.branches(function (err, branches){
+			if(err){
+				console.log('no');
+				colog.log(colog.colorRed('Error: ' + err));
+			}
+			else{
+
+			console.log('si');
+				pfunction(branches);
+			}
+		});
+	}
 };
 
 module.exports = commit;

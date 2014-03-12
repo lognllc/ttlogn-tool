@@ -23,9 +23,9 @@ var configPath = function getUserHome() {
 	*/
 var saveFile = function (pdata){
 	var relativePath = configPath();
-	fs.writeFile(relativePath, pdata, 'utf8',function(err){
+	fs.writeFile(relativePath, pdata, 'utf8', '0777',function(err){
             if(err) {
-				colog.log(colog.colorRed('Error: saving file'));
+				colog.log(colog.colorRed('Error: saving file' + err));
                 console.error("Error saving file", err);
                 process.exit(1);
             }

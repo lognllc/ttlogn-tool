@@ -1,6 +1,7 @@
 var path = require('path'),
 	colog = require('colog'),
 	fs = require('fs'),
+	_ = require('underscore'),
 	sha1 = require('sha1'),
 	dataAccess = require('../dataAccess/config_data_access.js');
 
@@ -51,26 +52,63 @@ var config = {
 	register a repository in the configuration file
 	ppath: path of the configuration file
 	*/
-	registerRepo: function(pproject){
+	registerRepo: function(pproject, pbranch){
 		var data = '',
 			dataFile = {},
-			dataRepo = {};
+			dataRepo = {},
+			newProject = {},
+			configuration = {};
 
 		dataFile = getJson();
-		data = process.cwd();
-		colog.log(colog.colorBlue('Adding repository: ' + data +', and project: '+ pproject.name +' to configuration file'));
-		
-		dataRepo = {
-			path: data,
-			project: {
-				name: pproject.name,
-				id: pproject.id
-			}
-		};
 
+		if(typeof pbranch === 'undefined'){
+			console.log('entre repo');
+			data = process.cwd();
+			colog.log(colog.colorBlue('Adding repository: ' + data +', and project: '+ pproject.name +' to configuration file'));
+			
+			dataRepo = {
+				path: data,
+				project: {
+					name: pproject.name,
+					id: pproject.id
+				}
+			};
+		}
+		else{
+			console.log('entre branch');
+			data = process.cwd();
+			colog.log(colog.colorBlue('Adding branch: ' + pbranch +', and project: '+ pproject.name +' to configuration file'));
+				
+			configuration = config.getConfig();
+			projectsList = _.find(configuration.repositories, function(repository){ return _.isArray(repository.project); });
+			
+			console.log(projectsList);
+			//if(typeof projectList !== 'undefined'){
+			//	console.log('no existen listas');
+				newProject = _.find(projectsList, function(repository){ return repository; });
+			//}
+
+			console.log(newProject);
+		//	newProject
+			if(typeof newProject === 'undefined'){
+				dataRepo = {
+					path: data,
+					project: [{
+						name: pproject.name,
+						id: pproject.id,
+						branch: pbranch
+					}]
+				};
+			}
+			else{
+				//newProject.repository.project.push();
+			}
+		}
+
+		//console.log(dataRepo);
 		dataFile.repositories.push(dataRepo);
 		dataFile = JSON.stringify(dataFile);
-		dataAccess.saveConfig(dataFile);
+		//dataAccess.saveConfig(dataFile);
 	},
 
 	/* 
@@ -90,6 +128,26 @@ var config = {
 			colog.log(colog.colorRed('Error: Make a configuration file'));
 		}
 		return data;
+	},
+
+	/* 
+	return the repositories of the configuration
+	*/
+	deleteRepo: function(prepos, prepo){
+		var repos = _.reject(prepos, function(repository){ return repository.path === prepo.path; });
+		return repos;
+
+	},
+
+	/* 
+	return the repositories of the configuration
+	*/
+	saveRepos: function(pconfig, prepos){
+		var dataFile = {};
+
+		pconfig.repositories = prepos;
+		dataFile = JSON.stringify(pconfig);
+		dataAccess.saveConfig(dataFile);
 	},
 
 	/* 

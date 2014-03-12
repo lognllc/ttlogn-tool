@@ -49,40 +49,42 @@ var	printCommits = function(prepos){
 		firstCommit = {};
 
 		limitDate = moment().startOf('day');
-		
-//		console.log(hoursPerDate);
 
 	_.each(prepos, function(projects){
 		_.each(projects, function(project){
-			console.log('\n-------------------------------');
-			colog.log(colog.apply(project.name, ['underline', 'bold', 'colorBlue']));
-			console.log('-------------------------------\n');
+			if(project.commits.length !== 0){
+				//console.log(project.commits.length);
+				console.log('\n-------------------------------');
+				colog.log(colog.apply(project.name, ['underline', 'bold', 'colorBlue']));
+				console.log('-------------------------------\n');
 
-			firstCommit = _.first(project.commits);
-			date = firstCommit.date.format(DATE_FORMAT);
-			colog.log(colog.apply(date, ['bold', 'colorBlue']));
 
-			_.each(project.commits, function(value){
-				
-				if(value.date <= limitDate){
-					colog.log(colog.apply('Hours worked: '+ hoursPerDate + '\n', ['colorGreen']));
-					hoursPerDate = 0;
-					limitDate.date(value.date.get('date'));
-					limitDate.month(value.date.get('month'));
-					limitDate.year(value.date.get('year'));
+				firstCommit = _.first(project.commits);
+				date = firstCommit.date.format(DATE_FORMAT);
+				colog.log(colog.apply(date, ['bold', 'colorBlue']));
 
+				_.each(project.commits, function(value){
+					
+					if(value.date <= limitDate){
+						colog.log(colog.apply('Hours worked: '+ hoursPerDate + '\n', ['colorGreen']));
+						hoursPerDate = 0;
+						limitDate.date(value.date.get('date'));
+						limitDate.month(value.date.get('month'));
+						limitDate.year(value.date.get('year'));
+
+						date = value.date.format(DATE_FORMAT);
+						colog.log(colog.apply(date, ['bold', 'colorBlue']));
+					}
+					
+					hoursPerTask = parseFloat(getWork(value.message));
+					hoursPerDate += hoursPerTask;
 					date = value.date.format(DATE_FORMAT);
-					colog.log(colog.apply(date, ['bold', 'colorBlue']));
-				}
-				
-				hoursPerTask = parseFloat(getWork(value.message));
-				hoursPerDate += hoursPerTask;
-				date = value.date.format(DATE_FORMAT);
-				colog.log(colog.colorBlue(value.message));
-				
-			});
-			colog.log(colog.apply('Hours worked: '+ hoursPerDate, ['colorGreen']));
-			hoursPerDate = 0;
+					colog.log(colog.colorBlue(value.message));
+					
+				});
+				colog.log(colog.apply('Hours worked: '+ hoursPerDate, ['colorGreen']));
+				hoursPerDate = 0;
+			}
 		});
 	});
 };
