@@ -38,29 +38,31 @@ var commit = {
 			objectRepo = {};
 
 		async.each(prepos, function(item, callback){
-				repo = getRepository(item.path);
-				repo.config(function (err, config){
-					if(err){
-						colog.log(colog.colorRed(err));
+			repo = getRepository(item.path);
+			repo.config(function (err, config){
+				if(err){
+					colog.log(colog.colorRed(err));
+				}
+				else{
+					objectRepo = {
+						path: item.path,
+						name: config.items['remote.origin.url'],
+						configBranches: [],
+						branches: []
+					};
+					if(_.isArray(item.project)){
+						objectRepo.configBranches = item.project;
 					}
-					else{
-						objectRepo = {
-							path: item.path,
-							name: config.items['remote.origin.url'],
-							project: item.project,
-							//projectId: item.projectId,
-							branches: []
-						};
-						configList.push(objectRepo);
-					}
-					callback();
-				});
-			},
+				//	console.log(objectRepo);
+					configList.push(objectRepo);
+				}
+				callback();
+			});
+		},
 
-			function(err){
-				pfunction(configList);
-			}
-		);
+		function(err){
+			pfunction(configList);
+		});
 	},
 
 	/* pprepos: the array of repositories
@@ -72,12 +74,29 @@ var commit = {
 			objectBrach = {};
 			
 		async.each(prepos, function(item, callback){
+			//console.log(item);
+			
+			if(_.isArray(item.configBranches)){
+				console.log('entre branches');
+				_.each(item.configBranches, function(value,index){
+					objectBrach = {
+						name: value.branch,
+						project: value.name,
+						projectId: value.id,
+						commits: []
+					};
+					item.branches.push(objectBrach);
+	//				console.log(item.branches);
+				});
+				callback();
+			}
+			else{
+				console.log('entre all');
 				repo = getRepository(item.path);
 				repo.branches(function (err, branches){
 					_.each(branches, function(value,index){
 						objectBrach = {
 							name: value.name,
-							repository: item.name,
 							project: item.project.name,
 							projectId: item.project.id,
 							commits: []
@@ -87,11 +106,12 @@ var commit = {
 					});
 					callback();
 				});
-			},
-			function(err){
-				pfunction(prepos);
 			}
-		);
+		},
+		function(err){
+			//	console.log(prepos);
+				pfunction(prepos);
+		});
 	},
 
 	/* pindexRepo: the index of the repository 

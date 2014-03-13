@@ -10,35 +10,39 @@ var _ = require('underscore'),
 	project = require(path.resolve(__dirname,'../models/project.js')),
 	hourType = require(path.resolve(__dirname,'../models/hour_type.js'));
 
-var FORMATHOUR = /^\d+(|\.\d+)h$/i,
-	DIGITS = /[^h]+/i,
-	PROJECT = /^\d+$/,
-	TIME_IN = /^[0-2]\d\:[0-6]\d$/;
+var PROJECT = /^\d+$/;
 
-/*pproyects: projects of the user to display
+/*pprojects: projects of the user to display
 prints the projects, get hour type*/
-var printTimeEntries = function(pentries){
-	console.log(pentries.result.not_confirmed_dates);
+var printProject = function(pprojects){
+	userId = puser.result.id;
+	userType = puser.result.devtype;
+
+	colog.log(colog.colorMagenta('Select a project: '));
+	_.each(pprojects.result, function(value, index){
+		index ++;
+		colog.log(colog.colorBlue(index + ': ' + value.name));
+	});
+	projects = pprojects.result;
+	hourType.getHourType(userId, getBillable);
 };
 
 /* puser: user data in the TT
 sets the user data and get hour types
 */
-var getTimeEntries = function(puser){
-	userId = puser.result.id;
-	userType = puser.result.devtype;
-	timeEntry.getUserPeriodTimeEntry(userId, printTimeEntries);
+var getProjects = function(puser){
+	project.getProjects(puser.result.id, printProject);
 };
 
-var controllerModifyTask = {
+var controllerListClients = {
 
 	/*saves a task of an user in the TT*/
-	modifyWork: function(){
+	saveWork: function(){
 		var repos = [],
 			configuration = config.getConfig();
 	
 		if(config.existConfig){
-			user.login(configuration.email, configuration.password, getHourType);
+			user.login(configuration.email, configuration.password, getProjects);
 		}
 		else{
 			colog.log(colog.colorRed("Error: Configuration file doesn't exist"));
@@ -46,4 +50,4 @@ var controllerModifyTask = {
 	}
 };
 
-module.exports = controllerModifyTask;
+module.exports = controllerListClients;

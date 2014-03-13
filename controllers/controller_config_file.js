@@ -46,15 +46,15 @@ var printRepos = function(pconfig){
 /*pprojects: projects of the user to display
 waits the user to choose a project, then save the repository*/
 var saveRepo = function(pbranches){
-	branch = {};
+	newBranch = {};
 
 	colog.log(colog.colorBlue('Select a branch: '));
 	_.each(pbranches, function(branch, index){
 		index++;
 		colog.log(colog.colorBlue(index + ': ' + branch.name));
 	});
-	cancel = pbranches.length + 1;
-	colog.log(colog.colorBlue(cancel + ': All'));
+	all = pbranches.length + 1;
+	colog.log(colog.colorBlue(all + ': All'));
 
 	prompt.start();
 
@@ -71,9 +71,9 @@ var saveRepo = function(pbranches){
 		}
 		else{
 			if(resultPrompt.branch <= pbranches.length){
-				branch = pbranches[resultPrompt.branch - 1];
+				newBranch = pbranches[resultPrompt.branch - 1];
 			}
-			config.registerRepo(newProject, branch.name);
+			config.registerRepo(newProject, newBranch.name);
 		}
 	});
 };
@@ -113,11 +113,9 @@ var getProject = function(pprojects){
 			colog.log(colog.colorRed(err));
 		}
 		newProject =  pprojects.result[resultPrompt.project - 1];
-
-//		config.registerRepo(pprojects.result[resultPrompt.project - 1]);
-		
+//		config.registerRepo(pprojects.result[resultPrompt.project - 1]);	
 		console.log(repoPath);
-		commit.getRepoBranches('/mnt/hgfs/Development/ttlogn-tool', saveRepo);
+		commit.getRepoBranches('/mnt/hgfs/Development/repoPrueba', saveRepo);
 	});
 };
 

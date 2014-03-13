@@ -60,7 +60,11 @@ var	printCommits = function(prepos){
 
 
 				firstCommit = _.first(project.commits);
-				date = firstCommit.date.format(DATE_FORMAT);
+				date = firstCommit.date;
+				limitDate.date(date.get('date'));
+				limitDate.month(date.get('month'));
+				limitDate.year(date.get('year'));
+				date = date.format(DATE_FORMAT);
 				colog.log(colog.apply(date, ['bold', 'colorBlue']));
 
 				_.each(project.commits, function(value){
@@ -79,7 +83,7 @@ var	printCommits = function(prepos){
 					hoursPerTask = parseFloat(getWork(value.message));
 					hoursPerDate += hoursPerTask;
 					date = value.date.format(DATE_FORMAT);
-					colog.log(colog.colorBlue(value.message));
+					colog.log(colog.colorBlue('\t' + value.message));
 					
 				});
 				colog.log(colog.apply('Hours worked: '+ hoursPerDate, ['colorGreen']));

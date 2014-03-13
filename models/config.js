@@ -2,6 +2,7 @@ var path = require('path'),
 	colog = require('colog'),
 	fs = require('fs'),
 	_ = require('underscore'),
+	prettyjson = require('prettyjson'),
 	sha1 = require('sha1'),
 	dataAccess = require('../dataAccess/config_data_access.js');
 
@@ -57,13 +58,14 @@ var config = {
 			dataFile = {},
 			dataRepo = {},
 			newProject = {},
-			configuration = {};
+			projectsList = {};
 
 		dataFile = getJson();
+		//data = process.cwd();
+		data = '/mnt/hgfs/Development/repoPrueba';
 
 		if(typeof pbranch === 'undefined'){
 			console.log('entre repo');
-			data = process.cwd();
 			colog.log(colog.colorBlue('Adding repository: ' + data +', and project: '+ pproject.name +' to configuration file'));
 			
 			dataRepo = {
@@ -73,24 +75,22 @@ var config = {
 					id: pproject.id
 				}
 			};
+			dataFile.repositories.push(dataRepo);
 		}
 		else{
 			console.log('entre branch');
-			data = process.cwd();
 			colog.log(colog.colorBlue('Adding branch: ' + pbranch +', and project: '+ pproject.name +' to configuration file'));
 				
-			configuration = config.getConfig();
-			projectsList = _.find(configuration.repositories, function(repository){ return _.isArray(repository.project); });
+			projectsList = _.filter(dataFile.repositories, function(repository)
+				{ return _.isArray(repository.project); });
 			
-			console.log(projectsList);
-			//if(typeof projectList !== 'undefined'){
-			//	console.log('no existen listas');
-				newProject = _.find(projectsList, function(repository){ return repository; });
-			//}
+			if(projectsList.length > 0){
+				newProject = _.find(projectsList, function(repository)
+					{ return repository.path  === data;});
+			}
 
-			console.log(newProject);
-		//	newProject
-			if(typeof newProject === 'undefined'){
+			if(typeof newProject === 'undefined' || projectsList.length === 0){
+				console.log('entre en nuevo');
 				dataRepo = {
 					path: data,
 					project: [{
@@ -99,16 +99,18 @@ var config = {
 						branch: pbranch
 					}]
 				};
+				dataFile.repositories.push(dataRepo);
 			}
 			else{
-				//newProject.repository.project.push();
+				newProject.project.push({
+					name: pproject.name,
+					id: pproject.id,
+					branch: pbranch
+				});
 			}
 		}
-
-		//console.log(dataRepo);
-		dataFile.repositories.push(dataRepo);
 		dataFile = JSON.stringify(dataFile);
-		//dataAccess.saveConfig(dataFile);
+		dataAccess.saveConfig(dataFile);
 	},
 
 	/* 
@@ -119,12 +121,7 @@ var config = {
 
 		data = getJson();
 
-		if(dataAccess.existConfig()){
-
-			data = dataAccess.readConfig();
-			data = JSON.parse(data);
-		}
-		else{
+		if(!dataAccess.existConfig()){
 			colog.log(colog.colorRed('Error: Make a configuration file'));
 		}
 		return data;

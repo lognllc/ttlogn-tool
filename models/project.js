@@ -13,8 +13,16 @@ var project = {
 	getProjects: function(puserId, pfunction){
 		var message	=  PROJECT + puserId;
 		dataAccess.get(message, pfunction);
-	}
+	},
 
+	/* puserId: id of the user
+	pfunction: funtion to send the projects
+	get the projects of an user
+	*/
+	getClients: function(pprojectId, pfunction){
+		var message	=  PROJECT + puserId;
+		dataAccess.get(message, pfunction);
+	}
 };
 
 module.exports = project;
