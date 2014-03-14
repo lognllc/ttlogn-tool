@@ -24,17 +24,11 @@ var getWork = function(pmessage){
 sort the commits by time
 */
 var	sortProjects = function(prepos){
-
 	_.each(prepos, function(projects){
 		_.each(projects, function(project){
 			var sortedProject = _.sortBy(project.commits, function(sortedCommit)
 				{ return sortedCommit.date; });
-			//console.log(project.commits[0].date);
-			project.commits = sortedProject;
-			_.each(project.commits, function(comm){
-				// console.log(comm);
-				console.log(comm.date.format(DATE_FORMAT));
-			});
+			project.commits = sortedProject.reverse();
 		});
 	});
 };
@@ -51,16 +45,15 @@ var	printCommits = function(prepos){
 		firstCommit = {};
 
 		limitDate = moment().startOf('day');
-		//sortProjects(prepos);
+		sortProjects(prepos);
 
 	_.each(prepos, function(projects){
 		_.each(projects, function(project){
 			if(project.commits.length !== 0){
-				//console.log(project.commits.length);
+
 				console.log('\n-------------------------------');
 				colog.log(colog.apply(project.name, ['underline', 'bold', 'colorBlue']));
 				console.log('-------------------------------\n');
-
 
 				firstCommit = _.first(project.commits);
 				date = firstCommit.date;
@@ -85,8 +78,9 @@ var	printCommits = function(prepos){
 					
 					hoursPerTask = parseFloat(getWork(value.message));
 					hoursPerDate += hoursPerTask;
-					//date = value.date.format(DATE_FORMAT);
-					colog.log(colog.colorBlue('\t' + value.message + ' ' + date));
+					message = value.message.split('\n');
+					value.message = message[0];
+					colog.log(colog.colorBlue('\t' + value.message));
 					
 				});
 				colog.log(colog.apply('Hours worked: '+ hoursPerDate, ['colorGreen']));
@@ -111,7 +105,6 @@ var	sortRepos = function(prepos){
 		repository.branches = branches;
 	});
 	prepos = repos;
-	//return repos;
 };
 
 
@@ -157,6 +150,7 @@ var	bindCommits = function(prepos, pgitName){
 						date = moment.parseZone(value.committed_date).zone(ZONE);
 						if(value.author.name === pgitName && date >= limitDate && FORMAT_HOUR.test(value.message)){
 							existCommit = _.findWhere(project.commits, {id: value.id});
+
 							if(typeof existCommit === 'undefined'){
 								validCommit.id = value.id;
 								validCommit.date = date;
@@ -193,20 +187,16 @@ var controllerListCommits = {
 				commit.setDateLimit(pdate);
 				
 				configuration = config.getConfig();
-				//gitName = configuration.gitUser;
 				reposConfig = configuration.repositories;
 				colog.log(colog.colorGreen('Loading...'));
 				
 				commit.getReposConfig(reposConfig, repos).then(function(){
-					//console.log(repos);
 					return commit.getBranches(repos);
 
 				}).then(function() {
-					//console.log(repos[0].branches);
 					return commit.getBranchCommits(repos);
 
 				}).then(function() {
-					//console.log(repos[0].branches[0].commits);
 					bindCommits(repos, configuration.gitUser);
 
 				}).catch(function(error) {

@@ -33,7 +33,7 @@ var	saveCommits = function(puser, prepos, phourType){
 
 	_.each(prepos, function(projects){
 		_.each(projects, function(project){
-			//_.setMaxListeners(0);
+
 			_.each(project.commits, function(value){
 				var commitToInsert = {},
 					timeIn = '',
@@ -43,10 +43,10 @@ var	saveCommits = function(puser, prepos, phourType){
 					work = 0;
 
 				date = moment(value.date).format('YYYY-MM-DD hh:mm:ss');
+				work = getWork(value.message);
 				commitMessage = value.message.split('\n');
-				commitMessage = commitMessage[0];
-				work = getWork(commitMessage);
-				colog.log(colog.colorBlue('Saving commit: ' +  commitMessage));
+				value.message = commitMessage[0];
+				colog.log(colog.colorBlue('Saving commit: ' +  value.message));
 
 				commitToInsert = {
 						created:  date,
@@ -185,31 +185,25 @@ var controllerSaveWork = {
 
 			if(config.existConfig){
 
-				//timeEntry.setMaxListeners(0);
-
 				colog.log(colog.colorGreen('Loading...'));
 				commit.setDateLimit(pdate);
 				reposConfig = configuration.repositories;
 
 				user.login(configuration.email, configuration.password).then(function(puser){
-					//console.log(puser.result);
 					userInfo = puser.result;
 					return hourType.getHourType(userInfo.id);
 
 				}).then(function(phourType){
-					//console.log(phourType);
 					billable = getBillable(phourType.result);
 					return commit.getReposConfig(reposConfig, repos);
-					//console.log(repos);
+
 				}).then(function(){
 					return commit.getBranches(repos);
 
 				}).then(function(){
-					//console.log(repos[0].branches);
 					return commit.getBranchCommits(repos);
 
 				}).then(function(){
-					//console.log(repos[0].branches[0].commits);
 					bindCommits(userInfo, repos, billable, configuration.gitUser);
 
 				}).catch(function(error) {

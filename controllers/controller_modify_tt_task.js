@@ -349,13 +349,11 @@ var controllerModifyTask = {
 	
 		if(config.existConfig){
 				user.login(configuration.email, configuration.password).then(function(puser){
-				//console.log(puser.result);
 				userId = puser.result.id;
 				userType = puser.result.devtype;
 				return project.getProjects(puser.result.id);
 
 			}).then(function(pprojects) {
-				//console.log(pprojects.result);
 				projects = pprojects.result;
 				return timeEntry.getUserPeriodTimeEntry(userId);
 

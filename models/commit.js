@@ -142,7 +142,7 @@ var commit = {
 				resolve(self);
 			}
 			else{
-				//console.log('entre all');
+		//		console.log('entre all');
 				repo = getRepository(prepo.path);
 				repo.branches(function (err, branches){
 					if(err){
@@ -153,8 +153,8 @@ var commit = {
 						_.each(branches, function(value){
 							objectBrach = {
 								name: value.name,
-								project: prepo.project.name,
-								projectId: prepo.project.id,
+								project: prepo.configBranches.name,
+								projectId: prepo.configBranches.id,
 								commits: []
 							};
 
@@ -228,12 +228,12 @@ var commit = {
 					objectRepo = {
 						path: prepo.path,
 						name: config.items['remote.origin.url'],
-						configBranches: [],
+						configBranches: prepo.project,
 						branches: []
 					};
-					if(_.isArray(prepo.project)){
+					/*if(_.isArray(prepo.project)){
 						objectRepo.configBranches = prepo.project;
-					}
+					}*/
 					//	console.log(objectRepo);
 					resolve(objectRepo);
 				}
