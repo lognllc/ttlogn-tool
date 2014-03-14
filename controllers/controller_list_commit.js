@@ -11,9 +11,6 @@ var FORMAT_HOUR = /\(\d+(|\.\d+)h\)/i,
 	ZONE = '-08:00',
 	DATE_FORMAT = 'dddd, DD MMMM YYYY'; // HH:mm
 
-var gitName = '';
-
-
 /* pmessage: message of the commit 
 return a string with the number of hours worked
 */
@@ -30,11 +27,16 @@ var	sortProjects = function(prepos){
 
 	_.each(prepos, function(projects){
 		_.each(projects, function(project){
-			var sortedProject = _.sortBy(project.commits, function(sortedCommit){ return sortedCommit.date; });
+			var sortedProject = _.sortBy(project.commits, function(sortedCommit)
+				{ return sortedCommit.date; });
+			//console.log(project.commits[0].date);
 			project.commits = sortedProject;
+			_.each(project.commits, function(comm){
+				// console.log(comm);
+				console.log(comm.date.format(DATE_FORMAT));
+			});
 		});
 	});
-	return prepos;
 };
 
 /* prepos: array of repos with commits
@@ -49,6 +51,7 @@ var	printCommits = function(prepos){
 		firstCommit = {};
 
 		limitDate = moment().startOf('day');
+		//sortProjects(prepos);
 
 	_.each(prepos, function(projects){
 		_.each(projects, function(project){
@@ -82,8 +85,8 @@ var	printCommits = function(prepos){
 					
 					hoursPerTask = parseFloat(getWork(value.message));
 					hoursPerDate += hoursPerTask;
-					date = value.date.format(DATE_FORMAT);
-					colog.log(colog.colorBlue('\t' + value.message));
+					//date = value.date.format(DATE_FORMAT);
+					colog.log(colog.colorBlue('\t' + value.message + ' ' + date));
 					
 				});
 				colog.log(colog.apply('Hours worked: '+ hoursPerDate, ['colorGreen']));
@@ -107,14 +110,15 @@ var	sortRepos = function(prepos){
 		branches = _.sortBy(repository.branches, function(branch){ return branch.projectId; });
 		repository.branches = branches;
 	});
-	return repos;
+	prepos = repos;
+	//return repos;
 };
 
 
 /* prepos: array of repos
 merges the branches with the same project
 */
-var	bindCommits = function(prepos){
+var	bindCommits = function(prepos, pgitName){
 	var repos = [],
 		validCommits = {
 			commits: []
@@ -123,7 +127,7 @@ var	bindCommits = function(prepos){
 		projectId = -1;
 
 	limitDate = commit.getDateLimit();
-	prepos = sortRepos(prepos);
+	sortRepos(prepos);
 
 	_.each(prepos, function(repository){
 		var projects = [];
@@ -151,7 +155,7 @@ var	bindCommits = function(prepos){
 							};
 
 						date = moment.parseZone(value.committed_date).zone(ZONE);
-						if(value.author.name === gitName && date >= limitDate && FORMAT_HOUR.test(value.message)){
+						if(value.author.name === pgitName && date >= limitDate && FORMAT_HOUR.test(value.message)){
 							existCommit = _.findWhere(project.commits, {id: value.id});
 							if(typeof existCommit === 'undefined'){
 								validCommit.id = value.id;
@@ -171,20 +175,6 @@ var	bindCommits = function(prepos){
 };
 
 
-/* pprepos: array of the repositories and branches
-get the commits
-*/
-var getCommits = function(prepos){
-	commit.getBranchCommits(prepos, bindCommits);
-};
-
-/* pconfig: array of the repositories
-get the branches
-*/
-var getBranches = function(pconfig){
-	commit.getBranches(pconfig, getCommits);
-};
-
 var controllerListCommits = {
 
 	/* 
@@ -192,7 +182,8 @@ var controllerListCommits = {
 	pdate: maximum date d/w/m
 	*/
 	listTasks: function(pdate){
-		var repos = [],
+		var reposConfig = [],
+			repos = [],
 			user = [];
 
 		if(pdate === '-w' || pdate === '-m' || pdate === '-d' || typeof pdate === 'undefined'){
@@ -202,11 +193,25 @@ var controllerListCommits = {
 				commit.setDateLimit(pdate);
 				
 				configuration = config.getConfig();
-				gitName = configuration.gitUser;
-				repos = configuration.repositories;
-
+				//gitName = configuration.gitUser;
+				reposConfig = configuration.repositories;
 				colog.log(colog.colorGreen('Loading...'));
-				commit.getRepoName(repos, getBranches);
+				
+				commit.getReposConfig(reposConfig, repos).then(function(){
+					//console.log(repos);
+					return commit.getBranches(repos);
+
+				}).then(function() {
+					//console.log(repos[0].branches);
+					return commit.getBranchCommits(repos);
+
+				}).then(function() {
+					//console.log(repos[0].branches[0].commits);
+					bindCommits(repos, configuration.gitUser);
+
+				}).catch(function(error) {
+					colog.log(colog.colorRed(error));
+				});
 			}
 			else{
 				colog.log(colog.colorRed("Error: Configuration file doesn't exist"));

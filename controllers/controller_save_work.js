@@ -7,21 +7,18 @@ var _ = require('underscore'),
 	timeEntry = require(path.resolve(__dirname,'../models/time_entry.js')),
 	user = require(path.resolve(__dirname,'../models/user.js')),
 	hourType = require(path.resolve(__dirname,'../models/hour_type.js')),
+	//emitter = require('events').EventEmitter,
 	commit = require(path.resolve(__dirname,'../models/commit.js'));
 
-var FORMATHOUR = /\(\d+(|\.\d+)h\)/i,
+var FORMAT_HOUR = /\(\d+(|\.\d+)h\)/i,
+	ZONE = '-08:00',
 	DIGITS = /[^\(\)h]+/i;
-
-var userId = 0,
-	userType = '',
-	arrayRepositories = [];
-
 
 /* pmessage: message of the commit 
 return a string with the number of hours worked
 */
 var getWork = function(pmessage){
-	var test = FORMATHOUR.exec(pmessage);
+	var test = FORMAT_HOUR.exec(pmessage);
 	test = DIGITS.exec(test[0]);
 	return test[0];
 };
@@ -29,55 +26,52 @@ var getWork = function(pmessage){
 /* phourType: hour type
 saves the commits in the TT
 */
-var	saveCommits = function(phourType){
+var	saveCommits = function(puser, prepos, phourType){
 
 	var date = moment().format('YYYY-MM-DD hh:mm:ss'),
-	commitMessage = '',
-	limitDate = '',
-	configuration = config.getConfig(),
-	gitName = configuration.gitUser;
 	promises = [];
-	
-	limitDate = commit.getDateLimit();
 
-	_.each(arrayRepositories, function(repository){
-		_.each(repository.branches, function(branch){
-			_.each(branch.commits, function(value){
+	_.each(prepos, function(projects){
+		_.each(projects, function(project){
+			//_.setMaxListeners(0);
+			_.each(project.commits, function(value){
 				var commitToInsert = {},
 					timeIn = '',
 					timeOut = '',
+					commitMessage = '',
 					hour = 0,
 					work = 0;
 
-				if(value.author.name === gitName && value.committed_date >= limitDate && FORMATHOUR.test(value.message)){
-					commitMessage = value.message.split('\n');
-					commitMessage = commitMessage[0];
-					work = getWork(commitMessage);
-					colog.log(colog.colorBlue('Saving commit: ' +  commitMessage));
+				date = moment(value.date).format('YYYY-MM-DD hh:mm:ss');
+				commitMessage = value.message.split('\n');
+				commitMessage = commitMessage[0];
+				work = getWork(commitMessage);
+				colog.log(colog.colorBlue('Saving commit: ' +  commitMessage));
 
-					commitToInsert = {
-							created:  date,
-							developer_id: userId,
-							project_id: repository.projectId,
-							description: commitMessage,
-							time: work,
-							hour_type_id: phourType.id
-						};
+				commitToInsert = {
+						created:  date,
+						developer_id: puser.id,
+						project_id: project.id,
+						description: commitMessage,
+						time: work,
+						hour_type_id: phourType.id
+					};
 
-					if(userType === 'non_exempt'){
+				if(puser.devtype === 'non_exempt'){
+					
+					hour = parseFloat(work);
+					timeIn = moment(value.date);
+					timeOut = moment(value.date);
+					timeOut.add((hour),'hours');
+
+					timeIn = timeIn.format('HH.mm');
+					timeOut = timeOut.format('HH.mm');
 						
-						timeIn = moment(value.committed_date);
-						timeOut = moment(value.committed_date);
-						timeOut.add((hour),'hours');
-
-						timeIn = timeIn.format('HH.mm');
-						timeOut = timeOut.format('HH.mm');
-						
-						commitToInsert.time_in = timeIn;
-						commitToInsert.time_out = timeOut;
-					}
-					promises.push(timeEntry.postTimeEntry(commitToInsert));
+					commitToInsert.time_in = timeIn;
+					commitToInsert.time_out = timeOut;
 				}
+				//console.log(commitToInsert);
+				promises.push(timeEntry.postTimeEntry(commitToInsert));
 			});
 		});
 	});
@@ -88,56 +82,92 @@ var	saveCommits = function(phourType){
 		});
 };
 
+
+/* parray: array of commits
+sort the repo "tree"
+*/
+var	sortRepos = function(prepos){
+	var repos =[],
+		branches;
+
+	repos = _.sortBy(prepos, function(repository){ return repository.name; });
+
+	_.each(repos, function(repository){
+		branches = _.sortBy(repository.branches, function(branch){ return branch.projectId; });
+		repository.branches = branches;
+	});
+	prepos = repos;
+	//return repos;
+};
+
+
+/* prepos: array of repos
+merges the branches with the same project
+*/
+var	bindCommits = function(puser, prepos, pbillable, pgitName){
+	var repos = [],
+		validCommits = {
+			commits: []
+		},
+		existCommit = '',
+		projectId = -1;
+
+	limitDate = commit.getDateLimit();
+	sortRepos(prepos);
+
+	_.each(prepos, function(repository){
+		var projects = [];
+
+		_.each(repository.branches, function(branch){
+			var	project = {
+					id: -1,
+					name: '',
+					commits: []
+				},
+				projectRepo = _.filter(repository.branches, function(projectBranch){
+					return projectBranch.projectId === branch.projectId; });
+			
+			if(projectId !== branch.projectId){
+				projectId = branch.projectId;
+				project.id = branch.projectId;
+				project.name = branch.project;
+				
+				_.each(projectRepo, function(projectBranch){
+					_.each(projectBranch.commits, function(value){
+						var validCommit = {
+								id: -1,
+								date: moment(),
+								message: ''
+							};
+
+						date = moment.parseZone(value.committed_date).zone(ZONE);
+						if(value.author.name === pgitName && date >= limitDate && FORMAT_HOUR.test(value.message)){
+							existCommit = _.findWhere(project.commits, {id: value.id});
+							if(typeof existCommit === 'undefined'){
+								validCommit.id = value.id;
+								validCommit.date = date;
+								validCommit.message = value.message;
+								project.commits.push(validCommit);
+							}
+						}
+					});
+				});
+				projects.push(project);
+			}
+		});
+		repos.push(projects);
+	});
+	saveCommits(puser, repos, pbillable);
+};
+
+
 /* phours: array of type of hours
 get billable type, 
 */
 var getBillable = function(phours){
 	var BILLABlE = 'Billable';
-	var billableHour = _.find(phours.result, function(hour){ return hour.name === BILLABlE; });
+	var billableHour = _.find(phours, function(hour){ return hour.name === BILLABlE; });
 	return billableHour;
-};
-
-/* prepos: array of the repositories, branches and commits
-get hour types
-*/
-var getHourType = function(prepos){
-	var billable = 0;
-
-	arrayRepositories = prepos;
-
-	hourType.getHourType(userId).then(function(phours){
-		billable = getBillable(phours);
-		saveCommits(billable);
-
-	}).catch(function(error) {
-		colog.log(colog.colorRed(error));
-	});
-};
-
-/* prepos: array of the repositories and branches
-get the commits
-*/
-var getCommits = function(prepos){
-	commit.getBranchCommits(prepos, getHourType);
-};
-
-/* pconfig: array of the repositories
-get the branches
-*/
-var getBranches = function(pconfig){
-	commit.getBranches(pconfig, getCommits);
-};
-
-/* pconfig: array of the repositories
-get the branches
-*/
-var getRepos = function(puser){
-	var	configuration = config.getConfig(),
-		repos = configuration.repositories;
-	
-	userId = puser.result.id;
-	userType = puser.result.devtype;
-	commit.getRepoName(repos, getBranches);
 };
 
 var controllerSaveWork = {
@@ -146,14 +176,45 @@ var controllerSaveWork = {
 	saves the commits of an user in the TT*/
 	saveWork: function(pdate){
 		var repos = [],
+			reposConfig = [],
+			userInfo = {},
+			billable = 0,
 			configuration = config.getConfig();
 
 		if(pdate === '-w' || pdate === '-m' || pdate === '-d' || typeof pdate === 'undefined'){
 
 			if(config.existConfig){
-				commit.setDateLimit(pdate);
+
+				//timeEntry.setMaxListeners(0);
+
 				colog.log(colog.colorGreen('Loading...'));
-				user.login(configuration.email, configuration.password, getRepos);
+				commit.setDateLimit(pdate);
+				reposConfig = configuration.repositories;
+
+				user.login(configuration.email, configuration.password).then(function(puser){
+					//console.log(puser.result);
+					userInfo = puser.result;
+					return hourType.getHourType(userInfo.id);
+
+				}).then(function(phourType){
+					//console.log(phourType);
+					billable = getBillable(phourType.result);
+					return commit.getReposConfig(reposConfig, repos);
+					//console.log(repos);
+				}).then(function(){
+					return commit.getBranches(repos);
+
+				}).then(function(){
+					//console.log(repos[0].branches);
+					return commit.getBranchCommits(repos);
+
+				}).then(function(){
+					//console.log(repos[0].branches[0].commits);
+					bindCommits(userInfo, repos, billable, configuration.gitUser);
+
+				}).catch(function(error) {
+					colog.log(colog.colorRed(error));
+				});
 			}
 			else{
 				colog.log(colog.colorRed("Error: Configuration file doesn't exist"));

@@ -3,9 +3,9 @@ var prettyjson = require('prettyjson'),
 	RSVP = require('rsvp'),
 	clientTT = require('node-rest-client').Client;
 
-var //HOST_DEVELOPMENT = 'http://10.0.1.80:3000',
+var HOST_DEVELOPMENT = 'http://10.0.1.80:3000',
 //	HOST_DEVELOPMENT = 'http://192.168.0.120:3000',	
-	HOST_DEVELOPMENT = 'http://186.177.44.15:3000',
+//	HOST_DEVELOPMENT = 'http://186.177.44.15:3000',
 	HOST = 'http://ec2-54-226-94-0.compute-1.amazonaws.com',
 	DEVELOPMENT = 'development';
 
@@ -26,17 +26,18 @@ var getHost = function(){
 var apiTTDataAccess = {
 
 /*	pparameters: parameters for the get
-	pfunction: function to execute later
 	makes a get and send the info receive to pfunction*/
 	get: function(pparameters){
 		var promise = new RSVP.Promise(function(resolve, reject) {
 			var dataServer = {},
+				self = this,
 				client = new clientTT(),
 				host = getHost();
 			
-			console.log(host+pparameters);
+			//console.log(host+pparameters);
 			client.get(host+pparameters, function(data, response){
 			//	console.log(data);
+
 				dataServer = JSON.parse(data);
 			//	pfunction(dataServer);
 				resolve(dataServer);
@@ -51,19 +52,21 @@ var apiTTDataAccess = {
 
 /*	ppost: post method
 	pparameters: parameters for the post
-	pfunction: function to execute later
 	makes a post and send the info receive to pfunction*/
 	post: function(ppost, pparameters){
 		var promise = new RSVP.Promise(function(resolve, reject) {
 			var client = new clientTT(),
 				dataServer = {},
+				self = this,
 				host = getHost(),
 				args = {
 					data: pparameters,
 					headers: {"Content-Type": "application/json"}
 				};
 
-			console.log(pparameters);
+			//console.log(pparameters);
+			//client.setMaxListeners(0);
+			
 			client.post(host + ppost, args, function(data,response) {
 			//	console.log(data);
 				dataServer = JSON.parse(data);
@@ -76,33 +79,8 @@ var apiTTDataAccess = {
 			});
 		});
 		return promise;
-	},
+	}
 
-/*	ppost: post method
-	pparameters: parameters for the get
-	makes a post, work with promises */
-/*	waitPost: function(ppost, pparameters){
-		var promise = new RSVP.Promise(function(resolve, reject) {
-			var client = new clientTT(),
-				self = this,
-				host = getHost(),
-				dataServer = {},
-				args = {
-					data: pparameters,
-					headers: {"Content-Type": "application/json"}
-				};
-			//console.log(pparameters);
-			client.post(host + ppost, args, function(data,response) {
-			//	console.log(data);
-				resolve(self);
-
-			}).on('error',function(err){
-				colog.log(colog.colorRed('Error: Something went wrong on the request', err.request.options));
-				reject(self);
-			});
-		});
-		return promise;
-	}*/
 };
 
 module.exports = apiTTDataAccess;

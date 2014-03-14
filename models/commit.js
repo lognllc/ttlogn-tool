@@ -28,98 +28,12 @@ var commit = {
 		return limitDate;
 	},
 
-	/* prepos: the array of repositories
-	pfunction: function to send the result array
-	return an array with the config of the repos */
-	getRepoName: function(prepos, pfunction){
-		
-		var repo = [],
-			configList = [],
-			objectRepo = {};
-
-		async.each(prepos, function(item, callback){
-			repo = getRepository(item.path);
-			repo.config(function (err, config){
-				if(err){
-					colog.log(colog.colorRed(err));
-				}
-				else{
-					objectRepo = {
-						path: item.path,
-						name: config.items['remote.origin.url'],
-						configBranches: [],
-						branches: []
-					};
-					if(_.isArray(item.project)){
-						objectRepo.configBranches = item.project;
-					}
-				//	console.log(objectRepo);
-					configList.push(objectRepo);
-				}
-				callback();
-			});
-		},
-
-		function(err){
-			pfunction(configList);
-		});
-	},
-
-	/* pprepos: the array of repositories
-	pfunction: function to send the result array
-	get the branches of the repositories */
-	getBranches: function(prepos, pfunction){
-
-		var repo = [],
-			objectBrach = {};
-			
-		async.each(prepos, function(item, callback){
-			//console.log(item);
-			
-			if(_.isArray(item.configBranches)){
-				console.log('entre branches');
-				_.each(item.configBranches, function(value,index){
-					objectBrach = {
-						name: value.branch,
-						project: value.name,
-						projectId: value.id,
-						commits: []
-					};
-					item.branches.push(objectBrach);
-	//				console.log(item.branches);
-				});
-				callback();
-			}
-			else{
-				console.log('entre all');
-				repo = getRepository(item.path);
-				repo.branches(function (err, branches){
-					_.each(branches, function(value,index){
-						objectBrach = {
-							name: value.name,
-							project: item.project.name,
-							projectId: item.project.id,
-							commits: []
-						};
-
-						item.branches.push(objectBrach);
-					});
-					callback();
-				});
-			}
-		},
-		function(err){
-			//	console.log(prepos);
-				pfunction(prepos);
-		});
-	},
-
 	/* pindexRepo: the index of the repository 
 	pindexBranch: the index of the branch
 	get commits of a branch */
-	getCommits: function(pindexRepo, pindexBranch){
+	getCommits: function(prepo, pbranch){
 		
-		var promise = new RSVP.Promise(function(resolve, reject) {
+		var promise = new RSVP.Promise(function(resolve, reject){
 			var date = new Date(),
 				numberCommits = 0,
 				skip = 0,
@@ -129,15 +43,17 @@ var commit = {
 						
 			async.doWhilst(
 				function (callback) {
-					repo = getRepository(repoArray[pindexRepo].path);
-					branch = repoArray[pindexRepo].branches[pindexBranch].name;
+					repo = getRepository(prepo.path);
+					branch = pbranch.name;
+					//console.log(pbranch);
 
 					repo.commits(branch, NUMBER_COMMITS, skip, function(err, commits){
 						if(err){
 							colog.log(colog.colorRed(err));
 						}
 						else{
-							repoArray[pindexRepo].branches[pindexBranch].commits = repoArray[pindexRepo].branches[pindexBranch].commits.concat(commits);
+							//console.log(pbranch);
+							pbranch.commits = pbranch.commits.concat(commits);
 							numberArray = commits.length - 1;
 							date = commits[numberArray].committed_date;
 							skip += NUMBER_COMMITS;
@@ -167,22 +83,25 @@ var commit = {
 	/* prepos: the array of repositories
 	pfunction: function to send the result array
 	gets commits of a branch */
-	getBranchCommits: function(prepos, pfunction){
-		var promises = [];
+	getBranchCommits: function(prepos){
+		var promise = new RSVP.Promise(function(resolve, reject){
+			var promises = [],
+				self = this;
 
-		repoArray = prepos;
+			_.each(prepos, function(repository){
+				_.each(repository.branches, function(branch){
+					promises.push(commit.getCommits(repository, branch));
+				});
+			});
 
-		_.each(repoArray, function(repository, indexRepo){
-			_.each(repository.branches, function(branch, indexBranch){
-				promises.push(commit.getCommits(indexRepo, indexBranch));
+			RSVP.all(promises).then(function(posts){
+				resolve(self);
+			}).catch(function(reason){
+				colog.log(colog.colorRed(reason));
+				reject(self);
 			});
 		});
-
-		RSVP.all(promises).then(function(posts) {
-			pfunction(repoArray);
-		}).catch(function(reason){
-			colog.log(colog.colorRed(reason));
-		});
+		return promise;
 	},
 
 	/* pdate: -d/-w/-m
@@ -197,6 +116,77 @@ var commit = {
 		else if(pdate === '-m'){
 			limitDate = moment().startOf('month');
 		}
+	},
+
+	/* pprepos: the array of repositories
+	pfunction: function to send the result array
+	get the branches of the repositories */
+	getBranch: function(prepo){
+		var promise = new RSVP.Promise(function(resolve, reject){
+			var repo = [],
+				objectBrach = {},
+				self = this;
+					
+			if(_.isArray(prepo.configBranches)){
+				//console.log('entre branches');
+				_.each(prepo.configBranches, function(value){
+					objectBrach = {
+						name: value.branch,
+						project: value.name,
+						projectId: value.id,
+						commits: []
+					};
+					prepo.branches.push(objectBrach);
+		//				console.log(item.branches);
+				});
+				resolve(self);
+			}
+			else{
+				//console.log('entre all');
+				repo = getRepository(prepo.path);
+				repo.branches(function (err, branches){
+					if(err){
+						colog.log(colog.colorRed(err));
+						reject(self);
+					}
+					else{
+						_.each(branches, function(value){
+							objectBrach = {
+								name: value.name,
+								project: prepo.project.name,
+								projectId: prepo.project.id,
+								commits: []
+							};
+
+							prepo.branches.push(objectBrach);
+						});
+						resolve(self);
+					}
+				});
+			}
+		});
+		return promise;
+	},
+
+	/* pprepos: the array of repositories
+	pfunction: function to send the result array
+	get the branches of the repositories */
+	getBranches: function(prepos){
+		var promise = new RSVP.Promise(function(resolve, reject){
+			var promises = [],
+				self = this;
+
+			_.each(prepos, function(item){
+				promises.push(commit.getBranch(item));
+			});
+
+			RSVP.all(promises).then(function(){
+				resolve(self);
+			}).catch(function(reason){
+				reject(self);
+			});
+		});
+		return promise;
 	},
 
 	/* pprepo: path of the repository
@@ -219,6 +209,58 @@ var commit = {
 				pfunction(branches);
 			}
 		});
+	},
+
+	getRepoConfig: function(prepo){
+		var promise = new RSVP.Promise(function(resolve, reject){
+
+			var repo = {},
+				self = this,
+				objectRepo = {};
+
+			repo = getRepository(prepo.path);
+			repo.config(function (err, config){
+				if(err){
+					colog.log(colog.colorRed(err));
+					reject(self);
+				}
+				else{
+					objectRepo = {
+						path: prepo.path,
+						name: config.items['remote.origin.url'],
+						configBranches: [],
+						branches: []
+					};
+					if(_.isArray(prepo.project)){
+						objectRepo.configBranches = prepo.project;
+					}
+					//	console.log(objectRepo);
+					resolve(objectRepo);
+				}
+			});
+		});
+		return promise;
+	},
+
+	getReposConfig: function(prepos, pnewRepos){
+		var promise = new RSVP.Promise(function(resolve, reject){
+			var promises = [],
+				self = this;
+
+			_.each(prepos, function(item){
+				promises.push(commit.getRepoConfig(item, pnewRepos));
+			});
+
+			RSVP.all(promises).then(function(repos){
+				_.each(repos, function(value){
+					pnewRepos.push(value);
+				});
+				resolve(self);
+			}).catch(function(reason){
+				reject(self);
+			});
+		});
+		return promise;
 	}
 };
 

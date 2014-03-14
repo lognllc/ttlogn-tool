@@ -220,7 +220,6 @@ var getHourType = function(userId){
 /*prints the time entry
 */
 var printTimeEntry = function(){
-
 	//console.log(entryToModify);
 	var date = moment(entryToModify.created).format(DATE_FORMAT);
 
