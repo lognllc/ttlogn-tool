@@ -12,14 +12,9 @@ var _ = require('underscore'),
 var DIGITS = /[^h]+/i,
 	NUMBER = /^\d+$/;
 
-var userId = 0,
-	userType = '',
-	projects = [];
-
-
 /*pentries: projects of the user to display
 set the projects, get hour type*/
-var deleteTimeEntry = function(pentries){
+var deleteTimeEntry = function(puser, pentries){
 	
 	prompt.get({
 		properties: {
@@ -33,9 +28,10 @@ var deleteTimeEntry = function(pentries){
 
 		var entryToDelete = {
 				entry_id: pentries[resultPrompt.entry - 1].id,
-				devtype: userType,
-				user_id: userId
+				devtype: puser.devtype,
+				user_id: puser.id
 			};
+		//	console.log(entryToDelete);
 		timeEntry.deleteTimeEntry(entryToDelete).then(function(){
 			colog.log(colog.colorGreen('Time entry deleted'));
 		});
@@ -44,7 +40,7 @@ var deleteTimeEntry = function(pentries){
 
 /*pentries: entries of the user unconfirm in this period to display
 prints the entries*/
-var printTimeEntries = function(pentries){
+var printTimeEntries = function(puser, pprojects, pentries){
 	
 	prompt.start();
 	prompt.get({
@@ -56,7 +52,7 @@ var printTimeEntries = function(pentries){
 			}
 		}
 	}, function (err, resultPrompt) {
-		var timeEntries = _.filter(pentries.result.not_confirmed_dates, function(entries){ return entries.project.id === projects[resultPrompt.project - 1].id; }),
+		var timeEntries = _.filter(pentries, function(entries){ return entries.project.id === pprojects[resultPrompt.project - 1].id; }),
 			date = moment();
 
 		colog.log(colog.colorMagenta('Select a time entry: '));
@@ -66,35 +62,18 @@ var printTimeEntries = function(pentries){
 			index++;
 			colog.log(colog.colorBlue(index + ': ' + value.tskDescription + '. Date: ' + date));
 		});
-		deleteTimeEntry(timeEntries);
+		deleteTimeEntry(puser, timeEntries);
 	});
-};
-
-/* gets the entries of the user unconfirm in this period to display
-*/
-var getTimeEntries = function(){
-	timeEntry.getUserPeriodTimeEntry(userId, printTimeEntries);
 };
 
 /*pprojects: projects of the user to display
 prints the projects, get hour type*/
 var printProjects = function(pprojects){
 	colog.log(colog.colorMagenta('Select a project: '));
-	_.each(pprojects.result, function(value, index){
+	_.each(pprojects, function(value, index){
 		index++;
 		colog.log(colog.colorBlue(index + ': ' + value.name));
 	});
-	projects = pprojects.result;
-	getTimeEntries();
-};
-
-/* puser: user data in the TT
-sets the user data and get hour types
-*/
-var getProjects = function(puser){
-	userId = puser.result.id;
-	userType = puser.result.devtype;
-	project.getProjects(puser.result.id, printProjects);
 };
 
 var controllerDeleteTask = {
@@ -102,10 +81,29 @@ var controllerDeleteTask = {
 	/*deletes a task of an user in the TT*/
 	deleteWork: function(){
 		var repos = [],
+			userInfo = {},
+			projects = [],
 			configuration = config.getConfig();
 	
 		if(config.existConfig){
-			user.login(configuration.email, configuration.password, getProjects);
+			user.login(configuration.email, configuration.password).then(function(puser){
+			//	console.log(puser.result);
+				userInfo = puser.result;
+				return project.getProjects(userInfo.id);
+
+			}).then(function(pprojects) {
+			//	console.log(pprojects.result);
+			//	console.log(userInfo.id);
+				projects = pprojects.result;
+				return timeEntry.getUserPeriodTimeEntry(userInfo.id);
+
+			}).then(function(pentries) {
+				printProjects(projects);
+				printTimeEntries(userInfo, projects, pentries.result.not_confirmed_dates);
+
+			}).catch(function(error) {
+				colog.log(colog.colorRed(error));
+			});
 		}
 		else{
 			colog.log(colog.colorRed("Error: Configuration file doesn't exist"));

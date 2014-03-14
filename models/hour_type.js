@@ -11,9 +11,9 @@ var hourType = {
 	puserId: users id
 	get the hour types of an user
 	*/
-	getHourType: function(puserId, pfunction){
+	getHourType: function(puserId){
 		var message	=  HOUR_TYPE + puserId;
-		dataAccess.get(message, pfunction);
+		return dataAccess.get(message);
 	}
 
 };

@@ -10,18 +10,9 @@ var project = {
 	pfunction: funtion to send the projects
 	get the projects of an user
 	*/
-	getProjects: function(puserId, pfunction){
+	getProjects: function(puserId){
 		var message	=  PROJECT + puserId;
-		dataAccess.get(message, pfunction);
-	},
-
-	/* puserId: id of the user
-	pfunction: funtion to send the projects
-	get the projects of an user
-	*/
-	getClients: function(pprojectId, pfunction){
-		var message	=  PROJECT + puserId;
-		dataAccess.get(message, pfunction);
+		return dataAccess.get(message);
 	}
 };
 

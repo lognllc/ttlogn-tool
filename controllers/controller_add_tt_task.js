@@ -17,11 +17,6 @@ var FORMATHOUR = /^\d+(|\.\d+)h$/i,
 	//ZONE = '-06:00',
 	DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
-var userId = 0,
-	userType = '',
-	projects = [];
-
-
 /* pmessage: message of the work
 return a string with the number of hours worked
 */
@@ -68,7 +63,7 @@ var saveDetailHour = function(ptask){
 /* ptask: the task to save
 save the task
 */
-var saveTask = function(ptask){
+var saveTask = function(ptask, puser, pprojects){
 
 	prompt.start();
 	prompt.get({
@@ -90,14 +85,15 @@ var saveTask = function(ptask){
 			}
 		}
 	}, function (err, resultPrompt) {
-		ptask.project_id = projects[resultPrompt.project - 1].id;
+		ptask.project_id = pprojects[resultPrompt.project - 1].id;
 		ptask.description = resultPrompt.description;
 		ptask.time = getWork(resultPrompt.time);
 
-		if(userType === 'non_exempt'){
+		if(puser.devtype === 'non_exempt'){
 			saveDetailHour(ptask);
 		}
 		else{
+		//	console.log(ptask);
 			timeEntry.postTimeEntry(ptask).then(function(){
 				colog.log(colog.colorGreen('Time entry saved'));
 			},
@@ -112,7 +108,7 @@ var saveTask = function(ptask){
 prints the information of the commits 
 if the last commit has a high date than the limitDate
 */
-var	getTaskDate = function(phourType){
+var	getTaskDate = function(puser, pprojects, phourType){
 
 	var date = moment().format(DATE_FORMAT);
 	
@@ -120,14 +116,14 @@ var	getTaskDate = function(phourType){
 
 	taskToInsert = {
 		created:  date,
-		developer_id: userId,
+		developer_id: puser.id,
 		project_id: '',
 		description: '',
 		time: '',
 		hour_type_id: phourType.id
 	};
 
-	saveTask(taskToInsert);
+	saveTask(taskToInsert, puser, pprojects);
 
 };
 
@@ -136,30 +132,20 @@ get the id of billable,
 */
 var getBillable = function(phours){
 	var BILLABlE = 'Billable';
-	var billableHour = _.find(phours.result, function(hour){ return hour.name === BILLABlE; });
-	getTaskDate(billableHour);
+	var billableHour = _.find(phours, function(hour){ return hour.name === BILLABlE; });
+	return billableHour;
+//	getTaskDate(billableHour);
 };
 
 
 /*pprojects: projects of the user to display
 prints the projects, get hour type*/
-var printProject = function(pprojects){
+var printProjects = function(pprojects){
 	colog.log(colog.colorMagenta('Select a project: '));
-	_.each(pprojects.result, function(value, index){
+	_.each(pprojects, function(value, index){
 		index ++;
 		colog.log(colog.colorBlue(index + ': ' + value.name));
 	});
-	projects = pprojects.result;
-	hourType.getHourType(userId, getBillable);
-};
-
-/* puser: user data in the TT
-sets the user data and get hour types
-*/
-var getHourType = function(puser){
-	userId = puser.result.id;
-	userType = puser.result.devtype;
-	project.getProjects(puser.result.id, printProject);
 };
 
 var controllerAddTask = {
@@ -167,10 +153,32 @@ var controllerAddTask = {
 	/*saves a task of an user in the TT*/
 	saveWork: function(){
 		var repos = [],
+			billable = 0,
+			userInfo = {},
+			projects = [],
 			configuration = config.getConfig();
 	
 		if(config.existConfig){
-			user.login(configuration.email, configuration.password, getHourType);
+			user.login(configuration.email, configuration.password).then(function(puser){
+				//console.log(puser.result);
+				userInfo = puser.result;
+				return project.getProjects(userInfo.id);
+
+			}).then(function(pprojects) {
+				//console.log(pprojects.result);
+				//console.log(userInfo.id);
+				projects = pprojects.result;
+				return hourType.getHourType(userInfo.id);
+
+			}).then(function(phourType) {
+				//console.log(phourType);
+				billable = getBillable(phourType.result);
+				printProjects(projects);
+				getTaskDate(userInfo, projects, billable);
+
+			}).catch(function(error) {
+				colog.log(colog.colorRed(error));
+			});
 		}
 		else{
 			colog.log(colog.colorRed("Error: Configuration file doesn't exist"));

@@ -207,6 +207,15 @@ var modifyHourType = function(phours){
 	});
 };
 
+/*pprojects: projects of the user to display
+prints the projects, get hour type*/
+var getHourType = function(userId){
+	hourType.getHourType(userId).then(function(hourTypes){
+		modifyHourType(pprojects);
+	}).catch(function(error) {
+		colog.log(colog.colorRed(error));
+	});
+};
 
 /*prints the time entry
 */
@@ -247,7 +256,7 @@ var printTimeEntry = function(){
 				modifyTime();
 				break;
 			case '4':
-				hourType.getHourType(userId, modifyHourType);
+				getHourType(userId);
 				break;
 			case '5':
 				modifyProject();
@@ -308,7 +317,7 @@ var printTimeEntries = function(pentries){
 			}
 		}
 	}, function (err, resultPrompt) {
-		var timeEntries = _.filter(pentries.result.not_confirmed_dates, function(entries){ return entries.project.id === projects[resultPrompt.project - 1].id; }),
+		var timeEntries = _.filter(pentries, function(entries){ return entries.project.id === projects[resultPrompt.project - 1].id; }),
 			date = moment();
 
 		colog.log(colog.colorMagenta('Select a time entry: '));
@@ -322,31 +331,14 @@ var printTimeEntries = function(pentries){
 	});
 };
 
-/* gets the entries of the user unconfirm in this period to display
-*/
-var getTimeEntries = function(){
-	timeEntry.getUserPeriodTimeEntry(userId, printTimeEntries);
-};
-
 /*pprojects: projects of the user to display
 prints the projects, get hour type*/
 var printProjects = function(pprojects){
 	colog.log(colog.colorMagenta('Select a project: '));
-	_.each(pprojects.result, function(value, index){
+	_.each(pprojects, function(value, index){
 		index++;
 		colog.log(colog.colorBlue(index + ': ' + value.name));
 	});
-	projects = pprojects.result;
-	getTimeEntries();
-};
-
-/* puser: user data in the TT
-sets the user data and get hour types
-*/
-var getProjects = function(puser){
-	userId = puser.result.id;
-	userType = puser.result.devtype;
-	project.getProjects(puser.result.id, printProjects);
 };
 
 var controllerModifyTask = {
@@ -357,7 +349,24 @@ var controllerModifyTask = {
 			configuration = config.getConfig();
 	
 		if(config.existConfig){
-			user.login(configuration.email, configuration.password, getProjects);
+				user.login(configuration.email, configuration.password).then(function(puser){
+				//console.log(puser.result);
+				userId = puser.result.id;
+				userType = puser.result.devtype;
+				return project.getProjects(puser.result.id);
+
+			}).then(function(pprojects) {
+				//console.log(pprojects.result);
+				projects = pprojects.result;
+				return timeEntry.getUserPeriodTimeEntry(userId);
+
+			}).then(function(pentries) {
+				printProjects(projects);
+				printTimeEntries(pentries.result.not_confirmed_dates);
+
+			}).catch(function(error) {
+				colog.log(colog.colorRed(error));
+			});
 		}
 		else{
 			colog.log(colog.colorRed("Error: Configuration file doesn't exist"));

@@ -4,7 +4,8 @@ var prettyjson = require('prettyjson'),
 	clientTT = require('node-rest-client').Client;
 
 var //HOST_DEVELOPMENT = 'http://10.0.1.80:3000',
-	HOST_DEVELOPMENT = 'http://192.168.0.120:3000',
+//	HOST_DEVELOPMENT = 'http://192.168.0.120:3000',	
+	HOST_DEVELOPMENT = 'http://186.177.44.15:3000',
 	HOST = 'http://ec2-54-226-94-0.compute-1.amazonaws.com',
 	DEVELOPMENT = 'development';
 
@@ -27,26 +28,33 @@ var apiTTDataAccess = {
 /*	pparameters: parameters for the get
 	pfunction: function to execute later
 	makes a get and send the info receive to pfunction*/
-	get: function(pparameters, pfunction){
+	get: function(pparameters){
+		var promise = new RSVP.Promise(function(resolve, reject) {
 			var dataServer = {},
 				client = new clientTT(),
 				host = getHost();
-			//console.log(pparameters);
+			
+			console.log(host+pparameters);
 			client.get(host+pparameters, function(data, response){
 			//	console.log(data);
 				dataServer = JSON.parse(data);
-				pfunction(dataServer);
+			//	pfunction(dataServer);
+				resolve(dataServer);
 
 			}).on('error',function(err){
 				colog.log(colog.colorRed('Error: Something went wrong on the request', err.request.options));
+				reject(self);
 			});
+		});
+		return promise;
 	},
 
 /*	ppost: post method
 	pparameters: parameters for the post
 	pfunction: function to execute later
 	makes a post and send the info receive to pfunction*/
-	post: function(ppost, pparameters, pfunction){
+	post: function(ppost, pparameters){
+		var promise = new RSVP.Promise(function(resolve, reject) {
 			var client = new clientTT(),
 				dataServer = {},
 				host = getHost(),
@@ -55,19 +63,25 @@ var apiTTDataAccess = {
 					headers: {"Content-Type": "application/json"}
 				};
 
+			console.log(pparameters);
 			client.post(host + ppost, args, function(data,response) {
+			//	console.log(data);
 				dataServer = JSON.parse(data);
-				pfunction(dataServer);
+			//	pfunction(dataServer);
+				resolve(dataServer);
 
 			}).on('error',function(err){
 				colog.log(colog.colorRed('Error: Something went wrong on the request', err.request.options));
+				reject(self);
 			});
+		});
+		return promise;
 	},
 
 /*	ppost: post method
 	pparameters: parameters for the get
 	makes a post, work with promises */
-	waitPost: function(ppost, pparameters){
+/*	waitPost: function(ppost, pparameters){
 		var promise = new RSVP.Promise(function(resolve, reject) {
 			var client = new clientTT(),
 				self = this,
@@ -88,7 +102,7 @@ var apiTTDataAccess = {
 			});
 		});
 		return promise;
-	}
+	}*/
 };
 
 module.exports = apiTTDataAccess;

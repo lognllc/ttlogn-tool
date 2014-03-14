@@ -93,11 +93,11 @@ var getProject = function(pprojects){
 		cancel = 0;
 
 	colog.log(colog.colorBlue('Select a project: '));
-	_.each(pprojects.result, function(projects, index){
+	_.each(pprojects, function(projects, index){
 		index++;
 		colog.log(colog.colorBlue(index + ': ' + projects.name));
 	});
-	cancel = pprojects.result.length + 1;
+	cancel = pprojects.length + 1;
 	colog.log(colog.colorBlue(cancel + ': Cancel'));
 
 	prompt.start();
@@ -112,17 +112,11 @@ var getProject = function(pprojects){
 		if(err){
 			colog.log(colog.colorRed(err));
 		}
-		newProject =  pprojects.result[resultPrompt.project - 1];
+		newProject =  pprojects[resultPrompt.project - 1];
 //		config.registerRepo(pprojects.result[resultPrompt.project - 1]);	
 		console.log(repoPath);
 		commit.getRepoBranches('/mnt/hgfs/Development/repoPrueba', saveRepo);
 	});
-};
-
-/*puser: object puser 
-uses the id of the user to search for he's projects */
-var getUserProject = function(puser){
-	project.getProjects(puser.result.id, getProject);
 };
 
 
@@ -143,7 +137,17 @@ var controllerConfigFile = {
 		
 		if(config.existConfig()){
 			configuration = config.getConfig();
-			user.login(configuration.email, configuration.password, getUserProject);
+			user.login(configuration.email, configuration.password).then(function(puser){
+				//console.log(puser.result);
+				return project.getProjects(puser.result.id);
+
+			}).then(function(pprojects) {
+				console.log(pprojects.result);
+				getProject(pprojects.result);
+
+			}).catch(function(error) {
+				colog.log(colog.colorRed(error));
+			});
 		}
 		else{
 			colog.log(colog.colorRed('Error: Make first the configuration:'));
