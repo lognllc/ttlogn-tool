@@ -2,14 +2,14 @@ var _ = require('underscore'),
 	path = require('path'),
 	colog = require('colog'),
 	RSVP = require('rsvp'),
-	moment = require('moment'),
+	moment = require('moment-timezone'),
 	config = require(path.resolve(__dirname,'../models/config.js')),
 	commit = require(path.resolve(__dirname,'../models/commit.js'));
 
 var FORMAT_HOUR = /\(\d+(|\.\d+)h\)/i,
 	DIGITS = /[^\(\)h]+/i,
-	ZONE = '-08:00',
-	DATE_FORMAT = 'dddd, DD MMMM YYYY'; // HH:mm
+	//ZONE = '-08:00',
+	DATE_FORMAT = 'dddd, DD MMMM YYYY ----- HH:mm';
 
 /* pmessage: message of the commit 
 return a string with the number of hours worked
@@ -80,7 +80,7 @@ var	printCommits = function(prepos){
 					hoursPerDate += hoursPerTask;
 					message = value.message.split('\n');
 					value.message = message[0];
-					colog.log(colog.colorBlue('\t' + value.message));
+					colog.log(colog.colorBlue('\t' + value.message + moment.parseZone(value.date).tz("America/Los_Angeles").format(DATE_FORMAT)));
 					
 				});
 				colog.log(colog.apply('Hours worked: '+ hoursPerDate, ['colorGreen']));
@@ -145,11 +145,14 @@ var	bindCommits = function(prepos, pgitName){
 								id: -1,
 								date: moment(),
 								message: ''
-							};
+							},
+							date = moment.parseZone(value.committed_date).tz("America/Los_Angeles");
 
-						date = moment.parseZone(value.committed_date).zone(ZONE);
+
 						if(value.author.name === pgitName && date >= limitDate && FORMAT_HOUR.test(value.message)){
 							existCommit = _.findWhere(project.commits, {id: value.id});
+
+							console.log(value.committed_date + '234123412341');
 
 							if(typeof existCommit === 'undefined'){
 								validCommit.id = value.id;

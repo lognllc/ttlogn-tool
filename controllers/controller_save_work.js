@@ -52,7 +52,7 @@ var	saveCommits = function(puser, prepos, phourType){
 						created:  date,
 						developer_id: puser.id,
 						project_id: project.id,
-						description: commitMessage,
+						description: value.message,
 						time: work,
 						hour_type_id: phourType.id
 					};
