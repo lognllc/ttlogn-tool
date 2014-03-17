@@ -80,7 +80,7 @@ var	printCommits = function(prepos){
 					hoursPerDate += hoursPerTask;
 					message = value.message.split('\n');
 					value.message = message[0];
-					colog.log(colog.colorBlue('\t' + value.message + moment.parseZone(value.date).tz("America/Los_Angeles").format(DATE_FORMAT)));
+					colog.log(colog.colorBlue('\t' + value.message));
 					
 				});
 				colog.log(colog.apply('Hours worked: '+ hoursPerDate, ['colorGreen']));

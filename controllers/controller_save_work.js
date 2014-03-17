@@ -60,8 +60,8 @@ var	saveCommits = function(puser, prepos, phourType){
 				if(puser.devtype === 'non_exempt'){
 					
 					hour = parseFloat(work);
-					timeIn = moment(value.date);
-					timeOut = moment(value.date);
+					timeIn = value.date;
+					timeOut = value.date;
 					timeOut.add((hour),'hours');
 
 					timeIn = timeIn.format('HH.mm');
@@ -70,16 +70,16 @@ var	saveCommits = function(puser, prepos, phourType){
 					commitToInsert.time_in = timeIn;
 					commitToInsert.time_out = timeOut;
 				}
-				console.log(commitToInsert);
-				//promises.push(timeEntry.postTimeEntry(commitToInsert));
+				//console.log(commitToInsert);
+				promises.push(timeEntry.postTimeEntry(commitToInsert));
 			});
 		});
 	});
-	/*RSVP.all(promises).then(function(posts) {
+	RSVP.all(promises).then(function(posts) {
 			colog.log(colog.colorGreen('Saved successful'));
 		}).catch(function(reason){
 			colog.log(colog.colorRed(reason));
-		});*/
+		});
 };
 
 
