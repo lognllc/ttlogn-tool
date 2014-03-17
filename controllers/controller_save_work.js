@@ -2,7 +2,7 @@ var _ = require('underscore'),
 	path = require('path'),
 	colog = require('colog'),
 	RSVP = require('rsvp'),
-	moment = require('moment'),
+	moment = require('moment-timezone'),
 	config = require(path.resolve(__dirname,'../models/config.js')),
 	timeEntry = require(path.resolve(__dirname,'../models/time_entry.js')),
 	user = require(path.resolve(__dirname,'../models/user.js')),
@@ -11,7 +11,7 @@ var _ = require('underscore'),
 	commit = require(path.resolve(__dirname,'../models/commit.js'));
 
 var FORMAT_HOUR = /\(\d+(|\.\d+)h\)/i,
-	ZONE = '-08:00',
+	//ZONE = '-08:00',
 	DIGITS = /[^\(\)h]+/i;
 
 /* pmessage: message of the commit 
@@ -28,7 +28,7 @@ saves the commits in the TT
 */
 var	saveCommits = function(puser, prepos, phourType){
 
-	var date = moment().format('YYYY-MM-DD hh:mm:ss'),
+	var date = moment().format('YYYY-MM-DD HH:mm:ss'),
 	promises = [];
 
 	_.each(prepos, function(projects){
@@ -42,7 +42,7 @@ var	saveCommits = function(puser, prepos, phourType){
 					hour = 0,
 					work = 0;
 
-				date = moment(value.date).format('YYYY-MM-DD hh:mm:ss');
+				date = value.date.format('YYYY-MM-DD HH:mm:ss');
 				work = getWork(value.message);
 				commitMessage = value.message.split('\n');
 				value.message = commitMessage[0];
@@ -70,16 +70,16 @@ var	saveCommits = function(puser, prepos, phourType){
 					commitToInsert.time_in = timeIn;
 					commitToInsert.time_out = timeOut;
 				}
-				//console.log(commitToInsert);
-				promises.push(timeEntry.postTimeEntry(commitToInsert));
+				console.log(commitToInsert);
+				//promises.push(timeEntry.postTimeEntry(commitToInsert));
 			});
 		});
 	});
-	RSVP.all(promises).then(function(posts) {
+	/*RSVP.all(promises).then(function(posts) {
 			colog.log(colog.colorGreen('Saved successful'));
 		}).catch(function(reason){
 			colog.log(colog.colorRed(reason));
-		});
+		});*/
 };
 
 
@@ -140,7 +140,7 @@ var	bindCommits = function(puser, prepos, pbillable, pgitName){
 								message: ''
 							};
 
-						date = moment.parseZone(value.committed_date).zone(ZONE);
+						date = moment.parseZone(value.committed_date);
 						if(value.author.name === pgitName && date >= limitDate && FORMAT_HOUR.test(value.message)){
 							existCommit = _.findWhere(project.commits, {id: value.id});
 							if(typeof existCommit === 'undefined'){

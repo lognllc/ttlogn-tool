@@ -9,7 +9,7 @@ var _ = require('underscore'),
 var FORMAT_HOUR = /\(\d+(|\.\d+)h\)/i,
 	DIGITS = /[^\(\)h]+/i,
 	//ZONE = '-08:00',
-	DATE_FORMAT = 'dddd, DD MMMM YYYY ----- HH:mm';
+	DATE_FORMAT = 'dddd, DD MMMM YYYY';
 
 /* pmessage: message of the commit 
 return a string with the number of hours worked
@@ -146,14 +146,12 @@ var	bindCommits = function(prepos, pgitName){
 								date: moment(),
 								message: ''
 							},
-							date = moment.parseZone(value.committed_date).tz("America/Los_Angeles");
+							date = moment.parseZone(value.committed_date);
 
 
 						if(value.author.name === pgitName && date >= limitDate && FORMAT_HOUR.test(value.message)){
 							existCommit = _.findWhere(project.commits, {id: value.id});
-
-							console.log(value.committed_date + '234123412341');
-
+							//console.log(value.committed_date);
 							if(typeof existCommit === 'undefined'){
 								validCommit.id = value.id;
 								validCommit.date = date;
