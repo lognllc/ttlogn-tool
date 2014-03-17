@@ -61,8 +61,8 @@ var config = {
 			projectsList = {};
 
 		dataFile = getJson();
-		//data = process.cwd();
-		data = '/mnt/hgfs/Development/repoPrueba';
+		data = process.cwd();
+//		data = '/mnt/hgfs/Development/repoPrueba';
 
 		if(typeof pbranch === 'undefined'){
 			console.log('entre repo');

@@ -7,11 +7,11 @@ var _ = require('underscore'),
 	timeEntry = require(path.resolve(__dirname,'../models/time_entry.js')),
 	user = require(path.resolve(__dirname,'../models/user.js')),
 	hourType = require(path.resolve(__dirname,'../models/hour_type.js')),
-	//emitter = require('events').EventEmitter,
+	detailTime = require(path.resolve(__dirname,'../models/detail_time.js')),
+	utils = require(path.resolve(__dirname,'../lib/utils.js')),
 	commit = require(path.resolve(__dirname,'../models/commit.js'));
 
 var FORMAT_HOUR = /\(\d+(|\.\d+)h\)/i,
-	//ZONE = '-08:00',
 	DIGITS = /[^\(\)h]+/i;
 
 /* pmessage: message of the commit 
@@ -21,6 +21,18 @@ var getWork = function(pmessage){
 	var test = FORMAT_HOUR.exec(pmessage);
 	test = DIGITS.exec(test[0]);
 	return test[0];
+};
+
+/* pmessage: message of the commit 
+return a string with the number of hours worked
+*/
+var setDetailTime = function(pentry, phour, pdate){
+	var timeOut = pdate;
+
+	timeOut.add((phour),'hours');
+
+	pentry.time_in = pdate.format('HH.mm');
+	pentry.time_out  = timeOut.format('HH.mm');
 };
 
 /* phourType: hour type
@@ -58,17 +70,8 @@ var	saveCommits = function(puser, prepos, phourType){
 					};
 
 				if(puser.devtype === 'non_exempt'){
-					
 					hour = parseFloat(work);
-					timeIn = value.date;
-					timeOut = value.date;
-					timeOut.add((hour),'hours');
-
-					timeIn = timeIn.format('HH.mm');
-					timeOut = timeOut.format('HH.mm');
-						
-					commitToInsert.time_in = timeIn;
-					commitToInsert.time_out = timeOut;
+					detailTime.setDetailTime(commitToInsert, hour, value.date);
 				}
 				//console.log(commitToInsert);
 				promises.push(timeEntry.postTimeEntry(commitToInsert));
@@ -160,16 +163,6 @@ var	bindCommits = function(puser, prepos, pbillable, pgitName){
 	saveCommits(puser, repos, pbillable);
 };
 
-
-/* phours: array of type of hours
-get billable type, 
-*/
-var getBillable = function(phours){
-	var BILLABlE = 'Billable';
-	var billableHour = _.find(phours, function(hour){ return hour.name === BILLABlE; });
-	return billableHour;
-};
-
 var controllerSaveWork = {
 
 	/*pdate: sets the limit date [-d|-w|-m]
@@ -194,7 +187,7 @@ var controllerSaveWork = {
 					return hourType.getHourType(userInfo.id);
 
 				}).then(function(phourType){
-					billable = getBillable(phourType.result);
+					billable = hourType.getBillable(phourType.result);
 					return commit.getReposConfig(reposConfig, repos);
 
 				}).then(function(){

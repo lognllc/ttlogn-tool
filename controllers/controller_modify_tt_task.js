@@ -8,6 +8,7 @@ var _ = require('underscore'),
 	timeEntry = require(path.resolve(__dirname,'../models/time_entry.js')),
 	user = require(path.resolve(__dirname,'../models/user.js')),
 	project = require(path.resolve(__dirname,'../models/project.js')),
+	utils = require(path.resolve(__dirname,'../lib/utils.js')),
 	hourType = require(path.resolve(__dirname,'../models/hour_type.js'));
 
 var FORMATHOUR = /^\d+(|\.\d+)h$/i,
@@ -69,16 +70,13 @@ var modifyTimeIn = function(){
 			}
 		}
 	}, function (err, resultPrompt) {
-		var timeIn = moment.utc(resultPrompt.timeIn, 'HH:mm');
-			timeOut = moment.utc(resultPrompt.timeIn, 'HH:mm');
+		var timeIn = moment(resultPrompt.timeIn, 'HH:mm');
+			timeOut = moment(resultPrompt.timeIn, 'HH:mm');
 
 		timeOut.add(parseFloat(entryToModify.time),'hours');
 
-		timeIn = timeIn.format('HH.mm');
-		timeOut = timeOut.format('HH.mm');
-
-		entryToModify.detail_hours.time_in = timeIn;
-		entryToModify.detail_hours.time_out = timeOut;
+		entryToModify.detail_hours.time_in = timeIn.format('HH.mm');
+		entryToModify.detail_hours.time_out = timeOut.format('HH.mm');
 		printTimeEntry();
 	});
 };
@@ -330,15 +328,6 @@ var printTimeEntries = function(pentries){
 	});
 };
 
-/*pprojects: projects of the user to display
-prints the projects, get hour type*/
-var printProjects = function(pprojects){
-	colog.log(colog.colorMagenta('Select a project: '));
-	_.each(pprojects, function(value, index){
-		index++;
-		colog.log(colog.colorBlue(index + ': ' + value.name));
-	});
-};
 
 var controllerModifyTask = {
 
@@ -358,7 +347,7 @@ var controllerModifyTask = {
 				return timeEntry.getUserPeriodTimeEntry(userId);
 
 			}).then(function(pentries) {
-				printProjects(projects);
+				utils.printNames(projects);
 				printTimeEntries(pentries.result.not_confirmed_dates);
 
 			}).catch(function(error) {

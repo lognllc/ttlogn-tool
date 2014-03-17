@@ -7,10 +7,12 @@ var _ = require('underscore'),
 	config = require(path.resolve(__dirname,'../models/config.js')),
 	timeEntry = require(path.resolve(__dirname,'../models/time_entry.js')),
 	user = require(path.resolve(__dirname,'../models/user.js')),
+	utils = require(path.resolve(__dirname,'../lib/utils.js')),
 	project = require(path.resolve(__dirname,'../models/project.js'));
 
 var DIGITS = /[^h]+/i,
-	NUMBER = /^\d+$/;
+	NUMBER = /^\d+$/,
+	DATE_FORMAT = 'l';
 
 /*pentries: projects of the user to display
 set the projects, get hour type*/
@@ -58,7 +60,7 @@ var printTimeEntries = function(puser, pprojects, pentries){
 		colog.log(colog.colorMagenta('Select a time entry: '));
 		_.each(timeEntries, function(value, index){
 			date = moment.utc(value.created);
-			date = date.format('l');
+			date = date.format(DATE_FORMAT);
 			index++;
 			colog.log(colog.colorBlue(index + ': ' + value.tskDescription + '. Date: ' + date));
 		});
@@ -66,15 +68,6 @@ var printTimeEntries = function(puser, pprojects, pentries){
 	});
 };
 
-/*pprojects: projects of the user to display
-prints the projects, get hour type*/
-var printProjects = function(pprojects){
-	colog.log(colog.colorMagenta('Select a project: '));
-	_.each(pprojects, function(value, index){
-		index++;
-		colog.log(colog.colorBlue(index + ': ' + value.name));
-	});
-};
 
 var controllerDeleteTask = {
 
@@ -87,18 +80,15 @@ var controllerDeleteTask = {
 	
 		if(config.existConfig){
 			user.login(configuration.email, configuration.password).then(function(puser){
-			//	console.log(puser.result);
 				userInfo = puser.result;
 				return project.getProjects(userInfo.id);
 
 			}).then(function(pprojects) {
-			//	console.log(pprojects.result);
-			//	console.log(userInfo.id);
 				projects = pprojects.result;
 				return timeEntry.getUserPeriodTimeEntry(userInfo.id);
 
 			}).then(function(pentries) {
-				printProjects(projects);
+				utils.printNames(projects);
 				printTimeEntries(userInfo, projects, pentries.result.not_confirmed_dates);
 
 			}).catch(function(error) {

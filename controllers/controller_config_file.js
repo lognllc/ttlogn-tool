@@ -5,11 +5,8 @@ var path = require('path'),
 	config = require(path.resolve(__dirname,'../models/config.js')),
 	commit = require(path.resolve(__dirname,'../models/commit.js')),
 	user = require(path.resolve(__dirname,'../models/user.js')),
+	utils = require(path.resolve(__dirname,'../lib/utils.js')),
 	project = require(path.resolve(__dirname,'../models/project.js'));
-
-var branchName = '',
-	newProject = {};
-
 
 var printRepos = function(pconfig){
 	var newRepos = [];
@@ -45,7 +42,7 @@ var printRepos = function(pconfig){
 
 /*pprojects: projects of the user to display
 waits the user to choose a project, then save the repository*/
-var saveRepo = function(pbranches){
+var saveRepo = function(pbranches, pproject){
 	newBranch = {};
 
 	colog.log(colog.colorBlue('Select a branch: '));
@@ -73,30 +70,18 @@ var saveRepo = function(pbranches){
 			if(resultPrompt.branch <= pbranches.length){
 				newBranch = pbranches[resultPrompt.branch - 1];
 			}
-			config.registerRepo(newProject, newBranch.name);
+			config.registerRepo(pproject, newBranch.name);
 		}
 	});
 };
-
-
-/*puser: object puser 
-uses the id of the user to search for he's projects */
-/*var getRepos = function(puser){
-	project.getProjects(puser.result.id, saveRepo);
-};*/
-
 
 /*pprojects: projects of the user to display
 waits the user to choose a project, then save the repository*/
 var getProject = function(pprojects){
 	var repoPath = process.cwd(),
-		cancel = 0;
+		cancel = 0,
+		newProject = {};
 
-	colog.log(colog.colorBlue('Select a project: '));
-	_.each(pprojects, function(projects, index){
-		index++;
-		colog.log(colog.colorBlue(index + ': ' + projects.name));
-	});
 	cancel = pprojects.length + 1;
 	colog.log(colog.colorBlue(cancel + ': Cancel'));
 
@@ -113,9 +98,11 @@ var getProject = function(pprojects){
 			colog.log(colog.colorRed(err));
 		}
 		newProject =  pprojects[resultPrompt.project - 1];
-//		config.registerRepo(pprojects.result[resultPrompt.project - 1]);	
-		console.log(repoPath);
-		commit.getRepoBranches('/mnt/hgfs/Development/repoPrueba', saveRepo);
+		commit.getRepoBranches(repoPath).then(function(pbranches){
+			saveRepo(pbranches, newProject);
+		}).catch(function(error) {
+			colog.log(colog.colorRed(error));
+		});
 	});
 };
 
@@ -143,6 +130,7 @@ var controllerConfigFile = {
 
 			}).then(function(pprojects) {
 				console.log(pprojects.result);
+				utils.printNames(pprojects.result);
 				getProject(pprojects.result);
 
 			}).catch(function(error) {

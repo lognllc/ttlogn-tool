@@ -8,6 +8,7 @@ var _ = require('underscore'),
 	timeEntry = require(path.resolve(__dirname,'../models/time_entry.js')),
 	user = require(path.resolve(__dirname,'../models/user.js')),
 	project = require(path.resolve(__dirname,'../models/project.js')),
+	utils = require(path.resolve(__dirname,'../lib/utils.js')),
 	hourType = require(path.resolve(__dirname,'../models/hour_type.js'));
 
 var FORMATHOUR = /^\d+(|\.\d+)h$/i,
@@ -122,31 +123,9 @@ var	getTaskDate = function(puser, pprojects, phourType){
 		time: '',
 		hour_type_id: phourType.id
 	};
-
 	saveTask(taskToInsert, puser, pprojects);
-
 };
 
-/* hours: array of type of hours
-get the id of billable, 
-*/
-var getBillable = function(phours){
-	var BILLABlE = 'Billable';
-	var billableHour = _.find(phours, function(hour){ return hour.name === BILLABlE; });
-	return billableHour;
-//	getTaskDate(billableHour);
-};
-
-
-/*pprojects: projects of the user to display
-prints the projects, get hour type*/
-var printProjects = function(pprojects){
-	colog.log(colog.colorMagenta('Select a project: '));
-	_.each(pprojects, function(value, index){
-		index ++;
-		colog.log(colog.colorBlue(index + ': ' + value.name));
-	});
-};
 
 var controllerAddTask = {
 
@@ -160,20 +139,16 @@ var controllerAddTask = {
 	
 		if(config.existConfig){
 			user.login(configuration.email, configuration.password).then(function(puser){
-				//console.log(puser.result);
 				userInfo = puser.result;
 				return project.getProjects(userInfo.id);
 
 			}).then(function(pprojects) {
-				//console.log(pprojects.result);
-				//console.log(userInfo.id);
 				projects = pprojects.result;
 				return hourType.getHourType(userInfo.id);
 
 			}).then(function(phourType) {
-				//console.log(phourType);
-				billable = getBillable(phourType.result);
-				printProjects(projects);
+				utils.printNames(projects);
+				billable = hourType.getBillable(phourType.result);
 				getTaskDate(userInfo, projects, billable);
 
 			}).catch(function(error) {

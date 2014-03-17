@@ -7,10 +7,11 @@ var HOST_DEVELOPMENT = 'http://10.0.1.80:3000',
 //	HOST_DEVELOPMENT = 'http://192.168.0.120:3000',	
 //	HOST_DEVELOPMENT = 'http://186.177.44.15:3000',
 	HOST = 'http://ec2-54-226-94-0.compute-1.amazonaws.com',
-	DEVELOPMENT = 'development';
+	DEVELOPMENT = 'development',
+	TT_ENV = 'TT_ENV';
 
 var getHost = function(){
-	var tt_env = process.env['TT_ENV'],
+	var tt_env = process.env[TT_ENV],
 		host = '';
 		
 	if(tt_env === DEVELOPMENT){
@@ -39,7 +40,6 @@ var apiTTDataAccess = {
 			//	console.log(data);
 
 				dataServer = JSON.parse(data);
-			//	pfunction(dataServer);
 				resolve(dataServer);
 
 			}).on('error',function(err){
@@ -61,16 +61,13 @@ var apiTTDataAccess = {
 				host = getHost(),
 				args = {
 					data: pparameters,
-					headers: {"Content-Type": "application/json"}
+					headers: {'Content-Type': 'application/json'}
 				};
 
 			//console.log(pparameters);
-			//client.setMaxListeners(0);
-			
 			client.post(host + ppost, args, function(data,response) {
 			//	console.log(data);
 				dataServer = JSON.parse(data);
-			//	pfunction(dataServer);
 				resolve(dataServer);
 
 			}).on('error',function(err){

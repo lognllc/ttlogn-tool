@@ -193,22 +193,24 @@ var commit = {
 	pfunction: function to send the result array
 	get the branches of the repositories */
 	getRepoBranches: function(prepo, pfunction){
-
-		var repo = [],
-			objectBrach = {};
-			
-		repo = getRepository(prepo);
-		repo.branches(function (err, branches){
-			if(err){
-				console.log('no');
-				colog.log(colog.colorRed('Error: ' + err));
-			}
-			else{
-
-			console.log('si');
-				pfunction(branches);
-			}
+		var promise = new RSVP.Promise(function(resolve, reject){
+			var repo = [],
+				objectBrach = {};
+				
+			repo = getRepository(prepo);
+			repo.branches(function (err, branches){
+				if(err){
+					//console.log('no');
+					colog.log(colog.colorRed('Error: ' + err));
+					reject(self);
+				}
+				else{
+					//console.log('si');
+					resolve(branches);
+				}
+			});
 		});
+		return promise;
 	},
 
 	getRepoConfig: function(prepo){
@@ -231,10 +233,6 @@ var commit = {
 						configBranches: prepo.project,
 						branches: []
 					};
-					/*if(_.isArray(prepo.project)){
-						objectRepo.configBranches = prepo.project;
-					}*/
-					//	console.log(objectRepo);
 					resolve(objectRepo);
 				}
 			});

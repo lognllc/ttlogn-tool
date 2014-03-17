@@ -4,6 +4,7 @@ var _ = require('underscore'),
 	RSVP = require('rsvp'),
 	moment = require('moment-timezone'),
 	config = require(path.resolve(__dirname,'../models/config.js')),
+	utils = require(path.resolve(__dirname,'../lib/utils.js')),
 	commit = require(path.resolve(__dirname,'../models/commit.js'));
 
 var FORMAT_HOUR = /\(\d+(|\.\d+)h\)/i,
@@ -33,6 +34,17 @@ var	sortProjects = function(prepos){
 	});
 };
 
+/* prepos: array of repos
+sort the commits by time
+*/
+var	setPrintDateLimit = function(pdate){
+	var limitDate = moment();
+	limitDate.date(pdate.get('date'));
+	limitDate.month(pdate.get('month'));
+	limitDate.year(pdate.get('year'));
+	return limitDate;
+};
+
 /* prepos: array of repos with commits
 prints the information of the commits 
 */
@@ -57,31 +69,25 @@ var	printCommits = function(prepos){
 
 				firstCommit = _.first(project.commits);
 				date = firstCommit.date;
-				limitDate.date(date.get('date'));
-				limitDate.month(date.get('month'));
-				limitDate.year(date.get('year'));
+				limitDate = setPrintDateLimit(date);
 				date = date.format(DATE_FORMAT);
+				
 				colog.log(colog.apply(date, ['bold', 'colorBlue']));
 
 				_.each(project.commits, function(value){
-					
 					if(value.date <= limitDate){
 						colog.log(colog.apply('Hours worked: '+ hoursPerDate + '\n', ['colorGreen']));
 						hoursPerDate = 0;
-						limitDate.date(value.date.get('date'));
-						limitDate.month(value.date.get('month'));
-						limitDate.year(value.date.get('year'));
+						limitDate = setPrintDateLimit(value.date);
 
 						date = value.date.format(DATE_FORMAT);
 						colog.log(colog.apply(date, ['bold', 'colorBlue']));
 					}
-					
 					hoursPerTask = parseFloat(getWork(value.message));
 					hoursPerDate += hoursPerTask;
 					message = value.message.split('\n');
 					value.message = message[0];
 					colog.log(colog.colorBlue('\t' + value.message));
-					
 				});
 				colog.log(colog.apply('Hours worked: '+ hoursPerDate, ['colorGreen']));
 				hoursPerDate = 0;
@@ -124,7 +130,6 @@ var	bindCommits = function(prepos, pgitName){
 
 	_.each(prepos, function(repository){
 		var projects = [];
-
 		_.each(repository.branches, function(branch){
 			var	project = {
 					id: -1,
@@ -148,10 +153,8 @@ var	bindCommits = function(prepos, pgitName){
 							},
 							date = moment.parseZone(value.committed_date);
 
-
 						if(value.author.name === pgitName && date >= limitDate && FORMAT_HOUR.test(value.message)){
 							existCommit = _.findWhere(project.commits, {id: value.id});
-							//console.log(value.committed_date);
 							if(typeof existCommit === 'undefined'){
 								validCommit.id = value.id;
 								validCommit.date = date;

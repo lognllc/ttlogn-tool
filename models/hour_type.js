@@ -1,4 +1,4 @@
-var //_ = require('underscore'),
+var _ = require('underscore'),
 	path = require('path'),
 	dataAccess = require(path.resolve(__dirname,'../dataAccess/apitt_data_access.js'));
 
@@ -14,6 +14,15 @@ var hourType = {
 	getHourType: function(puserId){
 		var message	=  HOUR_TYPE + puserId;
 		return dataAccess.get(message);
+	},
+
+	/* phours: array of type of hours
+	get billable type, 
+	*/
+	getBillable: function(phours){
+		var BILLABlE = 'Billable';
+		var billableHour = _.find(phours, function(hour){ return hour.name === BILLABlE; });
+		return billableHour;
 	}
 
 };

@@ -7,8 +7,6 @@ var USER_LOGIN = '/login/create.json',
 	GET_CLIENTS = '/users/get_clients.json?id=';
 
 
-
-
 var user = {
 
 	/*puser: email of the user
