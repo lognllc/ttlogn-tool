@@ -125,11 +125,9 @@ var controllerConfigFile = {
 		if(config.existConfig()){
 			configuration = config.getConfig();
 			user.login(configuration.email, configuration.password).then(function(puser){
-				//console.log(puser.result);
 				return project.getProjects(puser.result.id);
 
 			}).then(function(pprojects) {
-				console.log(pprojects.result);
 				utils.printNames(pprojects.result);
 				getProject(pprojects.result);
 

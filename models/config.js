@@ -65,7 +65,6 @@ var config = {
 //		data = '/mnt/hgfs/Development/repoPrueba';
 
 		if(typeof pbranch === 'undefined'){
-			console.log('entre repo');
 			colog.log(colog.colorBlue('Adding repository: ' + data +', and project: '+ pproject.name +' to configuration file'));
 			
 			dataRepo = {
@@ -78,7 +77,6 @@ var config = {
 			dataFile.repositories.push(dataRepo);
 		}
 		else{
-			console.log('entre branch');
 			colog.log(colog.colorBlue('Adding branch: ' + pbranch +', and project: '+ pproject.name +' to configuration file'));
 				
 			projectsList = _.filter(dataFile.repositories, function(repository)
@@ -90,7 +88,6 @@ var config = {
 			}
 
 			if(typeof newProject === 'undefined' || projectsList.length === 0){
-				console.log('entre en nuevo');
 				dataRepo = {
 					path: data,
 					project: [{
