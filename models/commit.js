@@ -34,7 +34,7 @@ var commit = {
 	getCommits: function(prepo, pbranch){
 		
 		var promise = new RSVP.Promise(function(resolve, reject){
-			var date = new Date(),
+			var date = moment(),
 				numberCommits = 0,
 				skip = 0,
 				numberArray = 0,
@@ -195,17 +195,16 @@ var commit = {
 	getRepoBranches: function(prepo, pfunction){
 		var promise = new RSVP.Promise(function(resolve, reject){
 			var repo = [],
+				self = this,
 				objectBrach = {};
 				
 			repo = getRepository(prepo);
 			repo.branches(function (err, branches){
 				if(err){
-					//console.log('no');
 					colog.log(colog.colorRed('Error: ' + err));
 					reject(self);
 				}
 				else{
-					//console.log('si');
 					resolve(branches);
 				}
 			});

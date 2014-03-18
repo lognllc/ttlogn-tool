@@ -10,7 +10,7 @@ var _ = require('underscore'),
 var FORMAT_HOUR = /\(\d+(|\.\d+)h\)/i,
 	DIGITS = /[^\(\)h]+/i,
 	//ZONE = '-08:00',
-	DATE_FORMAT = 'dddd, DD MMMM YYYY';
+	DATE_FORMAT = 'dddd, DD MMMM YYYY --- HH:mm';
 
 /* pmessage: message of the commit 
 return a string with the number of hours worked
@@ -38,7 +38,7 @@ var	sortProjects = function(prepos){
 sort the commits by time
 */
 var	setPrintDateLimit = function(pdate){
-	var limitDate = moment();
+	var limitDate = moment().startOf('day');
 	limitDate.date(pdate.get('date'));
 	limitDate.month(pdate.get('month'));
 	limitDate.year(pdate.get('year'));
@@ -75,6 +75,7 @@ var	printCommits = function(prepos){
 				colog.log(colog.apply(date, ['bold', 'colorBlue']));
 
 				_.each(project.commits, function(value){
+					
 					if(value.date <= limitDate){
 						colog.log(colog.apply('Hours worked: '+ hoursPerDate + '\n', ['colorGreen']));
 						hoursPerDate = 0;
@@ -97,82 +98,6 @@ var	printCommits = function(prepos){
 };
 
 
-/* parray: array of commits
-sort the repo "tree"
-*/
-var	sortRepos = function(prepos){
-	var repos =[],
-		branches;
-
-	repos = _.sortBy(prepos, function(repository){ return repository.name; });
-
-	_.each(repos, function(repository){
-		branches = _.sortBy(repository.branches, function(branch){ return branch.projectId; });
-		repository.branches = branches;
-	});
-	prepos = repos;
-};
-
-
-/* prepos: array of repos
-merges the branches with the same project
-*/
-var	bindCommits = function(prepos, pgitName){
-	var repos = [],
-		validCommits = {
-			commits: []
-		},
-		existCommit = '',
-		projectId = -1;
-
-	limitDate = commit.getDateLimit();
-	sortRepos(prepos);
-
-	_.each(prepos, function(repository){
-		var projects = [];
-		_.each(repository.branches, function(branch){
-			var	project = {
-					id: -1,
-					name: '',
-					commits: []
-				},
-				projectRepo = _.filter(repository.branches, function(projectBranch){
-					return projectBranch.projectId === branch.projectId; });
-			
-			if(projectId !== branch.projectId){
-				projectId = branch.projectId;
-				project.id = branch.projectId;
-				project.name = branch.project;
-				
-				_.each(projectRepo, function(projectBranch){
-					_.each(projectBranch.commits, function(value){
-						var validCommit = {
-								id: -1,
-								date: moment(),
-								message: ''
-							},
-							date = moment.parseZone(value.committed_date);
-
-						if(value.author.name === pgitName && date >= limitDate && FORMAT_HOUR.test(value.message)){
-							existCommit = _.findWhere(project.commits, {id: value.id});
-							if(typeof existCommit === 'undefined'){
-								validCommit.id = value.id;
-								validCommit.date = date;
-								validCommit.message = value.message;
-								project.commits.push(validCommit);
-							}
-						}
-					});
-				});
-				projects.push(project);
-			}
-		});
-		repos.push(projects);
-	});
-	printCommits(repos);
-};
-
-
 var controllerListCommits = {
 
 	/* 
@@ -182,7 +107,8 @@ var controllerListCommits = {
 	listTasks: function(pdate){
 		var reposConfig = [],
 			repos = [],
-			user = [];
+			user = [],
+			newRepos = [];
 
 		if(pdate === '-w' || pdate === '-m' || pdate === '-d' || typeof pdate === 'undefined'){
 
@@ -201,7 +127,8 @@ var controllerListCommits = {
 					return commit.getBranchCommits(repos);
 
 				}).then(function() {
-					bindCommits(repos, configuration.gitUser);
+					newRepos = utils.bindCommits(repos, configuration.gitUser);
+					printCommits(newRepos);
 
 				}).catch(function(error) {
 					colog.log(colog.colorRed(error));

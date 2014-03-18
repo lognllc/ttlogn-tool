@@ -104,65 +104,6 @@ var	sortRepos = function(prepos){
 };
 
 
-/* prepos: array of repos
-merges the branches with the same project
-*/
-var	bindCommits = function(puser, prepos, pbillable, pgitName){
-	var repos = [],
-		validCommits = {
-			commits: []
-		},
-		existCommit = '',
-		projectId = -1;
-
-	limitDate = commit.getDateLimit();
-	sortRepos(prepos);
-
-	_.each(prepos, function(repository){
-		var projects = [];
-
-		_.each(repository.branches, function(branch){
-			var	project = {
-					id: -1,
-					name: '',
-					commits: []
-				},
-				projectRepo = _.filter(repository.branches, function(projectBranch){
-					return projectBranch.projectId === branch.projectId; });
-			
-			if(projectId !== branch.projectId){
-				projectId = branch.projectId;
-				project.id = branch.projectId;
-				project.name = branch.project;
-				
-				_.each(projectRepo, function(projectBranch){
-					_.each(projectBranch.commits, function(value){
-						var validCommit = {
-								id: -1,
-								date: moment(),
-								message: ''
-							};
-
-						date = moment.parseZone(value.committed_date);
-						if(value.author.name === pgitName && date >= limitDate && FORMAT_HOUR.test(value.message)){
-							existCommit = _.findWhere(project.commits, {id: value.id});
-							if(typeof existCommit === 'undefined'){
-								validCommit.id = value.id;
-								validCommit.date = date;
-								validCommit.message = value.message;
-								project.commits.push(validCommit);
-							}
-						}
-					});
-				});
-				projects.push(project);
-			}
-		});
-		repos.push(projects);
-	});
-	saveCommits(puser, repos, pbillable);
-};
-
 var controllerSaveWork = {
 
 	/*pdate: sets the limit date [-d|-w|-m]
@@ -172,6 +113,7 @@ var controllerSaveWork = {
 			reposConfig = [],
 			userInfo = {},
 			billable = 0,
+			newRepos = [],
 			configuration = config.getConfig();
 
 		if(pdate === '-w' || pdate === '-m' || pdate === '-d' || typeof pdate === 'undefined'){
@@ -197,8 +139,9 @@ var controllerSaveWork = {
 					return commit.getBranchCommits(repos);
 
 				}).then(function(){
-					bindCommits(userInfo, repos, billable, configuration.gitUser);
-
+					newRepos = utils.bindCommits(repos, configuration.gitUser);
+					saveCommits(userInfo, newRepos, billable);
+				//	bindCommits(userInfo, repos, billable, configuration.gitUser);
 				}).catch(function(error) {
 					colog.log(colog.colorRed(error));
 				});

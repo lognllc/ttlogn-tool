@@ -43,7 +43,52 @@ var deleteTimeEntry = function(puser, pentries){
 /*pentries: entries of the user unconfirm in this period to display
 prints the entries*/
 var printTimeEntries = function(puser, pprojects, pentries){
+	var cancel = pprojects.length,
+		timeEntries = [];
+	cancel++;
+	colog.log(colog.colorBlue(cancel + ': Cancel'));
+
+	utils.getPromptProject().then(function(projectResult){
+		if(projectResult < cancel){
+			ptask.project_id = pprojects[projectResult - 1].id;
+			return utils.getPromptDescription();
+		}
+		else{
+			process.exit(0);
+		}
+
+	}).then(function(pdescription) {
+		var	date = moment();
+
+		colog.log(colog.colorMagenta('Select a time entry: '));
+		timeEntries = _.filter(pentries, function(entries){ return entries.project.id === pprojects[resultPrompt.project - 1].id; });
+		
+		_.each(timeEntries, function(value, index){
+			date = moment.utc(value.created);
+			date = date.format(DATE_FORMAT);
+			index++;
+			colog.log(colog.colorBlue(index + ': ' + value.tskDescription + '. Date: ' + date));
+		});
+
+		cancel = timeEntries.length;
+		cancel++;
+		colog.log(colog.colorBlue(cancel + ': Cancel'));
+		return utils.getUserPeriodTimeEntry();
 	
+	}).then(function(ptimeEntry) {
+		colog.log(colog.colorMagenta('Select a time entry: '));
+		if(ptimeEntry < cancel){
+			ptask.project_id = pprojects[ptimeEntry - 1].id;
+			//deleteTimeEntry(puser, timeEntries);
+		}
+		else{
+			process.exit(0);
+		}
+	
+	}).catch(function(error) {
+		colog.log(colog.colorRed(error));
+	});
+/*
 	prompt.start();
 	prompt.get({
 		properties: {
@@ -65,7 +110,7 @@ var printTimeEntries = function(puser, pprojects, pentries){
 			colog.log(colog.colorBlue(index + ': ' + value.tskDescription + '. Date: ' + date));
 		});
 		deleteTimeEntry(puser, timeEntries);
-	});
+	});*/
 };
 
 

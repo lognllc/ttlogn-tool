@@ -30,34 +30,23 @@ var getWork = function(pmessage){
 save the task and the detail hour
 */
 var saveDetailHour = function(ptask){
-	prompt.get({
-		properties: {
-			timeIn: {
-				description: "Begin of the task (HH:mm)".magenta,
-				required: true,
-				pattern: TIME_IN,
-				message: 'Format: HH:mm. EX.: 09:05'.red
-			}
-		}
-	}, function (err, resultPrompt) {
-		var timeIn = moment(resultPrompt.timeIn, 'HH:mm');
-			timeOut = moment(resultPrompt.timeIn, 'HH:mm');
+	
+	utils.getPromptDetailHour().then(function(timeResult){
+		var timeIn = moment(timeResult, 'HH:mm');
+			timeOut = moment(timeResult, 'HH:mm');
 
-		timeOut.add(parseFloat(ptask.time),'hours');
+			timeOut.add(parseFloat(ptask.time),'hours');
 
-		timeIn = timeIn.format('HH.mm');
-		timeOut = timeOut.format('HH.mm');
+			ptask.time_in = timeIn.format('HH.mm');
+			ptask.time_out = timeOut.format('HH.mm');
 
-		ptask.time_in = timeIn; //parseFloat(resultPrompt.timeIn);
-		ptask.time_out = timeOut; //ptask.time_in + parseFloat(ptask.time);
+			return timeEntry.postTimeEntry(ptask);
 
-		//console.log(ptask);
-		timeEntry.postTimeEntry(ptask).then(function(){
-			colog.log(colog.colorGreen('Time entry saved'));
-		},
-		function(err) {
-			colog.log(colog.colorRed(err));
-		});
+	}).then(function(pdescription) {
+		colog.log(colog.colorGreen('Time entry saved'));
+
+	}).catch(function(error) {
+		colog.log(colog.colorRed(error));
 	});
 };
 
@@ -65,36 +54,29 @@ var saveDetailHour = function(ptask){
 save the task
 */
 var saveTask = function(ptask, puser, pprojects){
+	var project = {},
+		cancel = pprojects.length;
 
-	prompt.start();
-	prompt.get({
-		properties: {
-			project: {
-				description: "Number of the project".magenta,
-				required: true,
-				pattern: PROJECT
-			},
-			description: {
-				description: "Description of the taks".magenta,
-				required: true
-			},
-			time: {
-				description: "Worked hours".magenta,
-				required: true,
-				pattern: FORMATHOUR,
-				message: 'Format: [float|int]h'.red
-			}
-		}
-	}, function (err, resultPrompt) {
-		ptask.project_id = pprojects[resultPrompt.project - 1].id;
-		ptask.description = resultPrompt.description;
-		ptask.time = getWork(resultPrompt.time);
+	cancel++;
+	colog.log(colog.colorBlue(cancel + ': Cancel'));
 
-		if(puser.devtype === 'non_exempt'){
-			saveDetailHour(ptask);
+	utils.getPromptProject().then(function(projectResult){
+		if(projectResult < cancel){
+			ptask.project_id = pprojects[projectResult - 1].id;
+			return utils.getPromptDescription();
 		}
 		else{
-		//	console.log(ptask);
+			process.exit(0);
+		}
+
+	}).then(function(pdescription) {
+		ptask.description = pdescription;
+		return utils.getPromptTime();
+
+	}).then(function(ptime) {
+		ptask.time = getWork(ptime);
+		
+		if(puser.devtype !== 'non_exempt'){
 			timeEntry.postTimeEntry(ptask).then(function(){
 				colog.log(colog.colorGreen('Time entry saved'));
 			},
@@ -102,8 +84,14 @@ var saveTask = function(ptask, puser, pprojects){
 				colog.log(colog.colorRed(err));
 			});
 		}
+		else{
+			saveDetailHour(ptask);
+		}
+	}).catch(function(error) {
+		colog.log(colog.colorRed(error));
 	});
 };
+
 
 /* phourType: id of the billable hour
 prints the information of the commits 
@@ -147,8 +135,8 @@ var controllerAddTask = {
 				return hourType.getHourType(userInfo.id);
 
 			}).then(function(phourType) {
-				utils.printNames(projects);
 				billable = hourType.getBillable(phourType.result);
+				utils.printNames(projects);
 				getTaskDate(userInfo, projects, billable);
 
 			}).catch(function(error) {

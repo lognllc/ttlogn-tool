@@ -157,6 +157,4 @@ var controllerConfigFile = {
 	}
 };
 
-
-//{"path":"/mnt/hgfs/Development/ttlogn-tool","project":{"name":"Cisco POC","id":75}}
 module.exports = controllerConfigFile;

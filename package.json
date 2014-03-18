@@ -1,6 +1,6 @@
 {
   "name": "ttlogn",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "timetracker helper tool",
   "main": "./lib/main",
   "bin": {
@@ -17,8 +17,7 @@
     "node-rest-client": "~0.7.12",
     "moment": "~2.5.1",
     "prompt": "~0.2.12",
-    "moment-timezone": "0.0.3",
-    "restify": "~2.6.3"
+    "moment-timezone": "0.0.3"
   },
   "devDependencies": {},
   "scripts": {

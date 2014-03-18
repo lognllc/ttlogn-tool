@@ -29,7 +29,7 @@ var apiTTDataAccess = {
 /*	pparameters: parameters for the get
 	makes a get and send the info receive to pfunction*/
 	get: function(pparameters){
-		var promise = new RSVP.Promise(function(resolve, reject) {
+		var promise = new RSVP.Promise(function(resolve, reject){
 			var dataServer = {},
 				self = this,
 				client = new clientTT(),
@@ -54,7 +54,7 @@ var apiTTDataAccess = {
 	pparameters: parameters for the post
 	makes a post and send the info receive to pfunction*/
 	post: function(ppost, pparameters){
-		var promise = new RSVP.Promise(function(resolve, reject) {
+		var promise = new RSVP.Promise(function(resolve, reject){
 			var client = new clientTT(),
 				dataServer = {},
 				self = this,
@@ -65,7 +65,7 @@ var apiTTDataAccess = {
 				};
 
 			//console.log(pparameters);
-			client.post(host + ppost, args, function(data,response) {
+			client.post(host + ppost, args, function(data,response){
 			//	console.log(data);
 				dataServer = JSON.parse(data);
 				resolve(dataServer);

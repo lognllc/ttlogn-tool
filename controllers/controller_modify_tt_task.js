@@ -271,7 +271,7 @@ var printTimeEntry = function(){
 				saveTimeEntry();
 				break;
 			case '8':
-	//			return '';
+				process.exit(0);
 			break;
 			default:
 				colog.log(colog.colorRed('Error: bad number'));
