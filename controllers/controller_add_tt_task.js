@@ -28,6 +28,7 @@ var saveDetailHour = function(ptask){
 			ptask.time_in = timeIn.format('HH.mm');
 			ptask.time_out = timeOut.format('HH.mm');
 
+			console.log(ptask);
 			return timeEntry.postTimeEntry(ptask);
 
 	}).then(function(pdescription) {

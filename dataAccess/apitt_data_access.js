@@ -19,7 +19,7 @@ var getHost = function(){
 	else{
 		host = HOST;
 	}
-	console.log(host);
+	//console.log(host);
 	return host;
 };
 
