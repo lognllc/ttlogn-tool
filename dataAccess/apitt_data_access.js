@@ -3,9 +3,9 @@ var prettyjson = require('prettyjson'),
 	RSVP = require('rsvp'),
 	clientTT = require('node-rest-client').Client;
 
-var HOST_DEVELOPMENT = 'http://10.0.1.80:3000',
+var //HOST_DEVELOPMENT = 'http://10.0.1.80:3000',
 //	HOST_DEVELOPMENT = 'http://192.168.0.120:3000',	
-//	HOST_DEVELOPMENT = 'http://186.177.44.15:3000',
+	HOST_DEVELOPMENT = 'http://186.176.36.125:3000',
 	HOST = 'http://ec2-54-226-94-0.compute-1.amazonaws.com',
 	DEVELOPMENT = 'development',
 	TT_ENV = 'TT_ENV';
@@ -13,7 +13,6 @@ var HOST_DEVELOPMENT = 'http://10.0.1.80:3000',
 var getHost = function(){
 	var tt_env = process.env[TT_ENV],
 		host = '';
-		
 	if(tt_env === DEVELOPMENT){
 		host = HOST_DEVELOPMENT;
 	}
@@ -34,11 +33,9 @@ var apiTTDataAccess = {
 				self = this,
 				client = new clientTT(),
 				host = getHost();
-			
 			//console.log(host+pparameters);
 			client.get(host+pparameters, function(data, response){
 			//	console.log(data);
-
 				dataServer = JSON.parse(data);
 				resolve(dataServer);
 
@@ -63,13 +60,11 @@ var apiTTDataAccess = {
 					data: pparameters,
 					headers: {'Content-Type': 'application/json'}
 				};
-
 			//console.log(pparameters);
 			client.post(host + ppost, args, function(data,response){
 			//	console.log(data);
 				dataServer = JSON.parse(data);
 				resolve(dataServer);
-
 			}).on('error',function(err){
 				colog.log(colog.colorRed('Error: Something went wrong on the request', err.request.options));
 				reject(self);

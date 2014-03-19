@@ -16,75 +16,78 @@ var DIGITS = /[^h]+/i,
 
 /*pentries: projects of the user to display
 set the projects, get hour type*/
-var deleteTimeEntry = function(puser, pentries){
-	
-	prompt.get({
-		properties: {
-			entry: {
-				description: "Number of the entry".magenta,
-				required: true,
-				pattern: NUMBER
-			}
-		}
-	}, function (err, resultPrompt) {
-
-		var entryToDelete = {
-				entry_id: pentries[resultPrompt.entry - 1].id,
-				devtype: puser.devtype,
-				user_id: puser.id
-			};
-		//	console.log(entryToDelete);
-		timeEntry.deleteTimeEntry(entryToDelete).then(function(){
-			colog.log(colog.colorGreen('Time entry deleted'));
-		});
+var deleteTimeEntry = function(puser, pentry){
+	var entryToDelete = {
+			entry_id: pentry,
+			devtype: puser.devtype,
+			user_id: puser.id
+		};
+		console.log(entryToDelete);
+	timeEntry.deleteTimeEntry(entryToDelete).then(function(){
+		colog.log(colog.colorGreen('Time entry deleted'));
+	}).catch(function(error) {
+		colog.log(colog.colorRed(error));
 	});
+
 };
 
 /*pentries: entries of the user unconfirm in this period to display
 prints the entries*/
-var printTimeEntries = function(puser, pprojects, pentries){
+var printTimeEntries = function(puser, pproject, pentries){
+	var cancel = 0,
+		timeEntries = [],
+		timeEntryToDelete = {},
+		date = moment();
+
+	colog.log(colog.colorMagenta('Select a time entry: '));
+	timeEntries = _.filter(pentries, function(entries){ return entries.project.id === pproject; });
+		
+	_.each(timeEntries, function(value, index){
+		date = moment.utc(value.created);
+		date = date.format(DATE_FORMAT);
+		index++;
+		colog.log(colog.colorBlue(index + ': ' + value.tskDescription + '. Date: ' + date));
+	});
+
+	cancel = timeEntries.length;
+	cancel++;
+
+	colog.log(colog.colorBlue(cancel + ': Cancel'));
+	colog.log(colog.colorMagenta('Select a time entry: '));
+	
+	utils.getPromptTimeEntry().then(function(ptimeEntry){
+		if(ptimeEntry < cancel){
+			timeEntryToDelete = pentries[ptimeEntry - 1].id;
+			deleteTimeEntry(puser, timeEntryToDelete);
+		}
+		else{
+			process.exit(0);
+		}
+	}).then(function(ptimeEntry) {
+	
+	}).catch(function(error) {
+		colog.log(colog.colorRed(error));
+	});
+};
+
+
+/*pentries: entries of the user unconfirm in this period to display
+prints the entries*/
+var getProjets = function(puser, pprojects, pentries){
 	var cancel = pprojects.length,
-		timeEntries = [];
+		projectId = 0;
+
 	cancel++;
 	colog.log(colog.colorBlue(cancel + ': Cancel'));
 
 	utils.getPromptProject().then(function(projectResult){
 		if(projectResult < cancel){
-			ptask.project_id = pprojects[projectResult - 1].id;
-			return utils.getPromptDescription();
+			projectId = pprojects[projectResult - 1].id;
+			printTimeEntries(puser, projectId, pentries);
 		}
 		else{
 			process.exit(0);
 		}
-
-	}).then(function(pdescription) {
-		var	date = moment();
-
-		colog.log(colog.colorMagenta('Select a time entry: '));
-		timeEntries = _.filter(pentries, function(entries){ return entries.project.id === pprojects[resultPrompt.project - 1].id; });
-		
-		_.each(timeEntries, function(value, index){
-			date = moment.utc(value.created);
-			date = date.format(DATE_FORMAT);
-			index++;
-			colog.log(colog.colorBlue(index + ': ' + value.tskDescription + '. Date: ' + date));
-		});
-
-		cancel = timeEntries.length;
-		cancel++;
-		colog.log(colog.colorBlue(cancel + ': Cancel'));
-		return utils.getUserPeriodTimeEntry();
-	
-	}).then(function(ptimeEntry) {
-		colog.log(colog.colorMagenta('Select a time entry: '));
-		if(ptimeEntry < cancel){
-			ptask.project_id = pprojects[ptimeEntry - 1].id;
-			//deleteTimeEntry(puser, timeEntries);
-		}
-		else{
-			process.exit(0);
-		}
-	
 	}).catch(function(error) {
 		colog.log(colog.colorRed(error));
 	});
@@ -134,7 +137,7 @@ var controllerDeleteTask = {
 
 			}).then(function(pentries) {
 				utils.printNames(projects);
-				printTimeEntries(userInfo, projects, pentries.result.not_confirmed_dates);
+				getProjets(userInfo, projects, pentries.result.not_confirmed_dates);
 
 			}).catch(function(error) {
 				colog.log(colog.colorRed(error));

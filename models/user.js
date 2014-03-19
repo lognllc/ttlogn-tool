@@ -1,6 +1,9 @@
 var //_ = require('underscore'),
 	path = require('path'),
 	fs = require('fs'),
+	pivotal = require('pivotal'),
+	RSVP = require('rsvp'),
+	colog = require('colog'),
 	dataAccess = require(path.resolve(__dirname, '../dataAccess/apitt_data_access.js'));
 
 var USER_LOGIN = '/login/create.json',
@@ -28,6 +31,25 @@ var user = {
 	getClients: function(puserId){
 		var message	=  GET_CLIENTS + puserId;
 		return dataAccess.get(message);
+	},
+
+	/* ppath: path of the directory
+	return the directory */
+	pivotalLogin: function (puser)
+	{	var promise = new RSVP.Promise(function(resolve, reject){
+			var self = this;
+			pivotal.getToken(puser.email, puser.password, function(err, ret){
+				if(!err){
+					resolve(ret.guid);
+				}
+				else{
+					colog.log(colog.colorRed('Error: Something went wrong on the request: ' + err.desc));
+					reject(self);
+				}
+			});
+
+		});
+		return promise;
 	}
 
 };
