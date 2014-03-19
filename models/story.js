@@ -14,7 +14,7 @@ var story = {
 			var self = this,
 				stories = [],
 				filter = {};
-console.log(idproject);
+				
 			pivotal.getStories(idproject, filter, function(err, ret){
 				if(!err){
 					console.log('entre');

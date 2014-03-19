@@ -11,18 +11,6 @@ var _ = require('underscore'),
 	utils = require(path.resolve(__dirname,'../lib/utils.js')),
 	commit = require(path.resolve(__dirname,'../models/commit.js'));
 
-var FORMAT_HOUR = /\(\d+(|\.\d+)h\)/i,
-	DIGITS = /[^\(\)h]+/i;
-
-/* pmessage: message of the commit 
-return a string with the number of hours worked
-*/
-var getWork = function(pmessage){
-	var test = FORMAT_HOUR.exec(pmessage);
-	test = DIGITS.exec(test[0]);
-	return test[0];
-};
-
 /* pmessage: message of the commit 
 return a string with the number of hours worked
 */
@@ -55,7 +43,7 @@ var	saveCommits = function(puser, prepos, phourType){
 					work = 0;
 
 				date = value.date.format('YYYY-MM-DD HH:mm:ss');
-				work = getWork(value.message);
+				work = utils.getWork(value.message);
 				commitMessage = value.message.split('\n');
 				value.message = commitMessage[0];
 				colog.log(colog.colorBlue('Saving commit: ' +  value.message));
@@ -73,7 +61,7 @@ var	saveCommits = function(puser, prepos, phourType){
 					hour = parseFloat(work);
 					detailTime.setDetailTime(commitToInsert, hour, value.date);
 				}
-				//console.log(commitToInsert);
+				console.log(commitToInsert);
 				promises.push(timeEntry.postTimeEntry(commitToInsert));
 			});
 		});
@@ -100,7 +88,6 @@ var	sortRepos = function(prepos){
 		repository.branches = branches;
 	});
 	prepos = repos;
-	//return repos;
 };
 
 
@@ -141,7 +128,6 @@ var controllerSaveWork = {
 				}).then(function(){
 					newRepos = utils.bindCommits(repos, configuration.gitUser);
 					saveCommits(userInfo, newRepos, billable);
-				//	bindCommits(userInfo, repos, billable, configuration.gitUser);
 				}).catch(function(error) {
 					colog.log(colog.colorRed(error));
 				});

@@ -7,19 +7,8 @@ var _ = require('underscore'),
 	utils = require(path.resolve(__dirname,'../lib/utils.js')),
 	commit = require(path.resolve(__dirname,'../models/commit.js'));
 
-var FORMAT_HOUR = /\(\d+(|\.\d+)h\)/i,
-	DIGITS = /[^\(\)h]+/i,
-	//ZONE = '-08:00',
-	DATE_FORMAT = 'dddd, DD MMMM YYYY --- HH:mm';
+var DATE_FORMAT = 'dddd, DD MMMM YYYY'; //--- HH:mm
 
-/* pmessage: message of the commit 
-return a string with the number of hours worked
-*/
-var getWork = function(pmessage){
-	var test = FORMAT_HOUR.exec(pmessage);
-	test = DIGITS.exec(test[0]);
-	return test[0];
-};
 
 /* prepos: array of repos
 sort the commits by time
@@ -84,7 +73,7 @@ var	printCommits = function(prepos){
 						date = value.date.format(DATE_FORMAT);
 						colog.log(colog.apply(date, ['bold', 'colorBlue']));
 					}
-					hoursPerTask = parseFloat(getWork(value.message));
+					hoursPerTask = parseFloat(utils.getWork(value.message));
 					hoursPerDate += hoursPerTask;
 					message = value.message.split('\n');
 					value.message = message[0];

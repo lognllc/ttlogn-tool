@@ -11,20 +11,8 @@ var _ = require('underscore'),
 	utils = require(path.resolve(__dirname,'../lib/utils.js')),
 	hourType = require(path.resolve(__dirname,'../models/hour_type.js'));
 
-var FORMATHOUR = /^\d+(|\.\d+)h$/i,
-	DIGITS = /[^h]+/i,
-	PROJECT = /^\d+$/,
-	TIME_IN = /^[0-2]\d\:[0-6]\d$/,
-	//ZONE = '-06:00',
-	DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
+var DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
-/* pmessage: message of the work
-return a string with the number of hours worked
-*/
-var getWork = function(pmessage){
-	var test = DIGITS.exec(pmessage);
-	return test[0];
-};
 
 /* ptask: the task to save
 save the task and the detail hour
@@ -74,7 +62,7 @@ var saveTask = function(ptask, puser, pprojects){
 		return utils.getPromptTime();
 
 	}).then(function(ptime) {
-		ptask.time = getWork(ptime);
+		ptask.time = utils.getWorkedHours(ptime);
 		
 		if(puser.devtype !== 'non_exempt'){
 			timeEntry.postTimeEntry(ptask).then(function(){

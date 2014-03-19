@@ -10,9 +10,7 @@ var _ = require('underscore'),
 	utils = require(path.resolve(__dirname,'../lib/utils.js')),
 	project = require(path.resolve(__dirname,'../models/project.js'));
 
-var DIGITS = /[^h]+/i,
-	NUMBER = /^\d+$/,
-	DATE_FORMAT = 'l';
+var DATE_FORMAT = 'l';
 
 /*pentries: projects of the user to display
 set the projects, get hour type*/
@@ -57,8 +55,10 @@ var printTimeEntries = function(puser, pproject, pentries){
 	
 	utils.getPromptTimeEntry().then(function(ptimeEntry){
 		if(ptimeEntry < cancel){
-			timeEntryToDelete = pentries[ptimeEntry - 1].id;
-			deleteTimeEntry(puser, timeEntryToDelete);
+			console.log(ptimeEntry);
+			timeEntryToDelete = timeEntries[ptimeEntry - 1];//.id;
+			console.log(timeEntryToDelete);
+			deleteTimeEntry(puser, timeEntryToDelete.id);
 		}
 		else{
 			process.exit(0);
@@ -91,29 +91,6 @@ var getProjets = function(puser, pprojects, pentries){
 	}).catch(function(error) {
 		colog.log(colog.colorRed(error));
 	});
-/*
-	prompt.start();
-	prompt.get({
-		properties: {
-			project: {
-				description: "Number of the project".magenta,
-				required: true,
-				pattern: NUMBER
-			}
-		}
-	}, function (err, resultPrompt) {
-		var timeEntries = _.filter(pentries, function(entries){ return entries.project.id === pprojects[resultPrompt.project - 1].id; }),
-			date = moment();
-
-		colog.log(colog.colorMagenta('Select a time entry: '));
-		_.each(timeEntries, function(value, index){
-			date = moment.utc(value.created);
-			date = date.format(DATE_FORMAT);
-			index++;
-			colog.log(colog.colorBlue(index + ': ' + value.tskDescription + '. Date: ' + date));
-		});
-		deleteTimeEntry(puser, timeEntries);
-	});*/
 };
 
 

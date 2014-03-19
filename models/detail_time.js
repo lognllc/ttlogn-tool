@@ -14,8 +14,7 @@ var detailTime = {
 		pentry.time_in = timeIn;
 
 		timeOut.add((phour),'hours');
-		timeOut = timeOut.format('HH.mm');
-		pentry.time_out = timeOut;
+		pentry.time_out = timeOut.format('HH.mm');
 	}
 
 };
