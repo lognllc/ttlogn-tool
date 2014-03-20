@@ -32,7 +32,13 @@ var story = {
 					}
 					if(pfilter !== '-a'){
 						filteredProject = _.filter(pproject.stories, function(pstory)
-							{ return  (pstory.current_state === 'unstarted' || pstory.current_state === 'started') ;});
+							{ return  ((pstory.current_state === 'unstarted' || pstory.current_state === 'started')) &&
+							pstory.owned_by === 'Daniel Solis';});
+						pproject.stories = filteredProject;
+					}
+					else{
+						filteredProject = _.filter(pproject.stories, function(pstory)
+							{ return pstory.owned_by === 'Daniel Solis';});
 						pproject.stories = filteredProject;
 					}
 					resolve(self);
