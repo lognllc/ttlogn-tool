@@ -66,7 +66,7 @@ var	saveCommits = function(puser, prepos, phourType){
 			});
 		});
 	});
-	RSVP.all(promises).then(function(posts) {
+	RSVP.all(promises).then(function() {
 			colog.log(colog.colorGreen('Saved successful'));
 		}).catch(function(reason){
 			colog.log(colog.colorRed(reason));

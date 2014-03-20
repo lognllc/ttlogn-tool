@@ -78,7 +78,7 @@ var saveRepo = function(pbranches, pproject){
 /*pprojects: projects of the user to display
 waits the user to choose a project, then save the repository*/
 var getProject = function(pprojects){
-	var repoPath = process.cwd(),
+	var repoPath = process.cwd(), //'/mnt/hgfs/Development/repoPrueba', //process.cwd(),
 		cancel = 0,
 		newProject = {};
 
@@ -137,7 +137,7 @@ var controllerConfigFile = {
 		}
 		else{
 			colog.log(colog.colorRed('Error: Make first the configuration:'));
-			colog.log(colog.colorRed('ttlogn login email password git_name'));
+			colog.log(colog.colorRed('ttlogn login email password git_name pivotal_password'));
 		}
 	},
 

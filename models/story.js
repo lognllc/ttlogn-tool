@@ -1,4 +1,5 @@
 var path = require('path'),
+	_ = require('underscore'),
 	pivotal = require("pivotal"),
 	RSVP = require('rsvp'),
 	colog = require('colog'),
@@ -6,19 +7,35 @@ var path = require('path'),
 
 var configPath;
 
+var getFilter = function(){
+
+};
+
 var story = {
 
 	// returns the limit date
-	getStory: function(idproject){
+	getStory: function(pproject, pfilter){
 		var promise = new RSVP.Promise(function(resolve, reject){
 			var self = this,
-				stories = [],
+				filteredProject = [];
 				filter = {};
-				
-			pivotal.getStories(idproject, filter, function(err, ret){
+			pivotal.getStories(pproject.id, filter, function(err, ret){
 				if(!err){
-					console.log('entre');
-					resolve(ret);
+					if(_.isArray(ret.story)){
+						pproject.stories = ret.story;
+					}
+					else{
+						pproject.stories = [];
+						if(typeof ret.story !== 'undefined'){
+							pproject.stories.push(ret.story);
+						}
+					}
+					if(pfilter !== '-a'){
+						filteredProject = _.filter(pproject.stories, function(pstory)
+							{ return  (pstory.current_state === 'unstarted' || pstory.current_state === 'started') ;});
+						pproject.stories = filteredProject;
+					}
+					resolve(self);
 				}
 				else{
 					colog.log(colog.colorRed('Error: Something went wrong on the request: ' + err.desc));
@@ -28,7 +45,39 @@ var story = {
 
 		});
 		return promise;
+	},
+
+	// returns the limit date
+	getStories: function(pprojects, puser, pfilter){
+		var promise = new RSVP.Promise(function(resolve, reject){
+			var self = this,
+				promises = [];
+
+			pivotal.useToken(puser);
+	
+			if(_.isArray(pprojects.project)){
+				_.each(pprojects.project, function(value){
+					promises.push(story.getStory(value, pfilter));
+				});
+				RSVP.all(promises).then(function() {
+					resolve(self);
+				}).catch(function(reason){
+					reject(self);
+					colog.log(colog.colorRed(reason));
+				});
+			}
+			else{
+				story.getStory(pprojects.project, pfilter).then(function(){
+					resolve(self);
+				}).catch(function(error) {
+					reject(self);
+					colog.log(colog.colorRed(error));
+				});
+			}
+		});
+		return promise;
 	}
+
 };
 
 module.exports = story;

@@ -6,6 +6,45 @@ var path = require('path'),
 	sha1 = require('sha1'),
 	dataAccess = require('../dataAccess/config_data_access.js');
 
+/* 
+	register a repository in the configuration file
+	ppath: path of the configuration file
+	*/
+var registerBranch = function(pproject, pbranch, pdataFile, pdata){
+	var dataRepo = {},
+		newProject = {},
+		projectsList = {};
+
+		colog.log(colog.colorBlue('Adding branch: ' + pbranch +', and project: '+ pproject.name +' to configuration file'));
+		projectsList = _.filter(pdataFile.repositories, function(repository)
+			{ return _.isArray(repository.project); });
+			
+		if(projectsList.length > 0){
+			newProject = _.find(projectsList, function(repository)
+				{ return repository.path  === pdata;});
+		}
+		if(typeof newProject === 'undefined' || projectsList.length === 0){
+			dataRepo = {
+				path: pdata,
+				project: [{
+					name: pproject.name,
+					id: pproject.id,
+					branch: pbranch
+				}]
+			};
+			pdataFile.repositories.push(dataRepo);
+		}
+		else{
+			newProject.project.push({
+				name: pproject.name,
+				id: pproject.id,
+				branch: pbranch
+			});
+		}
+	pdataFile = JSON.stringify(pdataFile);
+	dataAccess.saveConfig(pdataFile);
+};
+
 
 /* 
 get the json to save the information
@@ -19,7 +58,7 @@ var getJson = function(){
 		jsonData = JSON.parse(dataFile);
 	}
 	else{
-		jsonData = { email: '', password: '', gitUser: '', repositories:[] };
+		jsonData = {repositories:[]};
 	}
 	return jsonData;
 };
@@ -44,6 +83,7 @@ var config = {
 		dataFile.email = pdata[0];
 		dataFile.password = pass;
 		dataFile.gitUser = pdata[2];
+		dataFile.pivotalPassword = pdata[3];
 
 		dataFile = JSON.stringify(dataFile);
 		dataAccess.saveConfig(dataFile);
@@ -56,17 +96,13 @@ var config = {
 	registerRepo: function(pproject, pbranch){
 		var data = '',
 			dataFile = {},
-			dataRepo = {},
-			newProject = {},
-			projectsList = {};
+			dataRepo = {};
 
 		dataFile = getJson();
 		data = process.cwd();
 //		data = '/mnt/hgfs/Development/repoPrueba';
-
 		if(typeof pbranch === 'undefined'){
 			colog.log(colog.colorBlue('Adding repository: ' + data +', and project: '+ pproject.name +' to configuration file'));
-			
 			dataRepo = {
 				path: data,
 				project: {
@@ -75,48 +111,19 @@ var config = {
 				}
 			};
 			dataFile.repositories.push(dataRepo);
+			dataFile = JSON.stringify(dataFile);
+			dataAccess.saveConfig(dataFile);
 		}
 		else{
-			colog.log(colog.colorBlue('Adding branch: ' + pbranch +', and project: '+ pproject.name +' to configuration file'));
-				
-			projectsList = _.filter(dataFile.repositories, function(repository)
-				{ return _.isArray(repository.project); });
-			
-			if(projectsList.length > 0){
-				newProject = _.find(projectsList, function(repository)
-					{ return repository.path  === data;});
-			}
-
-			if(typeof newProject === 'undefined' || projectsList.length === 0){
-				dataRepo = {
-					path: data,
-					project: [{
-						name: pproject.name,
-						id: pproject.id,
-						branch: pbranch
-					}]
-				};
-				dataFile.repositories.push(dataRepo);
-			}
-			else{
-				newProject.project.push({
-					name: pproject.name,
-					id: pproject.id,
-					branch: pbranch
-				});
-			}
+			registerBranch(pproject, pbranch, dataFile, data);
 		}
-		dataFile = JSON.stringify(dataFile);
-		dataAccess.saveConfig(dataFile);
 	},
 
 	/* 
 	return the repositories of the configuration
 	*/
 	getConfig: function(){
-		var data = {};
-
-		data = getJson();
+		var data = getJson();
 
 		if(!dataAccess.existConfig()){
 			colog.log(colog.colorRed('Error: Make a configuration file'));
