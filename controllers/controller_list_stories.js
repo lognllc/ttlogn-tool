@@ -19,7 +19,6 @@ var printStories = function(pprojects){
 			colog.log(colog.apply(pivotalStory.name + ' - ' + pivotalStory.story_type, ['bold', 'colorBlue']));
 			colog.log(colog.colorBlue(pivotalStory.description));
 			//colog.log(colog.colorBlue(pivotalStory.current_state));
-			//console.log(pivotalStory);
 			console.log('-------------------------------');
 		});
 	});
@@ -36,6 +35,7 @@ var controllerListStories = {
 			if(config.existConfig){
 				colog.log(colog.colorGreen('Loading...'));
 				userInfo.email = configuration.email;
+				userInfo.pivotalUser = configuration.pivotalUser;
 				userInfo.password = configuration.pivotalPassword;
 
 				user.pivotalLogin(userInfo).then(function(puserId){
@@ -44,7 +44,7 @@ var controllerListStories = {
 
 				}).then(function(pprojects){
 					projects = pprojects;
-					return story.getStories(projects, userId, pfilter);
+					return story.getStories(projects, userId, userInfo.pivotalUser, pfilter);
 
 				}).then(function(pstories){
 					printStories(projects);

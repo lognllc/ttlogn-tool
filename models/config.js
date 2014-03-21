@@ -2,9 +2,12 @@ var path = require('path'),
 	colog = require('colog'),
 	fs = require('fs'),
 	_ = require('underscore'),
+	prompt = require('prompt'),
 	prettyjson = require('prettyjson'),
 	sha1 = require('sha1'),
 	dataAccess = require('../dataAccess/config_data_access.js');
+
+var EMAIL = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]+$/;
 
 /* 
 	register a repository in the configuration file
@@ -70,23 +73,54 @@ var config = {
 	pdata: data to save
 	*/
 	registerUser: function(pdata){
-		var dataFile = {},
-			pass = '';
+		
+		prompt.start();
+		prompt.get({
+			properties: {
+				email:{
+					description: 'Email'.magenta,
+					required: true,
+					pattern: EMAIL
+				},
+				ttPassword:{
+					description: 'Timetracker password'.magenta,
+					required: true,
+					hidden: true
+				},
+				gitUser:{
+					description: 'Git user'.magenta,
+					required: true
+				},
+				pivotalUser:{
+					description: 'Pivotal user'.magenta,
+					required: true
+				},
+				pivotalPassword:{
+					description: 'Pivotal password'.magenta,
+					required: true,
+					hidden: true
+				}
+			}
+		}, function (err, resultPrompt) {
+			if(!err){
+				colog.log(colog.colorBlue('Adding user'));
+				colog.log(colog.colorBlue('Email: ' + resultPrompt.email));
 
-		colog.log(colog.colorBlue('Adding user'));
-		colog.log(colog.colorBlue('Email: ' + pdata[0] + ', Git User: ' + pdata[2]));
+				dataFile = getJson();
+				pass = sha1('RtB8gDm'+ resultPrompt.ttPassword);
+				dataFile.email = resultPrompt.email;
+				dataFile.password = pass;
+				dataFile.gitUser = resultPrompt.gitUser;
+				dataFile.pivotalPassword = resultPrompt.pivotalPassword;
+				dataFile.pivotalUser = resultPrompt.pivotalUser;
 
-		dataFile = getJson();
-
-		pass = sha1('RtB8gDm'+ pdata[1]);
-	
-		dataFile.email = pdata[0];
-		dataFile.password = pass;
-		dataFile.gitUser = pdata[2];
-		dataFile.pivotalPassword = pdata[3];
-
-		dataFile = JSON.stringify(dataFile);
-		dataAccess.saveConfig(dataFile);
+				dataFile = JSON.stringify(dataFile);
+				dataAccess.saveConfig(dataFile);
+			}
+			else{
+				colog.log(colog.colorRed('Error: ' + err));
+			}
+		});
 	},
 
 	/* 

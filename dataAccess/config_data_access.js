@@ -53,7 +53,15 @@ var configDataAccess = {
 		var relativePath = configPath();
 		return fs.readFileSync(relativePath, 'utf8');
 	},
-	
+
+	/* 
+	read the configuration file
+	*/
+/*	readHelp: function(){
+		var relativePath = path.resolve(__dirname,'../ttlogn.1');
+		return fs.readFileSync(relativePath, 'utf8');
+	},
+*/
 	/* 
 	returns a boolean, says if the config file exists
 	*/

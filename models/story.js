@@ -7,14 +7,10 @@ var path = require('path'),
 
 var configPath;
 
-var getFilter = function(){
-
-};
-
 var story = {
 
 	// returns the limit date
-	getStory: function(pproject, pfilter){
+	getStory: function(pproject, puserName, pfilter){
 		var promise = new RSVP.Promise(function(resolve, reject){
 			var self = this,
 				filteredProject = [];
@@ -33,12 +29,12 @@ var story = {
 					if(pfilter !== '-a'){
 						filteredProject = _.filter(pproject.stories, function(pstory)
 							{ return  ((pstory.current_state === 'unstarted' || pstory.current_state === 'started')) &&
-							pstory.owned_by === 'Daniel Solis';});
+							pstory.owned_by === puserName;});
 						pproject.stories = filteredProject;
 					}
 					else{
 						filteredProject = _.filter(pproject.stories, function(pstory)
-							{ return pstory.owned_by === 'Daniel Solis';});
+							{ return pstory.owned_by === puserName;});
 						pproject.stories = filteredProject;
 					}
 					resolve(self);
@@ -54,7 +50,7 @@ var story = {
 	},
 
 	// returns the limit date
-	getStories: function(pprojects, puser, pfilter){
+	getStories: function(pprojects, puser, puserName, pfilter){
 		var promise = new RSVP.Promise(function(resolve, reject){
 			var self = this,
 				promises = [];
@@ -63,7 +59,7 @@ var story = {
 	
 			if(_.isArray(pprojects.project)){
 				_.each(pprojects.project, function(value){
-					promises.push(story.getStory(value, pfilter));
+					promises.push(story.getStory(value, puserName, pfilter));
 				});
 				RSVP.all(promises).then(function() {
 					resolve(self);
@@ -73,7 +69,7 @@ var story = {
 				});
 			}
 			else{
-				story.getStory(pprojects.project, pfilter).then(function(){
+				story.getStory(pprojects.project, puserName, pfilter).then(function(){
 					resolve(self);
 				}).catch(function(error) {
 					reject(self);

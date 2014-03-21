@@ -1,13 +1,10 @@
 .\" Process this file with
-.\" groff -man -Tascii foo.1
+.\" groff -man -Tascii ttlogn.1
 .\"
 .TH TTLOGN 1 "MARCH 2014"
 
 .SH NAME
 ttlogn \- Timetracker LogN
-
-.SH SYNOPSIS
-.B foo [--help]
 
 .SH DESCRIPTION
 .B ttlogn
@@ -16,11 +13,11 @@ It shows the tasks finished and to do, of the worker in an easy way.
 Also it helps the with the log of his tasks in a Timetracker.
 
 .SH OPTIONS
-.IP "login <email> <password> <Git user>" 
+.IP "login" 
+Saves the credentials of the user.
+.IP "ls" 
 List the commits in a period of time.
-.IP "ls " 
-List the commits in a period of time.
-.IP "save "
+.IP "save"
 Saves the commits of Github in the Timetracker.
 .IP "add repo"
 Binds a repository to a project of the Timetracker.
@@ -34,6 +31,8 @@ Modify an existing task in the Timetracker.
 Delete an existing task in the Timetracker.
 .IP clients 
 List the clients of an User in the Timetracker.
+.IP "list stories"
+List the Pivotal's stories of an user.
 
 .SH FILES
 .I ~/.ttlogn
@@ -44,13 +43,7 @@ The configuration file of ttlogn.
 Flag to know what Data Base to use.
 
 .SH BUGS
-The command name should have been chosen more carefully
-to reflect its purpose.
 
 .SH AUTHOR
 Daniel Solis
 
-.SH "SEE ALSO"
-.BR bar (1),
-.BR foo (5),
-.BR xyzzy (1)
