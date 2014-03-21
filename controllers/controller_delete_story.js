@@ -4,30 +4,15 @@ var path = require('path'),
 	colog = require('colog'),
 	story = require(path.resolve(__dirname,'../models/story.js')),
 	user = require(path.resolve(__dirname,'../models/user.js')),
+	utils = require(path.resolve(__dirname,'../lib/utils.js')),
 	config = require(path.resolve(__dirname,'../models/config.js')),
 	project = require(path.resolve(__dirname,'../models/project.js'));
 
-
-var printStories = function(pprojects){
-	//console.log(pprojects.project);
-	_.each(pprojects, function(pivotalProject){
-		console.log('');
-		colog.log(colog.apply(pivotalProject.name, ['underline', 'bold', 'colorBlue']));
-		console.log('-------------------------------');
-		console.log('-------------------------------');
-		_.each(pivotalProject.stories, function(pivotalStory){
-			colog.log(colog.apply(pivotalStory.name + ' - ' + pivotalStory.story_type, ['bold', 'colorBlue']));
-			colog.log(colog.colorBlue(pivotalStory.description));
-			console.log('-------------------------------');
-		});
-	});
-};
-
-var controllerListStories = {
-	// returns the limit date
-	listStories: function(pfilter){
+var controllerDeleteStories = {
+	
+	deleteStory: function(pfilter){
 		var userId = '',
-			projects = [],
+			storyProject = [],
 			userInfo = {},
 			configuration = config.getConfig();
 		if(pfilter === '-a' || typeof pfilter === 'undefined'){
@@ -42,11 +27,22 @@ var controllerListStories = {
 					return project.getPivotalProjects(userId);
 
 				}).then(function(pprojects){
-					projects = pprojects;
-					return story.getStories(projects, userId, userInfo.pivotalUser, pfilter);
+					utils.printNames(pprojects);
+					return utils.getPromptProject2(pprojects);
+
+				}).then(function(pproject){
+					storyProject = pproject;
+					return story.getStories(storyProject, userId, userInfo.pivotalUser, pfilter);
 
 				}).then(function(){
-					printStories(projects);
+					utils.printNames(storyProject.stories);
+					return utils.getPromptStory(storyProject.stories);
+
+				}).then(function(pstory){
+					return story.deleteStory(storyProject.id, pstory.id, userId);
+
+				}).then(function(){
+					colog.log(colog.colorGreen("Story deleted"));
 
 				}).catch(function(error) {
 					colog.log(colog.colorRed(error));
@@ -59,9 +55,8 @@ var controllerListStories = {
 		else{
 			colog.log(colog.colorRed("Error: list story [-a]"));
 		}
-
 	}
 };
 
-module.exports = controllerListStories;
+module.exports = controllerDeleteStories;
 

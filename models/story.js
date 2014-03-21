@@ -15,6 +15,8 @@ var story = {
 			var self = this,
 				filteredProject = [];
 				filter = {};
+
+			//console.log(pproject.id);
 			pivotal.getStories(pproject.id, filter, function(err, ret){
 				if(!err){
 					if(_.isArray(ret.story)){
@@ -49,7 +51,6 @@ var story = {
 		return promise;
 	},
 
-	// returns the limit date
 	getStories: function(pprojects, puser, puserName, pfilter){
 		var promise = new RSVP.Promise(function(resolve, reject){
 			var self = this,
@@ -57,8 +58,8 @@ var story = {
 
 			pivotal.useToken(puser);
 	
-			if(_.isArray(pprojects.project)){
-				_.each(pprojects.project, function(value){
+			if(_.isArray(pprojects)){
+				_.each(pprojects, function(value){
 					promises.push(story.getStory(value, puserName, pfilter));
 				});
 				RSVP.all(promises).then(function() {
@@ -69,13 +70,31 @@ var story = {
 				});
 			}
 			else{
-				story.getStory(pprojects.project, puserName, pfilter).then(function(){
+				story.getStory(pprojects, puserName, pfilter).then(function(){
 					resolve(self);
 				}).catch(function(error) {
 					reject(self);
 					colog.log(colog.colorRed(error));
 				});
 			}
+		});
+		return promise;
+	},
+
+	deleteStory: function(pprojectId, pstoryId, puser){
+		var promise = new RSVP.Promise(function(resolve, reject){
+			var self = this;
+			
+			pivotal.useToken(puser);
+			pivotal.removeStory(pprojectId, pstoryId, function(err, ret){
+				if(!err){
+					resolve(self);
+				}
+				else{
+					colog.log(colog.colorRed('Error: Something went wrong on the request: ' + err.desc));
+					reject(self);
+				}
+			});
 		});
 		return promise;
 	}

@@ -70,9 +70,6 @@ var printTimeEntries = function(puser, pproject, pentries){
 	});
 };
 
-
-/*pentries: entries of the user unconfirm in this period to display
-prints the entries*/
 var getProjets = function(puser, pprojects, pentries){
 	var cancel = pprojects.length,
 		projectId = 0;

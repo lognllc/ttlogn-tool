@@ -18,7 +18,6 @@ var project = {
 		return dataAccess.get(message);
 	},
 
-	// returns the limit date
 	getPivotalProjects: function(puser){
 		var promise = new RSVP.Promise(function(resolve, reject){
 			var self = this;
@@ -26,7 +25,7 @@ var project = {
 			pivotal.useToken(puser);
 			pivotal.getProjects(function(err, ret){
 				if(!err){
-					resolve(ret);
+					resolve(ret.project);
 				}
 				else{
 					colog.log(colog.colorRed('Error: Something went wrong on the request: ' + err.desc));

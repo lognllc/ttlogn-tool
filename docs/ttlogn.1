@@ -1,23 +1,38 @@
 .\" Process this file with
-.\" groff -man -Tascii ttlogn.1
+.\" groff -man -Tascii man
 .\"
+
 .TH TTLOGN 1 "MARCH 2014"
 
 .SH NAME
 ttlogn \- Timetracker LogN
 
 .SH DESCRIPTION
-.B ttlogn
-is a software that helps the worker with managing of tasks.
-It shows the tasks finished and to do, of the worker in an easy way.
+ttlogn is a software that helps the worker with managing of tasks. 
+It shows the tasks finished and to do, of the worker in an easy way. 
 Also it helps the with the log of his tasks in a Timetracker.
+
+.SH SYNOPSIS
+.IP login
+.IP ls 
+[-d|-w|-m]
+.IP save 
+[-d|-w|-m]
+.IP "add repo"
+.IP "delete repo"
+.IP "add task"
+.IP "modify task"
+.IP "delete task"
+.IP clients
+.IP "list stories" 
+[-a]
 
 .SH OPTIONS
 .IP "login" 
 Saves the credentials of the user.
-.IP "ls" 
+.IP "ls [-d|-w|-m]" 
 List the commits in a period of time.
-.IP "save"
+.IP "save [-d|-w|-m]"
 Saves the commits of Github in the Timetracker.
 .IP "add repo"
 Binds a repository to a project of the Timetracker.
@@ -35,7 +50,7 @@ List the clients of an User in the Timetracker.
 List the Pivotal's stories of an user.
 
 .SH FILES
-.I ~/.ttlogn
+.IP ~/.ttlogn
 The configuration file of ttlogn. 
 
 .SH ENVIRONMENT
@@ -46,4 +61,3 @@ Flag to know what Data Base to use.
 
 .SH AUTHOR
 Daniel Solis
-
