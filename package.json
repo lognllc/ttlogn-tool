@@ -3,7 +3,7 @@
   "version": "0.0.7",
   "description": "timetracker helper tool",
   "main": "./lib/main",
-  "man": ["./man/ttlogn.1"],
+  "man": ["./man/man.1.gz"],
   "bin": {
     "ttlogn": "./bin/ttlogn.js"
   },

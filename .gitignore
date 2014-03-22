@@ -26,7 +26,6 @@ lcov.info
 *.dat
 *.out
 *.pid
-*.gz
 
 pids
 logs
