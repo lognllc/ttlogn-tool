@@ -3,7 +3,7 @@ var path = require('path'),
 	colog = require('colog'),
 	lineReader = require('line-reader');
 
-var PATH = '../docs/ttlogn.1',
+var PATH = '../man/ttlogn.1',
 	COMMENT = '.\\"',
 	TITLE = '.TH',
 	SUBTITLE = '.SH',
@@ -50,8 +50,9 @@ var task = {
 
 	displayHelp: function(){
 		var isItem = false;
+		helpPath = path.resolve(__dirname, PATH);
 
-		lineReader.eachLine(PATH, function(line, last) {
+		lineReader.eachLine(helpPath, function(line, last) {
 			isItem = printHelp(line, isItem);
 		});
 	}
