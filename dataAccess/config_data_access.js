@@ -7,11 +7,14 @@ var CONFIGPATH = '.ttlogn';
 /* 
 	get the user's home path
 */
-var configPath = function getUserHome() {
+var configPath = function () {
 	var pathResult;
 	pathResult = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE;
+	console.log(pathResult);
 	pathResult = (path.relative(__dirname,pathResult));
+	console.log(pathResult);
 	pathResult = path.join(pathResult, CONFIGPATH);
+	console.log(pathResult);
 	return pathResult;
 };
 
@@ -25,8 +28,8 @@ var saveFile = function (pdata){
 	var relativePath = configPath();
 	fs.writeFile(relativePath, pdata, 'utf8', '0777',function(err){
             if(err) {
-				colog.log(colog.colorRed('Error: saving file' + err));
-                console.error("Error saving file", err);
+				colog.log(colog.colorRed('Error: saving file.'));
+                colog.log(colog.colorRed(err));
                 process.exit(1);
             }
             else{

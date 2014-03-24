@@ -23,7 +23,6 @@ var deleteTimeEntry = function(puser, pentry, pentryDescription){
 		//console.log(entryToDelete);
 	utils.getConfirmation(pentryDescription).then(function(){
 		return timeEntry.deleteTimeEntry(entryToDelete);
-		
 	}).then(function(){
 		colog.log(colog.colorGreen('Time entry deleted'));
 	}).catch(function(error) {

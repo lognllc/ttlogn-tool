@@ -137,7 +137,7 @@ var controllerConfigFile = {
 		}
 		else{
 			colog.log(colog.colorRed('Error: Make first the configuration:'));
-			colog.log(colog.colorRed('ttlogn login email password git_name pivotal_password'));
+			colog.log(colog.colorRed('ttlogn login'));
 		}
 	},
 
