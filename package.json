@@ -1,9 +1,9 @@
 {
   "name": "ttlogn",
-  "version": "0.0.9",
+  "version": "0.0.11",
   "description": "timetracker helper tool",
   "main": "./lib/main",
-  "man": ["./man/man.1.gz"],
+  "man": ["./man/ttlogn.1"],
   "bin": {
     "ttlogn": "./bin/ttlogn.js"
   },
