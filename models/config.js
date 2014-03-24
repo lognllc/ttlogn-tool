@@ -91,10 +91,6 @@ var config = {
 					description: 'Git user'.magenta,
 					required: true
 				},
-				pivotalUser:{
-					description: 'Pivotal user'.magenta,
-					required: true
-				},
 				pivotalPassword:{
 					description: 'Pivotal password'.magenta,
 					required: true,
@@ -112,7 +108,6 @@ var config = {
 				dataFile.password = pass;
 				dataFile.gitUser = resultPrompt.gitUser;
 				dataFile.pivotalPassword = resultPrompt.pivotalPassword;
-				dataFile.pivotalUser = resultPrompt.pivotalUser;
 
 				dataFile = JSON.stringify(dataFile);
 				dataAccess.saveConfig(dataFile);

@@ -16,9 +16,9 @@ var story = {
 				filteredProject = [];
 				filter = {};
 
-			//console.log(pproject.id);
 			pivotal.getStories(pproject.id, filter, function(err, ret){
 				if(!err){
+					
 					if(_.isArray(ret.story)){
 						pproject.stories = ret.story;
 					}
@@ -58,7 +58,7 @@ var story = {
 
 			pivotal.useToken(puser);
 	
-			if(_.isArray(pprojects)){
+			//if(_.isArray(pprojects)){
 				_.each(pprojects, function(value){
 					promises.push(story.getStory(value, puserName, pfilter));
 				});
@@ -68,7 +68,7 @@ var story = {
 					reject(self);
 					colog.log(colog.colorRed(reason));
 				});
-			}
+			/*}
 			else{
 				story.getStory(pprojects, puserName, pfilter).then(function(){
 					resolve(self);
@@ -76,7 +76,7 @@ var story = {
 					reject(self);
 					colog.log(colog.colorRed(error));
 				});
-			}
+			}*/
 		});
 		return promise;
 	},

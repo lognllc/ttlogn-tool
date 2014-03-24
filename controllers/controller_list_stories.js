@@ -29,6 +29,7 @@ var controllerListStories = {
 		var userId = '',
 			projects = [],
 			userInfo = {},
+			pivotalUser = '',
 			configuration = config.getConfig();
 		if(pfilter === '-a' || typeof pfilter === 'undefined'){
 			if(config.existConfig){
@@ -43,7 +44,11 @@ var controllerListStories = {
 
 				}).then(function(pprojects){
 					projects = pprojects;
-					return story.getStories(projects, userId, userInfo.pivotalUser, pfilter);
+					return project.getMemberships(userId, projects);
+
+				}).then(function(pmemberships){
+					pivotalUser = user.getPivotalUser(userInfo, pmemberships);
+					return story.getStories(projects, userId, pivotalUser, pfilter);
 
 				}).then(function(){
 					printStories(projects);

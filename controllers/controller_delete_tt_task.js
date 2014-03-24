@@ -14,14 +14,17 @@ var DATE_FORMAT = 'l';
 
 /*pentries: projects of the user to display
 set the projects, get hour type*/
-var deleteTimeEntry = function(puser, pentry){
+var deleteTimeEntry = function(puser, pentry, pentryDescription){
 	var entryToDelete = {
 			entry_id: pentry,
 			devtype: puser.devtype,
 			user_id: puser.id
 		};
-		console.log(entryToDelete);
-	timeEntry.deleteTimeEntry(entryToDelete).then(function(){
+		//console.log(entryToDelete);
+	utils.getConfirmation(pentryDescription).then(function(){
+		return timeEntry.deleteTimeEntry(entryToDelete);
+		
+	}).then(function(){
 		colog.log(colog.colorGreen('Time entry deleted'));
 	}).catch(function(error) {
 		colog.log(colog.colorRed(error));
@@ -58,7 +61,7 @@ var printTimeEntries = function(puser, pproject, pentries){
 			console.log(ptimeEntry);
 			timeEntryToDelete = timeEntries[ptimeEntry - 1];//.id;
 			console.log(timeEntryToDelete);
-			deleteTimeEntry(puser, timeEntryToDelete.id);
+			deleteTimeEntry(puser, timeEntryToDelete.id, timeEntryToDelete.tskDescription);
 		}
 		else{
 			process.exit(0);

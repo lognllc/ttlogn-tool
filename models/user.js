@@ -3,6 +3,7 @@ var //_ = require('underscore'),
 	fs = require('fs'),
 	pivotal = require('pivotal'),
 	RSVP = require('rsvp'),
+	_ = require('underscore'),
 	colog = require('colog'),
 	dataAccess = require(path.resolve(__dirname, '../dataAccess/apitt_data_access.js'));
 
@@ -50,7 +51,12 @@ var user = {
 
 		});
 		return promise;
-	}
+	},
+
+	getPivotalUser: function (puser, pmemberships)
+	{	var pivotalUser = _.find(pmemberships, function(membership){ return puser.email === membership.person.email; });
+		return pivotalUser.person.name;
+	},
 
 };
 module.exports = user;

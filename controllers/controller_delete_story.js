@@ -14,7 +14,9 @@ var controllerDeleteStories = {
 		var userId = '',
 			storyProject = [],
 			userInfo = {},
-			configuration = config.getConfig();
+			pivotalUser = '',
+			configuration = config.getConfig(),
+			selectedStory = {};
 		if(pfilter === '-a' || typeof pfilter === 'undefined'){
 			if(config.existConfig){
 				colog.log(colog.colorGreen('Loading...'));
@@ -31,15 +33,24 @@ var controllerDeleteStories = {
 					return utils.getPromptProject2(pprojects);
 
 				}).then(function(pproject){
-					storyProject = pproject;
-					return story.getStories(storyProject, userId, userInfo.pivotalUser, pfilter);
+					storyProject.push(pproject);
+					return project.getMemberships(userId, storyProject);
+
+				}).then(function(pmemberships){
+					pivotalUser = user.getPivotalUser(userInfo, pmemberships);
+					return story.getStories(storyProject, userId, pivotalUser, pfilter);
 
 				}).then(function(){
+					storyProject = _.first(storyProject);
 					utils.printNames(storyProject.stories);
 					return utils.getPromptStory(storyProject.stories);
 
 				}).then(function(pstory){
-					return story.deleteStory(storyProject.id, pstory.id, userId);
+					selectedStory = pstory;
+					return utils.getConfirmation(pstory.name);
+
+				}).then(function(){
+						return story.deleteStory(storyProject.id, selectedStory.id, userId);
 
 				}).then(function(){
 					colog.log(colog.colorGreen("Story deleted"));
