@@ -10,10 +10,6 @@ var CONFIGPATH = '.ttlogn';
 var configPath = function () {
 	var pathResult;
 	pathResult = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE;
-	console.log(pathResult);
-	console.log(__dirname);
-	pathResult = (path.relative(__dirname, pathResult));
-	console.log(pathResult);
 	pathResult = path.join(pathResult, CONFIGPATH);
 	console.log(pathResult);
 	return pathResult;
@@ -58,14 +54,6 @@ var configDataAccess = {
 		return fs.readFileSync(relativePath, 'utf8');
 	},
 
-	/* 
-	read the configuration file
-	*/
-/*	readHelp: function(){
-		var relativePath = path.resolve(__dirname,'../ttlogn.1');
-		return fs.readFileSync(relativePath, 'utf8');
-	},
-*/
 	/* 
 	returns a boolean, says if the config file exists
 	*/
