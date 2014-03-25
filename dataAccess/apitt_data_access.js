@@ -62,7 +62,7 @@ var apiTTDataAccess = {
 				};
 			//console.log(pparameters);
 			client.post(host + ppost, args, function(data,response){
-				console.log(data);
+			//	console.log(data);
 				dataServer = JSON.parse(data);
 				resolve(dataServer);
 			}).on('error',function(err){

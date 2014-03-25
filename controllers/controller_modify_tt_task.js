@@ -13,7 +13,7 @@ var _ = require('underscore'),
 
 var FORMATHOUR = /^\d+(|\.\d+)h$/i,
 	DIGITS = /[^h]+/i,
-	PROJECT = /^\d+$/,
+	NUMBERS = /^\d+$/,
 	FIELD = /^[0-6]$/,
 	CREATED = /^\d\d$/,
 	TIME_IN = /^[0-2]\d\:[0-6]\d$/,
@@ -171,7 +171,7 @@ var modifyProject = function(){
 			project: {
 				description: "Number of the project".magenta,
 				required: true,
-				pattern: PROJECT
+				pattern: NUMBERS
 			}
 		}
 	}, function (err, resultPrompt) {
@@ -196,7 +196,7 @@ var modifyHourType = function(phours){
 			hours: {
 				description: "Number of hour type".magenta,
 				required: true,
-				pattern: PROJECT
+				pattern: NUMBERS
 			}
 		}
 	}, function (err, resultPrompt) {
@@ -238,7 +238,8 @@ var printTimeEntry = function(){
 			field: {
 				description: "Number of field".magenta,
 				required: true,
-				pattern: PROJECT
+				default: '1',
+				pattern: NUMBERS
 			}
 		}
 	}, function (err, resultPrompt) {
@@ -289,7 +290,7 @@ var setTimeEntry = function(pentries){
 			entry: {
 				description: "Number of the entry".magenta,
 				required: true,
-				pattern: PROJECT
+				pattern: NUMBERS
 			}
 		}
 	}, function (err, resultPrompt) {
@@ -310,7 +311,7 @@ var printTimeEntries = function(pentries){
 			project: {
 				description: "Number of the project".magenta,
 				required: true,
-				pattern: PROJECT
+				pattern: NUMBERS
 			}
 		}
 	}, function (err, resultPrompt) {

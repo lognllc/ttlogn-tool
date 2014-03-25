@@ -33,7 +33,6 @@ var	saveCommits = function(puser, prepos, phourType){
 
 	_.each(prepos, function(projects){
 		_.each(projects, function(project){
-
 			_.each(project.commits, function(value){
 				var commitToInsert = {},
 					timeIn = '',
@@ -61,7 +60,7 @@ var	saveCommits = function(puser, prepos, phourType){
 					hour = parseFloat(work);
 					detailTime.setDetailTime(commitToInsert, hour, value.date);
 				}
-				console.log(commitToInsert);
+				//console.log(commitToInsert);
 				promises.push(timeEntry.postTimeEntry(commitToInsert));
 			});
 		});
@@ -128,6 +127,7 @@ var controllerSaveWork = {
 				}).then(function(){
 					newRepos = utils.bindCommits(repos, configuration.gitUser);
 					saveCommits(userInfo, newRepos, billable);
+
 				}).catch(function(error) {
 					colog.log(colog.colorRed(error));
 				});

@@ -78,7 +78,7 @@ var config = {
 		prompt.get({
 			properties: {
 				email:{
-					description: 'Email'.magenta,
+					description: 'Log(n) email '.magenta,
 					required: true,
 					pattern: EMAIL
 				},
@@ -90,6 +90,11 @@ var config = {
 				gitUser:{
 					description: 'Git user'.magenta,
 					required: true
+				},
+				pivotalEmail:{
+					description: 'Pivotal email'.magenta,
+					required: true,
+					pattern: EMAIL
 				},
 				pivotalPassword:{
 					description: 'Pivotal password'.magenta,
