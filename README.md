@@ -37,6 +37,7 @@ Stores a repository in the config file. The config file must exists. The path of
 * Branch: select the branch or all the branches to bind with the project
 
 ### Examples
+```
 ttlogn add repo
 1: Project 1
 2: Project 2
@@ -49,6 +50,7 @@ Select a branch:
 prompt: Number of the branch: :  3
 Adding repository: repo_path, and project: Project 1
 Success: configuration file saved
+```
 
 ## delete repo
 Delete an existing repository in the configuration file.
@@ -57,6 +59,7 @@ Delete an existing repository in the configuration file.
 * Repository: path of the repository to delete 
 
 ### Examples
+```
 ttlogn delete repo
 1: Repository 1
 2: Repository 2
@@ -66,6 +69,7 @@ Do you want to delete:
 Repository 1
 prompt: (y or n):  y
 Success: configuration file saved
+```
 
 ## ls
 Searches for the repositories in the configuration file. Then, depending on the parameter receive: [-d/-w/-m], print a list of commits of the branches of the different repositories. If there isn't a parameter the default value is '-d'.
@@ -79,21 +83,21 @@ Searches for the repositories in the configuration file. Then, depending on the 
 ```
 ttlogn ls -d
 Loading...
->
+
 -------------------------------
 Project 1
 -------------------------------
->
+
 Wednesday, 26 March 2014
->	Example Task 11 (3h)
+	Example Task 11 (3h)
 Hours worked: 3
->
+
 -------------------------------
 Project 2
 -------------------------------
->
+
 Wednesday, 26 March 2014
->	Example Task 21 (2h)
+	Example Task 21 (2h)
 Hours worked: 2
 ```
 
@@ -106,11 +110,13 @@ Searches for the repositories in the configuration file. Then, depending on the 
 * [-m]: print the commits of the month
 
 ### Examples
+```
 ttlogn save -d
 Loading...
 Saving commit: Example Task 11 (3h)
 Saving commit: Example Task 21 (2h)
 Saved successful
+```
 
 ## add entry
 Add a new time entry to the Timetracker.
@@ -122,6 +128,7 @@ Add a new time entry to the Timetracker.
 * Begin of the task: Is the hour of the begin of the task. Is needed depending of the type of user. The format is (HH:mm). Ex: 09:00
 
 ### Examples
+```
 ttlogn add entry
 1: Project 1
 2: Project 2
@@ -131,6 +138,7 @@ prompt: Description of the taks:  Example task 12
 prompt: Worked hours:  4h
 prompt: Begin of the task (HH:mm):  09:35
 Time entry saved
+```
 
 ## modify entry
 Modify a existing time entry in the Timetracker. 
@@ -144,6 +152,7 @@ Modify a existing time entry in the Timetracker.
 * Begin of the task: Is the hour of the begin of the task. Is needed depending of the type of user. The format is (HH:mm). Ex: 09:00
 
 ### Examples
+```
 ttlogn modify entry
 1: Project 1
 2: Project 2
@@ -164,6 +173,7 @@ Select a field:
 8: Cancel 
 prompt: Number of field:  (1) 7
 Time entry saved
+```
 
 ## delete entry
 Deletes an existing time entry in the Timetracker
@@ -173,6 +183,7 @@ Deletes an existing time entry in the Timetracker
 * Entry: entry to delete
 
 ### Examples
+```
 ttlogn delete entry
 1: Project 1
 2: Project 2
@@ -186,15 +197,18 @@ Do you want to delete:
 Example Task 11 (3h)
 prompt: (y or n):  y
 Time entry deleted
+```
 
 ## clients
 Prints the clients in the Timetracker of an user .
 
 ### Examples
+```
 ttlogn clients
 1. Client 1
 2. Client 2
 3. Client 3
+```
 
 ## story ls	[-a]
 Searches for the stories in Pivotal Tracker. If the parameter received is '-a', print all the stories of the user. If there isn't a parameter print a list of the started and unstarted stories of the user.
@@ -203,9 +217,10 @@ Searches for the stories in Pivotal Tracker. If the parameter received is '-a', 
 * [-a]: print all stories of the user
 
 ### Examples
+```
 ttlogn story ls
 Loading...
->
+
 Project 1
 -------------------------------
 -------------------------------
@@ -215,13 +230,14 @@ Description
 Story 2 - type
 Description
 -------------------------------
->
+
 Project 2
 -------------------------------
 -------------------------------
 Story 1 - type
 Description
 -------------------------------
+```
 
 ## delete story
 Deletes an existing story in Pivotal Tracker.
@@ -231,6 +247,7 @@ Deletes an existing story in Pivotal Tracker.
 * Story: story in the Pivotal Tracker to delete
 
 ### Examples
+```
 ttlogn delete story
 Loading...
 1: Project 1
@@ -245,6 +262,7 @@ Do you want to delete:
 Story 1
 prompt: (y or n):  y
 Story deleted
+```
 
 ## --help
 Prints the man page, displays the help.
