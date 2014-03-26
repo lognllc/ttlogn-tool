@@ -115,6 +115,7 @@ var config = {
 				dataFile.email = resultPrompt.email;
 				dataFile.password = pass;
 				dataFile.gitUser = resultPrompt.gitUser;
+				dataFile.pivotalEmail = resultPrompt.pivotalEmail;
 				dataFile.pivotalPassword = resultPrompt.pivotalPassword;
 
 				dataFile = JSON.stringify(dataFile, null, 4);

@@ -11,24 +11,7 @@ var _ = require('underscore'),
 	utils = require(path.resolve(__dirname,'../lib/utils.js')),
 	commit = require(path.resolve(__dirname,'../models/commit.js'));
 
-/* pmessage: message of the commit 
-return a string with the number of hours worked
-*/
-/*var setDetailTime = function(pentry, phour, pdate){
-	var timeOut = pdate;
 
-	timeOut.add((phour),'hours');
-
-	pentry.time_in = pdate.format('HH.mm');
-	pentry.time_out  = timeOut.format('HH.mm');
-};*/
-
-/* 
-puser: information of the user
-prepos: repositories to save
-phourType: hour type
-saves the commits in the TT
-*/
 var	saveCommits = function(puser, prepos, phourType){
 
 	var date = moment().format('YYYY-MM-DD HH:mm:ss'),
@@ -61,7 +44,7 @@ var	saveCommits = function(puser, prepos, phourType){
 
 				if(puser.devtype === 'non_exempt'){
 					hour = parseFloat(work);
-					detailTime.setDetailTime(commitToInsert, hour, value.date);
+					detailTime.setDetailTimeOut(commitToInsert, hour, value.date);
 				}
 				//console.log(commitToInsert);
 				promises.push(timeEntry.postTimeEntry(commitToInsert));

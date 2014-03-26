@@ -24,9 +24,11 @@ save the task
 */
 var saveTimeEntry = function(){
 
+	var date = entryToModify.created.format(DATE_FORMAT);
+	
 	task = {
 		id: entryToModify.id,
-		created:  entryToModify.created,
+		created:  date,
 		developer_id: userInfo.id,
 		project_id: entryToModify.project.id,
 		description: entryToModify.tskDescription,
@@ -79,8 +81,8 @@ var modifyCreated = function(){
 			}
 		}
 	}, function (err, resultPrompt) {
-		entryToModify.created = moment(entryToModify.created).date(resultPrompt.created).format(DATE_FORMAT);
-		console.log(entryToModify);
+		entryToModify.created = moment(entryToModify.created).date(resultPrompt.created);
+		//console.log(entryToModify);
 		printTimeEntry();
 	});
 };
@@ -165,7 +167,7 @@ var getHourType = function(){
 /*prints the time entry, options
 */
 var printOptions = function(){
-	console.log(entryToModify);
+//	console.log(entryToModify);
 	var date = entryToModify.created.format(DATE_FORMAT);
 
 	colog.log(colog.colorMagenta('Select a field: '));
