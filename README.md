@@ -1,6 +1,8 @@
 ttlogn-tool
 ===========
 
+ttlogn is a software that helps the worker managing his tasks. It shows and manage the tasks finished and to do, of the worker in an easy way. Also it helps the with the log of his tasks in a Timetracker.
+
 ## Installation
 > npm install -g ttlogn
 
@@ -21,8 +23,22 @@ Stores a repository in the config file. The config file must exists. The path of
 * Project: project to bind the repo
 * Branch: select the branch or all the branches to bind with the project
 
+## delete repo
+Delete an existing repository in the configuration file.
+
+### Parameters
+* Repository: path of the repository to delete 
+
 ## ls
 Searches for the repositories in the configuration file. Then, depending on the parameter receive: [-d/-w/-m], print a list of commits of the branches of the different repositories. If there isn't a parameter the default value is '-d'.
+
+### Parameters
+* [-d]: print the commits of the day
+* [-w]: print the commits of the week
+* [-m]: print the commits of the month
+
+## save
+Searches for the repositories in the configuration file. Then, depending on the parameter received: [-d/-w/-m], saves the commits of the branches of the different repositories. If there isn't a parameter the default value is '-d'. The commits need to have a specific format, test (worked_hours h). Ex: Test commit (2h) 
 
 ### Parameters
 * [-d]: print the commits of the day
@@ -56,11 +72,14 @@ Deletes an existing time entry in the Timetracker
 * Project: project in the Timetracker that has the entry to delete
 * Entry: entry to delete
 
-## delete repo
-Delete an existing repository in the configuration file.
+## clients
+Prints the clients in the Timetracker of an user .
+
+## story ls	[-a]
+Searches for the stories in Pivotal Tracker. If the parameter received is '-a', print all the stories of the user. If there isn't a parameter print a list of the started and unstarted stories of the user.
 
 ### Parameters
-* Repository: path of the repository to delete 
+* [-a]: print all stories of the user
 
 ## delete story
 Deletes an existing story in Pivotal Tracker.
@@ -68,23 +87,6 @@ Deletes an existing story in Pivotal Tracker.
 ### Parameters
 * Project: project of Pivotal Tracker that has the entry to delete
 * Story: story in the Pivotal Tracker to delete
-
-## clients
-Prints the clients in the Timetracker of an user .
-
-## save
-Searches for the repositories in the configuration file. Then, depending on the parameter received: [-d/-w/-m], saves the commits of the branches of the different repositories. If there isn't a parameter the default value is '-d'. The commits need to have a specific format, test (worked_hours h). Ex: Test commit (2h) 
-
-### Parameters
-* [-d]: print the commits of the day
-* [-w]: print the commits of the week
-* [-m]: print the commits of the month
-
-## story ls	[-a]
-Searches for the stories in Pivotal Tracker. If the parameter received is '-a', print all the stories of the user. If there isn't a parameter print a list of the started and unstarted stories of the user.
-
-### Parameters
-* [-a]: print all stories of the user
 
 ## --help
 Prints the man page, displays the help.

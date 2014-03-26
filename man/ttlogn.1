@@ -8,24 +8,26 @@
 ttlogn \- Timetracker LogN
 
 .SH DESCRIPTION
-ttlogn is a software that helps the worker with managing of tasks. 
-It shows the tasks finished and to do, of the worker in an easy way. 
-Also it helps the with the log of his tasks in a Timetracker.
+ttlogn is a software that helps the worker managing his tasks. 
+It shows and manage the tasks finished and to do, of the worker 
+in an easy way. Also it helps the with the log of his tasks in 
+a Timetracker.
 
 .SH SYNOPSIS
 .IP login
+.IP "add repo"
+.IP "delete repo"
 .IP ls 
 [-d|-w|-m]
 .IP save 
 [-d|-w|-m]
-.IP "add repo"
-.IP "delete repo"
 .IP "add entry"
 .IP "modify entry"
 .IP "delete entry"
 .IP clients
-.IP "list stories" 
+.IP "story ls" 
 [-a]
+.IP "delete story"
 
 .SH OPTIONS
 .IP "login" 
@@ -48,6 +50,8 @@ Delete an existing entry in the Timetracker.
 List the clients of an User in the Timetracker.
 .IP "story ls [-a]"
 List the Pivotal's stories of an user.
+.IP "delete story"
+Delete an existing story in Pivotal Tracker.
 
 .SH FILES
 .IP ~/.ttlogn
