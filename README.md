@@ -4,7 +4,7 @@ ttlogn-tool
 ttlogn is a software that helps the worker managing his tasks. It shows and manage the tasks finished and to do, of the worker in an easy way. Also it helps the with the log of his tasks in a Timetracker.
 
 ## Installation
-> npm install -g ttlogn
+npm install -g ttlogn
 
 ## login
 Sets a user in the config file. If the config file doesn't exists, it is created. The user information is obtained by the parameters.
@@ -17,15 +17,15 @@ Sets a user in the config file. If the config file doesn't exists, it is created
 * Pivotal password: password for Pivotal Tracker
 
 ### Example
-> ttlogn login
-> prompt: Log(n) email :  user@logn.com
-> prompt: Timetracker password:  
-> prompt: Git user:  git_user
-> prompt: Pivotal email:  user@gmail.com
-> prompt: Pivotal password:  
-> Adding user:
-> user@logn.com, user@gmail.com, git_user
-> Success: configuration file saved
+ttlogn login
+prompt: Log(n) email :  user@logn.com
+prompt: Timetracker password:  
+prompt: Git user:  git_user
+prompt: Pivotal email:  user@gmail.com
+prompt: Pivotal password:  
+Adding user:
+user@logn.com, user@gmail.com, git_user
+Success: configuration file saved
 
 ## add repo
 Stores a repository in the config file. The config file must exists. The path of the repository will be the current working directory.
@@ -35,19 +35,18 @@ Stores a repository in the config file. The config file must exists. The path of
 * Branch: select the branch or all the branches to bind with the project
 
 ### Examples
-> ttlogn add repo
-> 1: Project 1
-> 2: Project 2
-> 3: Cancel
-> prompt: Number of the project:  1
-> Select a branch: 
-> 1: master
-> 2: branch 1
-> 3: All
-> prompt: Number of the branch: :  3
-> Adding repository: repo_path, and project: Project 1
-> Success: configuration file saved
-
+ttlogn add repo
+1: Project 1
+2: Project 2
+3: Cancel
+prompt: Number of the project:  1
+Select a branch: 
+1: master
+2: branch 1
+3: All
+prompt: Number of the branch: :  3
+Adding repository: repo_path, and project: Project 1
+Success: configuration file saved
 
 ## delete repo
 Delete an existing repository in the configuration file.
@@ -56,15 +55,15 @@ Delete an existing repository in the configuration file.
 * Repository: path of the repository to delete 
 
 ### Examples
-> ttlogn delete repo
-> 1: Repository 1
-> 2: Repository 2
-> 3: Cancel
-> prompt: Number of the repository: :  1
-> Do you want to delete: 
-> Repository 1
-> prompt: (y or n):  y
-> Success: configuration file saved
+ttlogn delete repo
+1: Repository 1
+2: Repository 2
+3: Cancel
+prompt: Number of the repository: :  1
+Do you want to delete: 
+Repository 1
+prompt: (y or n):  y
+Success: configuration file saved
 
 ## ls
 Searches for the repositories in the configuration file. Then, depending on the parameter receive: [-d/-w/-m], print a list of commits of the branches of the different repositories. If there isn't a parameter the default value is '-d'.
@@ -75,24 +74,24 @@ Searches for the repositories in the configuration file. Then, depending on the 
 * [-m]: print the commits of the month
 
 ### Examples
-> ttlogn ls -d
-> Loading...
+ttlogn ls -d
+Loading...
 >
-> -------------------------------
-> Project 1
-> -------------------------------
+-------------------------------
+Project 1
+-------------------------------
 >
-> Wednesday, 26 March 2014
+Wednesday, 26 March 2014
 >	Example Task 11 (3h)
-> Hours worked: 3
+Hours worked: 3
 >
-> -------------------------------
-> Project 2
-> -------------------------------
+-------------------------------
+Project 2
+-------------------------------
 >
-> Wednesday, 26 March 2014
+Wednesday, 26 March 2014
 >	Example Task 21 (2h)
-> Hours worked: 2
+Hours worked: 2
 
 ## save
 Searches for the repositories in the configuration file. Then, depending on the parameter received: [-d/-w/-m], saves the commits of the branches of the different repositories. If there isn't a parameter the default value is '-d'. The commits need to have a specific format, test (worked_hours h). Ex: Test commit (2h) 
@@ -103,11 +102,11 @@ Searches for the repositories in the configuration file. Then, depending on the 
 * [-m]: print the commits of the month
 
 ### Examples
-> ttlogn save -d
-> Loading...
-> Saving commit: Example Task 11 (3h)
-> Saving commit: Example Task 21 (2h)
-> Saved successful
+ttlogn save -d
+Loading...
+Saving commit: Example Task 11 (3h)
+Saving commit: Example Task 21 (2h)
+Saved successful
 
 ## add entry
 Add a new time entry to the Timetracker.
@@ -119,15 +118,15 @@ Add a new time entry to the Timetracker.
 * Begin of the task: Is the hour of the begin of the task. Is needed depending of the type of user. The format is (HH:mm). Ex: 09:00
 
 ### Examples
-> ttlogn add entry
-> 1: Project 1
-> 2: Project 2
-> 3: Cancel
-> prompt: Number of the project:  1
-> prompt: Description of the taks:  Example task 12
-> prompt: Worked hours:  4h
-> prompt: Begin of the task (HH:mm):  09:35
-> Time entry saved
+ttlogn add entry
+1: Project 1
+2: Project 2
+3: Cancel
+prompt: Number of the project:  1
+prompt: Description of the taks:  Example task 12
+prompt: Worked hours:  4h
+prompt: Begin of the task (HH:mm):  09:35
+Time entry saved
 
 ## modify entry
 Modify a existing time entry in the Timetracker. 
@@ -141,24 +140,24 @@ Modify a existing time entry in the Timetracker.
 * Begin of the task: Is the hour of the begin of the task. Is needed depending of the type of user. The format is (HH:mm). Ex: 09:00
 
 ### Examples
-> ttlogn modify entry
-> 1: Project 1
-> 2: Project 2
-> 3: Cancel
-> prompt: Number of the project:  1 
-> 1: Example Task 11 (3h)
-> 2: Example task 12
-> 3: Cancel
-> prompt: Number of the Time Entry:  1
-> Select a field: 
-> 1: Created: 2014-03-26 10:29:34
-> 2: Description: Example Task 11 (3h)
-> 3: Time: 2
-> 4: Hour Type: Billable
-> 5: Proyect: Project 1
-> 6: Begin of task:  8.29
-> 7: Save 
-> 8: Cancel 
+ttlogn modify entry
+1: Project 1
+2: Project 2
+3: Cancel
+prompt: Number of the project:  1 
+1: Example Task 11 (3h)
+2: Example task 12
+3: Cancel
+prompt: Number of the Time Entry:  1
+Select a field: 
+1: Created: 2014-03-26 10:29:34
+2: Description: Example Task 11 (3h)
+3: Time: 2
+4: Hour Type: Billable
+5: Proyect: Project 1
+6: Begin of task:  8.29
+7: Save 
+8: Cancel 
 prompt: Number of field:  (1) 7
 Time entry saved
 
@@ -170,28 +169,28 @@ Deletes an existing time entry in the Timetracker
 * Entry: entry to delete
 
 ### Examples
-> ttlogn delete entry
-> 1: Project 1
-> 2: Project 2
-> 3: Cancel
-> prompt: Number of the project:  1 
-> 1: Example Task 11 (3h)
-> 2: Example task 12
-> 3: Cancel
-> prompt: Number of the Time Entry:  1
-> Do you want to delete: 
-> Example Task 11 (3h)
-> prompt: (y or n):  y
-> Time entry deleted
+ttlogn delete entry
+1: Project 1
+2: Project 2
+3: Cancel
+prompt: Number of the project:  1 
+1: Example Task 11 (3h)
+2: Example task 12
+3: Cancel
+prompt: Number of the Time Entry:  1
+Do you want to delete: 
+Example Task 11 (3h)
+prompt: (y or n):  y
+Time entry deleted
 
 ## clients
 Prints the clients in the Timetracker of an user .
 
 ### Examples
-> ttlogn clients
-> 1. Client 1
-> 2. Client 2
-> 3. Client 3
+ttlogn clients
+1. Client 1
+2. Client 2
+3. Client 3
 
 ## story ls	[-a]
 Searches for the stories in Pivotal Tracker. If the parameter received is '-a', print all the stories of the user. If there isn't a parameter print a list of the started and unstarted stories of the user.
@@ -200,25 +199,25 @@ Searches for the stories in Pivotal Tracker. If the parameter received is '-a', 
 * [-a]: print all stories of the user
 
 ### Examples
-> ttlogn story ls
-> Loading...
+ttlogn story ls
+Loading...
 >
-> Project 1
-> -------------------------------
-> -------------------------------
-> Story 1 - type
-> Description
-> -------------------------------
-> Story 2 - type
-> Description
-> -------------------------------
+Project 1
+-------------------------------
+-------------------------------
+Story 1 - type
+Description
+-------------------------------
+Story 2 - type
+Description
+-------------------------------
 >
-> Project 2
-> -------------------------------
-> -------------------------------
-> Story 1 - type
-> Description
-> -------------------------------
+Project 2
+-------------------------------
+-------------------------------
+Story 1 - type
+Description
+-------------------------------
 
 ## delete story
 Deletes an existing story in Pivotal Tracker.
@@ -228,20 +227,20 @@ Deletes an existing story in Pivotal Tracker.
 * Story: story in the Pivotal Tracker to delete
 
 ### Examples
-> ttlogn delete story
-> Loading...
-> 1: Project 1
-> 2: Project 2
-> 3: Cancel
-> prompt: Number of the project:  1
-> 1: Story 1
-> 2: Story 2
-> 3: Cancel
-> prompt: Number of the story:  1
-> Do you want to delete: 
-> Story 1
-> prompt: (y or n):  y
-> Story deleted
+ttlogn delete story
+Loading...
+1: Project 1
+2: Project 2
+3: Cancel
+prompt: Number of the project:  1
+1: Story 1
+2: Story 2
+3: Cancel
+prompt: Number of the story:  1
+Do you want to delete: 
+Story 1
+prompt: (y or n):  y
+Story deleted
 
 ## --help
 Prints the man page, displays the help.
