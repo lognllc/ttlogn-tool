@@ -43,7 +43,7 @@ var story = {
 							{ return pstory.owned_by === puserName;});
 						pproject.stories = filteredProject;
 					}
-					resolve(self);
+					resolve();
 				}
 				else{
 					colog.log(colog.colorRed('Error: Something went wrong on the request: ' + err.desc));
@@ -72,7 +72,7 @@ var story = {
 				promises.push(story.getStory(value, puserName, pfilter));
 			});
 			RSVP.all(promises).then(function() {
-				resolve(self);
+				resolve();
 			}).catch(function(reason){
 				reject(self);
 				colog.log(colog.colorRed(reason));
@@ -93,7 +93,7 @@ var story = {
 			pivotal.useToken(puser);
 			pivotal.removeStory(pprojectId, pstoryId, function(err, ret){
 				if(!err){
-					resolve(self);
+					resolve();
 				}
 				else{
 					colog.log(colog.colorRed('Error: Something went wrong on the request: ' + err.desc));

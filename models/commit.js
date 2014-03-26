@@ -65,7 +65,7 @@ var commit = {
 						reject(self);
 						return false;
 					}
-					resolve(self);
+					resolve();
 				});
 			});
 		return promise;
@@ -85,7 +85,7 @@ var commit = {
 			});
 
 			RSVP.all(promises).then(function(posts){
-				resolve(self);
+				resolve();
 			}).catch(function(reason){
 				colog.log(colog.colorRed(reason));
 				reject(self);
@@ -128,7 +128,7 @@ var commit = {
 					prepo.branches.push(objectBrach);
 		//				console.log(item.branches);
 				});
-				resolve(self);
+				resolve();
 			}
 			else{
 		//		console.log('entre all');
@@ -149,7 +149,7 @@ var commit = {
 
 							prepo.branches.push(objectBrach);
 						});
-						resolve(self);
+						resolve();
 					}
 				});
 			}
@@ -169,7 +169,7 @@ var commit = {
 			});
 
 			RSVP.all(promises).then(function(){
-				resolve(self);
+				resolve();
 			}).catch(function(reason){
 				reject(self);
 			});
@@ -248,7 +248,7 @@ var commit = {
 				_.each(repos, function(value){
 					pnewRepos.push(value);
 				});
-				resolve(self);
+				resolve();
 			}).catch(function(reason){
 				reject(self);
 			});

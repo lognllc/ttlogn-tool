@@ -6,6 +6,10 @@ ttlogn is a software that helps the worker managing his tasks. It shows and mana
 ## Installation
 npm install -g ttlogn
 
+
+## --help
+Prints the man page, displays the help.
+
 ## login
 Sets a user in the config file. If the config file doesn't exists, it is created. The user information is obtained by the parameters.
 
@@ -264,5 +268,3 @@ prompt: (y or n):  y
 Story deleted
 ```
 
-## --help
-Prints the man page, displays the help.
