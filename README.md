@@ -17,6 +17,7 @@ Sets a user in the config file. If the config file doesn't exists, it is created
 * Pivotal password: password for Pivotal Tracker
 
 ### Example
+```
 ttlogn login
 prompt: Log(n) email :  user@logn.com
 prompt: Timetracker password:  
@@ -26,6 +27,7 @@ prompt: Pivotal password:
 Adding user:
 user@logn.com, user@gmail.com, git_user
 Success: configuration file saved
+```
 
 ## add repo
 Stores a repository in the config file. The config file must exists. The path of the repository will be the current working directory.
@@ -74,6 +76,7 @@ Searches for the repositories in the configuration file. Then, depending on the 
 * [-m]: print the commits of the month
 
 ### Examples
+```
 ttlogn ls -d
 Loading...
 >
@@ -92,6 +95,7 @@ Project 2
 Wednesday, 26 March 2014
 >	Example Task 21 (2h)
 Hours worked: 2
+```
 
 ## save
 Searches for the repositories in the configuration file. Then, depending on the parameter received: [-d/-w/-m], saves the commits of the branches of the different repositories. If there isn't a parameter the default value is '-d'. The commits need to have a specific format, test (worked_hours h). Ex: Test commit (2h) 
