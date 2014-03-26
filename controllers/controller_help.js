@@ -12,6 +12,11 @@ var PATH = '../man/ttlogn.1',
 	ITEM = '.IP',
 	WITHOUT_QUOTES = /(")/g;
 
+/*
+pline: line to read
+pisItem: is if item, for indexation 
+display the man page line by line
+*/
 var printHelp =  function(pline, pisItem){
 
 	var words = pline.split(' '),
@@ -48,6 +53,9 @@ var printHelp =  function(pline, pisItem){
 
 var task = {
 
+	/*
+	reads line by line the man page to display it
+	*/
 	displayHelp: function(){
 		var isItem = false;
 		helpPath = path.resolve(__dirname, PATH);

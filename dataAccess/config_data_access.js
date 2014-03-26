@@ -11,7 +11,6 @@ var configPath = function () {
 	var pathResult;
 	pathResult = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE;
 	pathResult = path.join(pathResult, CONFIGPATH);
-	//console.log(pathResult);
 	return pathResult;
 };
 

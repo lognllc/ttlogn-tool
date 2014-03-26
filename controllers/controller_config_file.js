@@ -8,40 +8,13 @@ var path = require('path'),
 	utils = require(path.resolve(__dirname,'../lib/utils.js')),
 	project = require(path.resolve(__dirname,'../models/project.js'));
 
-var printRepos = function(pconfig){
-	var newRepos = [];
+var INTEGER = /^\d+$/;
 
-	_.each(pconfig.repositories, function(repos, index){
-		index++;
-		repoPath = path.basename(repos.path);
-		colog.log(colog.colorBlue(index + ': ' + repoPath));
-	});
-
-	prompt.start();
-
-	prompt.get({
-		properties: {
-			repo: {
-				description: "Number of the repository: ".magenta,
-				required: true
-			}
-		}
-	}, function (err, resultPrompt) {
-		if(err){
-			colog.log(colog.colorRed(err));
-		}
-
-		deletePath = path.basename(pconfig.repositories[resultPrompt.repo - 1]);
-		colog.log(colog.colorBlue('Deleting: ' + deletePath));
-		newRepos = config.deleteRepo(pconfig.repositories, pconfig.repositories[resultPrompt.repo - 1]);
-		config.saveRepos(pconfig, newRepos);
-	});
-
-};
-
-
-/*pprojects: projects of the user to display
-waits the user to choose a project, then save the repository*/
+/*
+pbranches: branches to select and bind
+pproject: project to save
+waits the user to choose a project, then save the repository
+*/
 var saveRepo = function(pbranches, pproject){
 	newBranch = {};
 
@@ -75,34 +48,23 @@ var saveRepo = function(pbranches, pproject){
 	});
 };
 
-/*pprojects: projects of the user to display
-waits the user to choose a project, then save the repository*/
+/*
+pprojects: projects of the user to display
+waits the user to choose a project, then save the repository
+*/
 var getProject = function(pprojects){
 	var repoPath = process.cwd(), //'/mnt/hgfs/Development/repoPrueba', //process.cwd(),
-		cancel = 0,
 		newProject = {};
 
-	cancel = pprojects.length + 1;
-	colog.log(colog.colorBlue(cancel + ': Cancel'));
+	utils.getPromptProject(pprojects).then(function(pproject){
+		newProject = pproject;
+		return commit.getRepoBranches(repoPath);
 
-	prompt.start();
-	prompt.get({
-		properties: {
-			project: {
-				description: "Number of the project: ".magenta,
-				required: true
-			}
-		}
-	}, function (err, resultPrompt) {
-		if(err){
-			colog.log(colog.colorRed(err));
-		}
-		newProject =  pprojects[resultPrompt.project - 1];
-		commit.getRepoBranches(repoPath).then(function(pbranches){
-			saveRepo(pbranches, newProject);
-		}).catch(function(error) {
-			colog.log(colog.colorRed(error));
-		});
+	}).then(function(pbranches){
+		saveRepo(pbranches, newProject);
+	
+	}).catch(function(error) {
+		colog.log(colog.colorRed(error));
 	});
 };
 
@@ -117,6 +79,7 @@ var controllerConfigFile = {
 	},
 
 	/* 
+	pbranch: branch to bind
 	register a repo in the configuration file
 	*/
 	registerRepo: function(pbranch){
@@ -142,14 +105,39 @@ var controllerConfigFile = {
 	},
 
 	/* 
-	register a repo in the configuration file
+	delete a repo in the configuration file
 	*/
-	deleteRepo: function(pbranch){
-		var configuration = {};
+	deleteRepo: function(){
+		var configuration = {},
+		newRepos = [],
+
+		restriction = {
+			description: "Number of the repository: ".magenta,
+			required: true,
+			pattern: INTEGER
+		};
 		
 		if(config.existConfig()){
 			configuration = config.getConfig();
-			printRepos(configuration);
+
+			_.each(configuration.repositories, function(repo, index){
+				index++;
+				repoPath = path.basename(repo.path);
+				colog.log(colog.colorBlue(index + ': ' + repoPath));
+			});
+
+			utils.getNumberPrompt(restriction, configuration.repositories).then(function(prepo){
+				deletePath = path.basename(prepo.path);
+				//colog.log(colog.colorBlue('Deleting: ' + deletePath));
+				newRepos = config.deleteRepo(configuration.repositories, prepo);
+				return utils.getConfirmation(deletePath);
+
+			}).then(function(){
+				config.saveRepos(configuration, newRepos);
+
+			}).catch(function(error) {
+				colog.log(colog.colorRed(error));
+			});
 		}
 		else{
 			colog.log(colog.colorRed('Error: Make first the configuration:'));

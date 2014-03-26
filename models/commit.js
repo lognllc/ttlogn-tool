@@ -10,16 +10,7 @@ var NUMBER_COMMITS = 10,
 	FORMATHOUR = /[^(]+\(\d+h\)/g,
 	DIGITOS = /\d+/g;
 
-var limitDate = new Date(),
-	gitName = '',
-	repoArray = [];
-
-/* ppath: path of the directory
-return the directory */
-var getRepository = function (ppath)
-{
-	return git(ppath);
-};
+var limitDate = new Date();
 
 var commit = {
 
@@ -28,8 +19,8 @@ var commit = {
 		return limitDate;
 	},
 
-	/* pindexRepo: the index of the repository 
-	pindexBranch: the index of the branch
+	/* prepo: repository 
+	pbranch: branch of a repo
 	get commits of a branch */
 	getCommits: function(prepo, pbranch){
 		
@@ -43,7 +34,7 @@ var commit = {
 						
 			async.doWhilst(
 				function (callback) {
-					repo = getRepository(prepo.path);
+					repo = git(prepo.path);
 					branch = pbranch.name;
 					//console.log(pbranch);
 
@@ -81,7 +72,6 @@ var commit = {
 	},
 
 	/* prepos: the array of repositories
-	pfunction: function to send the result array
 	gets commits of a branch */
 	getBranchCommits: function(prepos){
 		var promise = new RSVP.Promise(function(resolve, reject){
@@ -119,7 +109,6 @@ var commit = {
 	},
 
 	/* pprepos: the array of repositories
-	pfunction: function to send the result array
 	get the branches of the repositories */
 	getBranch: function(prepo){
 		var promise = new RSVP.Promise(function(resolve, reject){
@@ -143,7 +132,7 @@ var commit = {
 			}
 			else{
 		//		console.log('entre all');
-				repo = getRepository(prepo.path);
+				repo = git(prepo.path);
 				repo.branches(function (err, branches){
 					if(err){
 						colog.log(colog.colorRed(err));
@@ -169,7 +158,6 @@ var commit = {
 	},
 
 	/* pprepos: the array of repositories
-	pfunction: function to send the result array
 	get the branches of the repositories */
 	getBranches: function(prepos){
 		var promise = new RSVP.Promise(function(resolve, reject){
@@ -190,15 +178,14 @@ var commit = {
 	},
 
 	/* pprepo: path of the repository
-	pfunction: function to send the result array
 	get the branches of the repositories */
-	getRepoBranches: function(prepo, pfunction){
+	getRepoBranches: function(prepo){
 		var promise = new RSVP.Promise(function(resolve, reject){
 			var repo = [],
 				self = this,
 				objectBrach = {};
 				
-			repo = getRepository(prepo);
+			repo = git(prepo);
 			repo.branches(function (err, branches){
 				if(err){
 					colog.log(colog.colorRed('Error: ' + err));
@@ -212,6 +199,10 @@ var commit = {
 		return promise;
 	},
 
+	/*
+	prepo: repo of the config file
+	get the information of repository 
+	*/
 	getRepoConfig: function(prepo){
 		var promise = new RSVP.Promise(function(resolve, reject){
 
@@ -219,7 +210,7 @@ var commit = {
 				self = this,
 				objectRepo = {};
 
-			repo = getRepository(prepo.path);
+			repo = git(prepo.path);
 			repo.config(function (err, config){
 				if(err){
 					colog.log(colog.colorRed(err));
@@ -239,6 +230,11 @@ var commit = {
 		return promise;
 	},
 
+	/*
+	prepos: array of repositories
+	pnewRepos: structure where the information of the repositories will be store
+	get the information of an array repositories
+	*/
 	getReposConfig: function(prepos, pnewRepos){
 		var promise = new RSVP.Promise(function(resolve, reject){
 			var promises = [],

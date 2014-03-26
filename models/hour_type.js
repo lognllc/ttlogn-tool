@@ -7,8 +7,7 @@ var HOUR_TYPE = '/users/hour_types.json?id=';
 var hourType = {
 
 	/* 
-	pfunction: funtion to send the projects,
-	puserId: users id
+	puserId: user's id
 	get the hour types of an user
 	*/
 	getHourType: function(puserId){

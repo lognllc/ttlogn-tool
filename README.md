@@ -19,3 +19,30 @@ Searches for the repositories in the configuration file. Then, depending on the 
 * -d: print the commits of the day
 * -w: print the commits of the week
 * -m: print the commits of the month
+
+## add entry
+
+
+## modify entry
+
+
+## delete entry
+
+
+## delete repo
+
+
+## delete story
+
+
+## clients
+
+
+## save
+
+
+## story ls	[-a]
+
+	
+## --help
+

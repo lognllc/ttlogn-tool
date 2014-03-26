@@ -7,12 +7,15 @@ var path = require('path'),
 	sha1 = require('sha1'),
 	dataAccess = require('../dataAccess/config_data_access.js');
 
-var EMAIL = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]+$/;
+var EMAIL = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]+$/i;
 
 /* 
-	register a repository in the configuration file
-	ppath: path of the configuration file
-	*/
+register a branch in the configuration file
+pproject: project to bind
+pbranch: branch to bind
+pdataFile: data of the file
+pdata: path of the project
+*/
 var registerBranch = function(pproject, pbranch, pdataFile, pdata){
 	var dataRepo = {},
 		newProject = {},
@@ -44,7 +47,7 @@ var registerBranch = function(pproject, pbranch, pdataFile, pdata){
 				branch: pbranch
 			});
 		}
-	pdataFile = JSON.stringify(pdataFile);
+	pdataFile = JSON.stringify(pdataFile, null, 4);
 	dataAccess.saveConfig(pdataFile);
 };
 
@@ -104,8 +107,8 @@ var config = {
 			}
 		}, function (err, resultPrompt) {
 			if(!err){
-				colog.log(colog.colorBlue('Adding user'));
-				colog.log(colog.colorBlue('Email: ' + resultPrompt.email));
+				colog.log(colog.colorBlue('Adding user:'));
+				colog.log(colog.colorBlue(resultPrompt.email + ', ' + resultPrompt.pivotalEmail+ ', ' +resultPrompt.gitUser));
 
 				dataFile = getJson();
 				pass = sha1('RtB8gDm'+ resultPrompt.ttPassword);
@@ -114,7 +117,7 @@ var config = {
 				dataFile.gitUser = resultPrompt.gitUser;
 				dataFile.pivotalPassword = resultPrompt.pivotalPassword;
 
-				dataFile = JSON.stringify(dataFile);
+				dataFile = JSON.stringify(dataFile, null, 4);
 				dataAccess.saveConfig(dataFile);
 			}
 			else{
@@ -124,8 +127,9 @@ var config = {
 	},
 
 	/* 
-	register a repository in the configuration file
-	ppath: path of the configuration file
+	pproject: project to bind
+	pbranch: name of the branch 
+	saves a project bind to a project or to a branch
 	*/
 	registerRepo: function(pproject, pbranch){
 		var data = '',
@@ -145,7 +149,7 @@ var config = {
 				}
 			};
 			dataFile.repositories.push(dataRepo);
-			dataFile = JSON.stringify(dataFile);
+			dataFile = JSON.stringify(dataFile, null, 4);
 			dataAccess.saveConfig(dataFile);
 		}
 		else{
@@ -154,7 +158,7 @@ var config = {
 	},
 
 	/* 
-	return the repositories of the configuration
+	return the information of the configuration
 	*/
 	getConfig: function(){
 		var data = getJson();
@@ -166,27 +170,30 @@ var config = {
 	},
 
 	/* 
-	return the repositories of the configuration
+	prepos: array of repositories in the configuration file
+	prepo: repository to be deleted
+	returns the array of repos without the deleted repo.
 	*/
 	deleteRepo: function(prepos, prepo){
-		var repos = _.reject(prepos, function(repository){ return repository.path === prepo.path; });
+		var repos = _.reject(prepos, function(repository){ return repository.path === prepo.path;});
 		return repos;
-
 	},
 
 	/* 
-	return the repositories of the configuration
+	pconfig: configuration
+	prepos: new repos to insert
+	saves the repositories in the configuration file
 	*/
 	saveRepos: function(pconfig, prepos){
 		var dataFile = {};
 
 		pconfig.repositories = prepos;
-		dataFile = JSON.stringify(pconfig);
+		dataFile = JSON.stringify(pconfig, null, 4);
 		dataAccess.saveConfig(dataFile);
 	},
 
 	/* 
-	return the user of the configuration
+	returns a boolean with saying if the config file exists 
 	*/
 	existConfig: function(){
 		return dataAccess.existConfig();

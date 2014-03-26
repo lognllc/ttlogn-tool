@@ -7,7 +7,10 @@ var path = require('path'),
 	config = require(path.resolve(__dirname,'../models/config.js')),
 	project = require(path.resolve(__dirname,'../models/project.js'));
 
-
+/*
+pprojects: projects to print
+print the list the stories of the projects
+*/
 var printStories = function(pprojects){
 	//console.log(pprojects.project);
 	_.each(pprojects, function(pivotalProject){
@@ -24,21 +27,21 @@ var printStories = function(pprojects){
 };
 
 var controllerListStories = {
-	// returns the limit date
+	
+	/*
+	pfilter: filter of the list of stories
+	list the stories of an user
+	*/
 	listStories: function(pfilter){
 		var userId = '',
 			projects = [],
-			userInfo = {},
 			pivotalUser = '',
 			configuration = config.getConfig();
 		if(pfilter === '-a' || typeof pfilter === 'undefined'){
 			if(config.existConfig){
 				colog.log(colog.colorGreen('Loading...'));
-				userInfo.email = configuration.email;
-				userInfo.pivotalUser = configuration.pivotalUser;
-				userInfo.password = configuration.pivotalPassword;
 
-				user.pivotalLogin(userInfo).then(function(puserId){
+				user.pivotalLogin(configuration).then(function(puserId){
 					userId = puserId;
 					return project.getPivotalProjects(userId);
 
@@ -47,7 +50,7 @@ var controllerListStories = {
 					return project.getMemberships(userId, projects);
 
 				}).then(function(pmemberships){
-					pivotalUser = user.getPivotalUser(userInfo, pmemberships);
+					pivotalUser = user.getPivotalUser(configuration.pivotalEmail, pmemberships);
 					return story.getStories(projects, userId, pivotalUser, pfilter);
 
 				}).then(function(){

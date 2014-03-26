@@ -1,19 +1,25 @@
 var //_ = require('underscore'),
 	path = require('path'),
+	moment = require('moment'),
 	fs = require('fs');
 
 var configPath;
 
 var detailTime = {
 
+	/* 
+	pentry: entry to insert the detail times,
+	phour: hours worked
+	pdate: time of timeIn
+	sets the detail time of a new entry
+	*/
 	setDetailTime: function(pentry, phour, pdate){
-		var timeIn = pdate,
-			timeOut = timeIn;
+		var timeIn = moment(pdate, 'HH:mm');
+			timeOut = moment(pdate, 'HH:mm');
 
-		timeIn = timeIn.format('HH.mm');
-		pentry.time_in = timeIn;
+		timeOut.add(parseFloat(pentry.time),'hours');
 
-		timeOut.add((phour),'hours');
+		pentry.time_in = timeIn.format('HH.mm');
 		pentry.time_out = timeOut.format('HH.mm');
 	}
 

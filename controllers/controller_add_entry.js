@@ -7,6 +7,7 @@ var _ = require('underscore'),
 	config = require(path.resolve(__dirname,'../models/config.js')),
 	timeEntry = require(path.resolve(__dirname,'../models/time_entry.js')),
 	user = require(path.resolve(__dirname,'../models/user.js')),
+	detailTime = require(path.resolve(__dirname,'../models/detail_time.js')),
 	project = require(path.resolve(__dirname,'../models/project.js')),
 	utils = require(path.resolve(__dirname,'../lib/utils.js')),
 	hourType = require(path.resolve(__dirname,'../models/hour_type.js'));
@@ -14,24 +15,18 @@ var _ = require('underscore'),
 var DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
 
-/* ptask: the task to save
+/* 
+ptask: the task to save
 save the task and the detail hour
 */
 var saveDetailHour = function(ptask){
 	
 	utils.getPromptDetailHour().then(function(timeResult){
-		var timeIn = moment(timeResult, 'HH:mm');
-			timeOut = moment(timeResult, 'HH:mm');
-
-			timeOut.add(parseFloat(ptask.time),'hours');
-
-			ptask.time_in = timeIn.format('HH.mm');
-			ptask.time_out = timeOut.format('HH.mm');
-
-			console.log(ptask);
+		detailTime.setDetailTime(ptask, ptask.time, timeResult);
+			//console.log(ptask);
 			return timeEntry.postTimeEntry(ptask);
 
-	}).then(function(pdescription) {
+	}).then(function() {
 		colog.log(colog.colorGreen('Time entry saved'));
 
 	}).catch(function(error) {
@@ -39,24 +34,18 @@ var saveDetailHour = function(ptask){
 	});
 };
 
-/* ptask: the task to save
+/* 
+puser: information of the user
+pprojects: information of the projects
+ptask: the task to save
 save the task
 */
 var saveTask = function(ptask, puser, pprojects){
-	var project = {},
-		cancel = pprojects.length;
+	var project = {};
 
-	cancel++;
-	colog.log(colog.colorBlue(cancel + ': Cancel'));
-
-	utils.getPromptProject().then(function(projectResult){
-		if(projectResult < cancel){
-			ptask.project_id = pprojects[projectResult - 1].id;
-			return utils.getPromptDescription();
-		}
-		else{
-			process.exit(0);
-		}
+	utils.getPromptProject(pprojects).then(function(projectResult){
+		ptask.project_id = projectResult.id;
+		return utils.getPromptDescription();
 
 	}).then(function(pdescription) {
 		ptask.description = pdescription;
@@ -68,9 +57,9 @@ var saveTask = function(ptask, puser, pprojects){
 		if(puser.devtype !== 'non_exempt'){
 			timeEntry.postTimeEntry(ptask).then(function(){
 				colog.log(colog.colorGreen('Time entry saved'));
-			},
-			function(err) {
-				colog.log(colog.colorRed(err));
+			
+			}).catch(function(error) {
+				colog.log(colog.colorRed(error));
 			});
 		}
 		else{
@@ -82,13 +71,16 @@ var saveTask = function(ptask, puser, pprojects){
 };
 
 
-/* phourType: id of the billable hour
-prints the information of the commits 
-if the last commit has a high date than the limitDate
+/* 
+puser: information of the user
+pprojects: information of the projects
+phourType: id of the billable hour
+creates and begins the task
 */
 var	getTaskDate = function(puser, pprojects, phourType){
 
 	var date = moment().format(DATE_FORMAT);
+	console.log(date);
 	
 	var taskToInsert = {};
 
@@ -104,7 +96,7 @@ var	getTaskDate = function(puser, pprojects, phourType){
 };
 
 
-var controllerAddTask = {
+var controllerAddEntry = {
 
 	/*saves a task of an user in the TT*/
 	saveWork: function(){
@@ -138,4 +130,4 @@ var controllerAddTask = {
 	}
 };
 
-module.exports = controllerAddTask;
+module.exports = controllerAddEntry;

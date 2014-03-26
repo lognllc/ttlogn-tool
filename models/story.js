@@ -9,7 +9,11 @@ var configPath;
 
 var story = {
 
-	// returns the limit date
+	/* pproject: project of the user
+	puserName: name of the user
+	pfilter: filter of the stories
+	get the stories of a project of an user 
+	*/
 	getStory: function(pproject, puserName, pfilter){
 		var promise = new RSVP.Promise(function(resolve, reject){
 			var self = this,
@@ -51,6 +55,12 @@ var story = {
 		return promise;
 	},
 
+	/* pprojects: project of the user
+	puser: token of the user
+	puserName: name of the user
+	pfilter: filter of the stories
+	get the stories of the projects of an user 
+	*/
 	getStories: function(pprojects, puser, puserName, pfilter){
 		var promise = new RSVP.Promise(function(resolve, reject){
 			var self = this,
@@ -58,29 +68,24 @@ var story = {
 
 			pivotal.useToken(puser);
 	
-			//if(_.isArray(pprojects)){
-				_.each(pprojects, function(value){
-					promises.push(story.getStory(value, puserName, pfilter));
-				});
-				RSVP.all(promises).then(function() {
-					resolve(self);
-				}).catch(function(reason){
-					reject(self);
-					colog.log(colog.colorRed(reason));
-				});
-			/*}
-			else{
-				story.getStory(pprojects, puserName, pfilter).then(function(){
-					resolve(self);
-				}).catch(function(error) {
-					reject(self);
-					colog.log(colog.colorRed(error));
-				});
-			}*/
+			_.each(pprojects, function(value){
+				promises.push(story.getStory(value, puserName, pfilter));
+			});
+			RSVP.all(promises).then(function() {
+				resolve(self);
+			}).catch(function(reason){
+				reject(self);
+				colog.log(colog.colorRed(reason));
+			});
 		});
 		return promise;
 	},
 
+	/* pprojectId: id of the project
+	puser: token of the user
+	pstoryId: id of the story
+	delete a story of a project of an user
+	*/
 	deleteStory: function(pprojectId, pstoryId, puser){
 		var promise = new RSVP.Promise(function(resolve, reject){
 			var self = this;

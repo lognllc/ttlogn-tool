@@ -14,16 +14,19 @@ var _ = require('underscore'),
 /* pmessage: message of the commit 
 return a string with the number of hours worked
 */
-var setDetailTime = function(pentry, phour, pdate){
+/*var setDetailTime = function(pentry, phour, pdate){
 	var timeOut = pdate;
 
 	timeOut.add((phour),'hours');
 
 	pentry.time_in = pdate.format('HH.mm');
 	pentry.time_out  = timeOut.format('HH.mm');
-};
+};*/
 
-/* phourType: hour type
+/* 
+puser: information of the user
+prepos: repositories to save
+phourType: hour type
 saves the commits in the TT
 */
 var	saveCommits = function(puser, prepos, phourType){

@@ -21,8 +21,7 @@ var time_entry = {
 		return dataAccess.post(DELETE_TIME_ENTRIES, pentry);
 	},
 	/* puserId: user's id
-	pfunction: function to do after
-	post the time entry of an user's project 
+	get the time entries of this period
 	*/
 	getUserPeriodTimeEntry: function(puserId){
 		var message = USER_TIME_ENTRIES + puserId;

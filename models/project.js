@@ -11,7 +11,6 @@ var PROJECT = '/users/projects.json?id=';
 var project = {
 
 	/* puserId: id of the user
-	pfunction: funtion to send the projects
 	get the projects of an user
 	*/
 	getProjects: function(puserId){
@@ -19,6 +18,9 @@ var project = {
 		return dataAccess.get(message);
 	},
 
+	/* puser: token of the user of pivotal
+	get the projects of pivotal of an user
+	*/
 	getPivotalProjects: function(puser){
 		var promise = new RSVP.Promise(function(resolve, reject){
 			var self = this,
@@ -46,11 +48,15 @@ var project = {
 		return promise;
 	},
 
+	/* puser: token of the user of pivotal
+	pprojects: list of projects of the user
+	get the projects of pivotal of an user
+	*/
 	getMemberships: function(puser, pprojects){
 		var promise = new RSVP.Promise(function(resolve, reject){
 			var self = this,
-			firstProject = _.first(pprojects),
-			memberships = [];
+				firstProject = _.first(pprojects),
+				memberships = [];
 
 			pivotal.useToken(puser);
 			pivotal.getMemberships(firstProject.id, function(err, ret){

@@ -23,8 +23,8 @@ var	sortProjects = function(prepos){
 	});
 };
 
-/* prepos: array of repos
-sort the commits by time
+/* pdate: date to be the limit
+return the limite date
 */
 var	setPrintDateLimit = function(pdate){
 	var limitDate = moment().startOf('day');

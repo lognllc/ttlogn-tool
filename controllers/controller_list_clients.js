@@ -13,7 +13,9 @@ var PROJECT = /^\d+$/;
 
 var controllerListClients = {
 
-	/*saves a task of an user in the TT*/
+	/*
+	list clients of an user
+	*/
 	listClients: function(){
 		var configuration = config.getConfig();
 	

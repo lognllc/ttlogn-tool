@@ -15,8 +15,7 @@ var user = {
 
 	/*puser: email of the user
 	ppassword: encrypted password of the user
-	pfunction: function to do next
-	gets the information of the user*/
+	gets the information of the user in the Timetracker*/
 	login: function(puser, ppassword){
 		var message	= {
 				email: puser,
@@ -26,20 +25,19 @@ var user = {
 	},
 
 	/* puserId: id of the user
-	pfunction: funtion to send the projects
-	get the projects of an user
+	get the clients of an user
 	*/
 	getClients: function(puserId){
 		var message	=  GET_CLIENTS + puserId;
 		return dataAccess.get(message);
 	},
 
-	/* ppath: path of the directory
-	return the directory */
+	/* puser: information of the user
+	returns the token of pivotal */
 	pivotalLogin: function (puser)
 	{	var promise = new RSVP.Promise(function(resolve, reject){
 			var self = this;
-			pivotal.getToken(puser.email, puser.password, function(err, ret){
+			pivotal.getToken(puser.pivotalEmail, puser.pivotalPassword, function(err, ret){
 				if(!err){
 					resolve(ret.guid);
 				}
@@ -53,8 +51,11 @@ var user = {
 		return promise;
 	},
 
+	/* puser: email of the user,
+	pmemberships: memberships of a project
+	returns the information of an user */
 	getPivotalUser: function (puser, pmemberships)
-	{	var pivotalUser = _.find(pmemberships, function(membership){ return puser.email === membership.person.email; });
+	{	var pivotalUser = _.find(pmemberships, function(membership){ return puser === membership.person.email; });
 		return pivotalUser.person.name;
 	},
 

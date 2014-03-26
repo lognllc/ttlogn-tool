@@ -4,7 +4,12 @@ var path = require('path'),
 var configPath;
 
 var task = {
-		// returns the limit date
+	
+	/* pprojectId: id of the project
+	puser: token of the user
+	pstoryId: id of the story
+	get the tasks of a story of an user 
+	*/
 	getTasks: function(pprojectId, puser, pstoryId){
 		var promise = new RSVP.Promise(function(resolve, reject){
 			var self = this,

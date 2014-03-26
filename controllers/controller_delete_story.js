@@ -10,34 +10,34 @@ var path = require('path'),
 
 var controllerDeleteStories = {
 	
+	/*
+	pfilter: filter to delete the story
+	delete a story
+	*/
 	deleteStory: function(pfilter){
 		var userId = '',
 			storyProject = [],
-			userInfo = {},
 			pivotalUser = '',
 			configuration = config.getConfig(),
 			selectedStory = {};
 		if(pfilter === '-a' || typeof pfilter === 'undefined'){
 			if(config.existConfig){
 				colog.log(colog.colorGreen('Loading...'));
-				userInfo.email = configuration.email;
-				userInfo.pivotalUser = configuration.pivotalUser;
-				userInfo.password = configuration.pivotalPassword;
 
-				user.pivotalLogin(userInfo).then(function(puserId){
+				user.pivotalLogin(configuration).then(function(puserId){
 					userId = puserId;
 					return project.getPivotalProjects(userId);
 
 				}).then(function(pprojects){
 					utils.printNames(pprojects);
-					return utils.getPromptProject2(pprojects);
+					return utils.getPromptProject(pprojects);
 
 				}).then(function(pproject){
 					storyProject.push(pproject);
 					return project.getMemberships(userId, storyProject);
 
 				}).then(function(pmemberships){
-					pivotalUser = user.getPivotalUser(userInfo, pmemberships);
+					pivotalUser = user.getPivotalUser(configuration.pivotalEmail, pmemberships);
 					return story.getStories(storyProject, userId, pivotalUser, pfilter);
 
 				}).then(function(){
