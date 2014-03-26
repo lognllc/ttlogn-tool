@@ -80,7 +80,6 @@ creates and begins the task
 var	getTaskDate = function(puser, pprojects, phourType){
 
 	var date = moment().format(DATE_FORMAT);
-//	console.log(date);
 	
 	var taskToInsert = {};
 
