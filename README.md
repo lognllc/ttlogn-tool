@@ -67,8 +67,7 @@ prompt: Number of the branch: :  3
 Adding repository: repo_path, and project: Project 1
 Success: configuration file saved
 ```
-
-## delete_repo
+## <a name="delete_repo"/>delete repo
 Delete an existing repository in the configuration file.
 
 ### Parameters
@@ -133,8 +132,7 @@ Saving commit: Example Task 11 (3h)
 Saving commit: Example Task 21 (2h)
 Saved successful
 ```
-
-## add_entry
+## <a name="add_entry"/>add entry
 Add a new time entry to the Timetracker.
 
 ### Parameters
@@ -155,8 +153,7 @@ prompt: Worked hours:  4h
 prompt: Begin of the task (HH:mm):  09:35
 Time entry saved
 ```
-
-## modify_entry
+## <a name="modify_entry"/>modify entry
 Modify a existing time entry in the Timetracker. 
 
 ### Parameters
@@ -191,7 +188,7 @@ prompt: Number of field:  (1) 7
 Time entry saved
 ```
 
-## delete entry
+## <a name="delete_entry"/>delete entry
 Deletes an existing time entry in the Timetracker
 
 ### Parameters
@@ -226,7 +223,7 @@ ttlogn clients
 3. Client 3
 ```
 
-## story ls	[-a]
+## <a name="story_ls"/>story ls
 Searches for the stories in Pivotal Tracker. If the parameter received is '-a', print all the stories of the user. If there isn't a parameter print a list of the started and unstarted stories of the user.
 
 ### Parameters
@@ -255,7 +252,7 @@ Description
 -------------------------------
 ```
 
-## delete story
+## <a name="delete_story"/>delete story
 Deletes an existing story in Pivotal Tracker.
 
 ### Parameters
