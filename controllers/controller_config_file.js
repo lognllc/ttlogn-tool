@@ -104,6 +104,23 @@ var controllerConfigFile = {
 		}
 	},
 
+
+	/* 
+	delete the configuration file.
+	*/
+	deleteConfig: function(){
+		var configFile = 'configuration file';
+
+		colog.log(colog.colorRed('This will erase and reset all of the information you have supplied to the app.'));
+		utils.getConfirmation(configFile).then(function() {
+			config.deleteConfig();
+			colog.log(colog.colorGreen("Information erased, you've logged out succesfully."));
+		}).catch(function(error) {
+			colog.log(colog.colorRed(error));
+		});
+	},
+
+
 	/* 
 	delete a repo in the configuration file
 	*/

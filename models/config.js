@@ -181,6 +181,13 @@ var config = {
 	},
 
 	/* 
+	delete the configuration file
+	*/
+	deleteConfig: function(){
+		dataAccess.deleteConfig();
+	},
+
+	/* 
 	pconfig: configuration
 	prepos: new repos to insert
 	saves the repositories in the configuration file

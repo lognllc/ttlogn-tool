@@ -3,9 +3,6 @@ ttlogn-tool
 
 ttlogn is a software that helps the worker managing his tasks. It shows and manage the tasks finished and to do, of the worker in an easy way. Also it helps the with the log of his tasks in a Timetracker.
 
-## Installation
-npm install -g ttlogn
-
 * [help](#--help)
 * [login](#login)
 * [add repo](#add_repo)
@@ -18,6 +15,9 @@ npm install -g ttlogn
 * [clients](#clients)
 * [story ls](#story_ls)
 * [delete story](#delete_story)
+
+## Installation
+npm install -g ttlogn
 
 ## --help
 Prints the man page, displays the help.

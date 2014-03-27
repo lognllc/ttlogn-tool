@@ -46,11 +46,24 @@ var configDataAccess = {
 	},
 
 	/* 
+	deletes the configuration file
+	*/
+	deleteConfig: function(){
+		var relativePath = configPath();
+		try {
+			fs.unlinkSync(relativePath);
+		} catch(err){
+			colog.log(colog.colorRed('Error: deleting file. '));
+			colog.log(colog.colorRed(err));
+		}
+	},
+
+	/* 
 	read the configuration file
 	*/
 	readConfig: function(){
 		var relativePath = configPath();
-		return fs.readFileSync(relativePath, 'utf8');
+		return fs.unlinkSync(relativePath, 'utf8');
 	},
 
 	/* 
