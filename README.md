@@ -8,16 +8,16 @@ npm install -g ttlogn
 
 * [help](#--help)
 * [login](#login)
-* [add repo](#add repo)
-* [delete repo](#delete repo)
+* [add repo](#add_repo)
+* [delete repo](#delete_repo)
 * [ls](#ls)
 * [save](#save)
-* [add entry](#add entry)
-* [modify entry](#modify entry)
-* [delete entry](#delete entry)
+* [add entry](#add_entry)
+* [modify entry](#modify_entry)
+* [delete entry](#delete_entry)
 * [clients](#clients)
-* [story ls](#story ls)
-* [delete story](#delete story)
+* [story ls](#story_ls)
+* [delete story](#delete_story)
 
 ## --help
 Prints the man page, displays the help.
@@ -45,7 +45,7 @@ user@logn.com, user@gmail.com, git_user
 Success: configuration file saved
 ```
 
-## add repo
+## add_repo
 Stores a repository in the config file. The config file must exists. The path of the repository will be the current working directory.
 
 ### Parameters
@@ -68,7 +68,7 @@ Adding repository: repo_path, and project: Project 1
 Success: configuration file saved
 ```
 
-## delete repo
+## delete_repo
 Delete an existing repository in the configuration file.
 
 ### Parameters
@@ -134,7 +134,7 @@ Saving commit: Example Task 21 (2h)
 Saved successful
 ```
 
-## add entry
+## add_entry
 Add a new time entry to the Timetracker.
 
 ### Parameters
@@ -156,7 +156,7 @@ prompt: Begin of the task (HH:mm):  09:35
 Time entry saved
 ```
 
-## modify entry
+## "modify entry"
 Modify a existing time entry in the Timetracker. 
 
 ### Parameters
