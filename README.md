@@ -13,7 +13,7 @@ npm install -g ttlogn
 * [ls](#ls)
 * [save](#save)
 * [add entry](#add_entry)
-* [modify entry](#"modify entry")
+* [modify entry](#modify_entry)
 * [delete entry](#delete_entry)
 * [clients](#clients)
 * [story ls](#story_ls)
@@ -45,7 +45,7 @@ user@logn.com, user@gmail.com, git_user
 Success: configuration file saved
 ```
 
-## add_repo
+## <a name="add_repo"/>add repo
 Stores a repository in the config file. The config file must exists. The path of the repository will be the current working directory.
 
 ### Parameters
@@ -156,7 +156,7 @@ prompt: Begin of the task (HH:mm):  09:35
 Time entry saved
 ```
 
-## "modify entry"
+## modify_entry
 Modify a existing time entry in the Timetracker. 
 
 ### Parameters
