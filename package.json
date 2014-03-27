@@ -3,7 +3,9 @@
   "version": "0.0.12",
   "description": "timetracker helper tool",
   "main": "./lib/main",
-  "man": ["./man/ttlogn.1"],
+  "man": [
+    "./man/ttlogn.1"
+  ],
   "bin": {
     "ttlogn": "./bin/ttlogn.js"
   },
@@ -21,7 +23,6 @@
     "moment-timezone": "0.0.3",
     "pivotal": "~0.2.0",
     "show-help": "~1.0.0",
-    "manolo": "~0.1.0",
     "line-reader": "~0.2.3"
   },
   "devDependencies": {},

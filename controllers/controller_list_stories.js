@@ -21,6 +21,7 @@ var printStories = function(pprojects){
 		_.each(pivotalProject.stories, function(pivotalStory){
 			colog.log(colog.apply(pivotalStory.name + ' - ' + pivotalStory.story_type, ['bold', 'colorBlue']));
 			colog.log(colog.colorBlue(pivotalStory.description));
+			//console.log(pivotalStory);
 			console.log('-------------------------------');
 		});
 	});

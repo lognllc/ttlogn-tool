@@ -6,8 +6,20 @@ ttlogn is a software that helps the worker managing his tasks. It shows and mana
 ## Installation
 npm install -g ttlogn
 
+[--help][]
+[login][]
+add repo
+delete repo
+ls
+save
+add entry
+modify entry
+delete entry
+clients
+story ls
+delete story
 
-## --help
+## --help ##
 Prints the man page, displays the help.
 
 ## login
@@ -21,7 +33,7 @@ Sets a user in the config file. If the config file doesn't exists, it is created
 * Pivotal password: password for Pivotal Tracker
 
 ### Example
-```
+```Shell
 ttlogn login
 prompt: Log(n) email :  user@logn.com
 prompt: Timetracker password:  
@@ -41,7 +53,7 @@ Stores a repository in the config file. The config file must exists. The path of
 * Branch: select the branch or all the branches to bind with the project
 
 ### Examples
-```
+```Shell
 ttlogn add repo
 1: Project 1
 2: Project 2
@@ -63,7 +75,7 @@ Delete an existing repository in the configuration file.
 * Repository: path of the repository to delete 
 
 ### Examples
-```
+```Shell
 ttlogn delete repo
 1: Repository 1
 2: Repository 2
@@ -84,7 +96,7 @@ Searches for the repositories in the configuration file. Then, depending on the 
 * [-m]: print the commits of the month
 
 ### Examples
-```
+```Shell
 ttlogn ls -d
 Loading...
 
@@ -114,7 +126,7 @@ Searches for the repositories in the configuration file. Then, depending on the 
 * [-m]: print the commits of the month
 
 ### Examples
-```
+```Shell
 ttlogn save -d
 Loading...
 Saving commit: Example Task 11 (3h)
@@ -132,7 +144,7 @@ Add a new time entry to the Timetracker.
 * Begin of the task: Is the hour of the begin of the task. Is needed depending of the type of user. The format is (HH:mm). Ex: 09:00
 
 ### Examples
-```
+```Shell
 ttlogn add entry
 1: Project 1
 2: Project 2
@@ -156,7 +168,7 @@ Modify a existing time entry in the Timetracker.
 * Begin of the task: Is the hour of the begin of the task. Is needed depending of the type of user. The format is (HH:mm). Ex: 09:00
 
 ### Examples
-```
+```Shell
 ttlogn modify entry
 1: Project 1
 2: Project 2
@@ -187,7 +199,7 @@ Deletes an existing time entry in the Timetracker
 * Entry: entry to delete
 
 ### Examples
-```
+```Shell
 ttlogn delete entry
 1: Project 1
 2: Project 2
@@ -207,7 +219,7 @@ Time entry deleted
 Prints the clients in the Timetracker of an user .
 
 ### Examples
-```
+```Shell
 ttlogn clients
 1. Client 1
 2. Client 2
@@ -221,7 +233,7 @@ Searches for the stories in Pivotal Tracker. If the parameter received is '-a', 
 * [-a]: print all stories of the user
 
 ### Examples
-```
+```Shell
 ttlogn story ls
 Loading...
 
@@ -251,7 +263,7 @@ Deletes an existing story in Pivotal Tracker.
 * Story: story in the Pivotal Tracker to delete
 
 ### Examples
-```
+```Shell
 ttlogn delete story
 Loading...
 1: Project 1
