@@ -13,7 +13,7 @@ npm install -g ttlogn
 * [ls](#ls)
 * [save](#save)
 * [add entry](#add_entry)
-* [modify entry](#modify_entry)
+* [modify entry](#"modify entry")
 * [delete entry](#delete_entry)
 * [clients](#clients)
 * [story ls](#story_ls)
