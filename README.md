@@ -6,8 +6,8 @@ ttlogn is a software that helps the worker managing his tasks. It shows and mana
 ## Installation
 npm install -g ttlogn
 
-[--help][]
-[login][]
+[--help][#--help]
+[login][##login]
 add repo
 delete repo
 ls
@@ -19,7 +19,7 @@ clients
 story ls
 delete story
 
-## --help ##
+## --help
 Prints the man page, displays the help.
 
 ## login
