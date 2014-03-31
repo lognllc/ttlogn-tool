@@ -109,7 +109,7 @@ var controllerConfigFile = {
 	delete the configuration file.
 	*/
 	deleteConfig: function(){
-		var configFile = 'configuration file';
+		var configFile = 'the information you have supplied';
 
 		colog.log(colog.colorRed('This will erase and reset all of the information you have supplied to the app.'));
 		utils.getConfirmation(configFile).then(function() {

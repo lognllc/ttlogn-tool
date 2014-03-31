@@ -41,12 +41,14 @@ prints the entries
 */
 var printTimeEntries = function(puser, pproject){
 	var cancel = 0,
+		periodEntries = [],
 		timeEntries = [],
 		timeEntryToDelete = {},
 		date = moment();
 
 	timeEntry.getUserPeriodTimeEntry(puser.id).then(function(entries){
-		timeEntries = _.filter(entries.result.not_confirmed_dates, function(pentries)
+		periodEntries = entries.result.not_confirmed_dates.concat(entries.result.confirmed_dates);
+		timeEntries = _.filter(periodEntries, function(pentries)
 			{ return pentries.project.id === pproject; });
 
 		utils.printEntries(timeEntries);

@@ -243,7 +243,8 @@ var controllerModifyEntry = {
 		var repos = [],
 			configuration = {},
 			projectId = 0,
-			timeEntries = {};
+			periodEntries = [];
+			timeEntries = [];
 	
 		if(config.existConfig){
 			configuration = config.getConfig();
@@ -262,7 +263,8 @@ var controllerModifyEntry = {
 				return timeEntry.getUserPeriodTimeEntry(userInfo.id);
 
 			}).then(function(entries) {
-				timeEntries = _.filter(entries.result.not_confirmed_dates, function(pentries)
+				periodEntries = entries.result.not_confirmed_dates.concat(entries.result.confirmed_dates);
+				timeEntries = _.filter(periodEntries, function(pentries)
 					{ return pentries.project.id === projectId; });
 
 				utils.printEntries(timeEntries);

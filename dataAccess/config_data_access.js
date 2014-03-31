@@ -63,7 +63,7 @@ var configDataAccess = {
 	*/
 	readConfig: function(){
 		var relativePath = configPath();
-		return fs.unlinkSync(relativePath, 'utf8');
+		return fs.readFileSync(relativePath, 'utf8');
 	},
 
 	/* 
