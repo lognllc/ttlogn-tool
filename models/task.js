@@ -1,4 +1,7 @@
 var path = require('path'),
+	RSVP = require('rsvp'),
+	_ = require('underscore'),
+	pivotal = require('pivotal'),
 	fs = require('fs');
 
 var configPath;

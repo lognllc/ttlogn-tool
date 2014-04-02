@@ -5,6 +5,7 @@ ttlogn is a software that helps the worker managing his tasks. It shows and mana
 
 * [help](#--help)
 * [login](#login)
+* [logout](#logout)
 * [add repo](#add_repo)
 * [delete repo](#delete_repo)
 * [ls](#ls)
@@ -43,6 +44,17 @@ prompt: Pivotal password:
 Adding user:
 user@logn.com, user@gmail.com, git_user
 Success: configuration file saved
+```
+## logout
+Erase and reset all of the information the user has supplied to the app.
+
+### Example
+```Shell
+ttlogn logout
+This will erase and reset all of the information you have supplied to the app.
+Do you want to delete: the information you have supplied
+prompt: (y or n):  y
+Information erased, you've logged out succesfully.
 ```
 
 ## <a name="add_repo"/>add repo

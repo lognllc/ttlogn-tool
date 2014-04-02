@@ -1,6 +1,6 @@
 var path = require('path'),
 	_ = require('underscore'),
-	pivotal = require("pivotal"),
+	pivotal = require('pivotal'),
 	RSVP = require('rsvp'),
 	colog = require('colog'),
 	fs = require('fs');
@@ -46,7 +46,8 @@ var story = {
 					resolve();
 				}
 				else{
-					colog.log(colog.colorRed('Error: Something went wrong on the request: ' + err.desc));
+					colog.log(colog.colorRed('Error: Something went wrong on the request: '));
+					colog.log(colog.colorRed(err.desc));
 					reject(self);
 				}
 			});
@@ -81,6 +82,46 @@ var story = {
 		return promise;
 	},
 
+	/* pprojects: project of the user
+	puser: token of the user
+	pstory: new story
+	add a new story to the TT 
+	*/
+	addStory: function(pproject, puser, pstory){
+		var promise = new RSVP.Promise(function(resolve, reject){
+			var self = this;
+
+			pivotal.useToken(puser);
+
+			console.log(pproject.id);
+			console.log(pstory);
+			//console.log(puser);
+
+			console.log(pivotal.updateStory.toString());
+			console.log('antes');
+
+			//pivotal.updateStory(pproject.id, '67880094', pstory, function(err, ret){
+			pivotal.addStory(pproject.id, pstory, function(err, ret){
+			//pivotal.getStories(pproject.id, pstory, function(err, ret){
+				console.log('entre1');
+				console.log(err);
+				console.log(ret);
+				
+				if(!err){
+					console.log('entre');
+					resolve();
+				}
+				else{
+					colog.log(colog.colorRed('Error: Something went wrong on the request: '));
+					colog.log(colog.colorRed(err.desc));
+					reject(self);
+				}
+			});
+	
+		});
+		return promise;
+	},
+
 	/* pprojectId: id of the project
 	puser: token of the user
 	pstoryId: id of the story
@@ -96,7 +137,8 @@ var story = {
 					resolve();
 				}
 				else{
-					colog.log(colog.colorRed('Error: Something went wrong on the request: ' + err.desc));
+					colog.log(colog.colorRed('Error: Something went wrong on the request: '));
+					colog.log(colog.colorRed(err.desc));
 					reject(self);
 				}
 			});
