@@ -2,6 +2,7 @@ var path = require('path'),
 	fs = require('fs'),
 	_ = require('underscore'),
 	colog = require('colog'),
+	RSVP = require('rsvp'),
 	task = require(path.resolve(__dirname,'../models/task.js')),
 	story = require(path.resolve(__dirname,'../models/story.js')),
 	user = require(path.resolve(__dirname,'../models/user.js')),
@@ -12,17 +13,70 @@ var path = require('path'),
 var DESCRIPTION = 'description',
 	NAME = 'name';
 
-var controllerListStories = {
-	
+/*var getInfoTask = function(){
+	var promise = new RSVP.Promise(function(resolve, reject){
+			var self = this,
+			newTask = {};
+
+			resolve(newTask);
+
+			reject(self);
+		utils.printArray(ptasks, DESCRIPTION);
+		return utils.getPromptStory(storyProject.stories);
+	});
+	return promise;
+};
+
+var useCommand = function(pcommand, storyProject, puserId, pstory){
+
+storyProject = _.first(storyProject);
+	if(pcommand !== 'add')
+	{
+		getInfoTask(add).then(function(ptask){
+		task.addTask(pproject, ptasks);
+
+		}).catch(function(error) {
+			colog.log(colog.colorRed(error));
+		});
+	}
+	else{
+		getTask();
+	}
+};
+
+
+var getTask = function(storyProject, puserId, pstory){
+	var selectedStory = {};
+
+
+//	return task.getTasks(storyProject.id, userId, pstory.id);
+
+	utils.printArray(storyProject.stories, NAME);
+	utils.getPromptStory(storyProject.stories).then(function(pstory){
+		selectedStory = pstory;
+		return task.getTasks(storyProject.id, userId, pstory.id);
+
+	}).then(function(ptasks){
+	utils.printArray(ptasks, DESCRIPTION);
+
+	}).catch(function(error) {
+		colog.log(colog.colorRed(error));
+	});
+};*/
+
+var controllerAddTasks = {
 	/*
 	pfilter: filter to delete the story
 	delete a story
 	*/
-	listTasks: function(pfilter){
+	addTask: function(pfilter){
 		var userId = '',
 			storyProject = [],
 			pivotalUser = '',
-			configuration = config.getConfig();
+			configuration = config.getConfig(),
+			selectedStory = {},
+			newTask = {task: {}};
+
 		if(pfilter === '-a' || typeof pfilter === 'undefined'){
 			if(config.existConfig){
 				colog.log(colog.colorGreen('Loading...'));
@@ -49,10 +103,15 @@ var controllerListStories = {
 					return utils.getPromptStory(storyProject.stories);
 
 				}).then(function(pstory){
-					return task.getTasks(storyProject.id, userId, pstory.id);
+					selectedStory = pstory;
+					return utils.getPromptDescription();
+				//	useCommand(pcommand);
+				}).then(function(description){
+					newTask.task.description = description;
+					task.addTask(storyProject, userId, selectedStory, newTask);
 
-				}).then(function(ptasks){
-					utils.printArray(ptasks, DESCRIPTION);
+				}).then(function(description){
+					colog.log(colog.colorGreen("Task saved"));
 
 				}).catch(function(error) {
 					colog.log(colog.colorRed(error));
@@ -68,5 +127,5 @@ var controllerListStories = {
 	}
 };
 
-module.exports = controllerListStories;
+module.exports = controllerAddTasks;
 

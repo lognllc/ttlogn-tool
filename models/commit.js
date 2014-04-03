@@ -95,7 +95,7 @@ var commit = {
 	},
 
 	/* pdate: -d/-w/-m
-	prints the information of the commits */
+	set the limit date of the commits of the commits */
 	setDateLimit: function (pdate){
 
 		limitDate = moment().startOf('day');

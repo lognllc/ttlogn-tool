@@ -8,7 +8,8 @@ var path = require('path'),
 	utils = require(path.resolve(__dirname,'../lib/utils.js')),
 	project = require(path.resolve(__dirname,'../models/project.js'));
 
-var INTEGER = /^\d+$/;
+var INTEGER = /^\d+$/,
+	NAME = 'name';
 
 /*
 pbranches: branches to select and bind
@@ -91,7 +92,7 @@ var controllerConfigFile = {
 				return project.getProjects(puser.result.id);
 
 			}).then(function(pprojects) {
-				utils.printNames(pprojects.result);
+				utils.printArray(pprojects.result, NAME);
 				getProject(pprojects.result);
 
 			}).catch(function(error) {

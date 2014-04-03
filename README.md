@@ -5,7 +5,7 @@ ttlogn is a software that helps the worker managing his tasks. It shows and mana
 
 * [help](#--help)
 * [login](#login)
-* [logout](#logout)
+* [logout](#logout_ttlogn)
 * [add repo](#add_repo)
 * [delete repo](#delete_repo)
 * [ls](#ls)
@@ -45,7 +45,7 @@ Adding user:
 user@logn.com, user@gmail.com, git_user
 Success: configuration file saved
 ```
-## logout
+## <a name="logout_ttlogn"/>logout
 Erase and reset all of the information the user has supplied to the app.
 
 ### Example

@@ -13,7 +13,9 @@ var _ = require('underscore'),
 
 var NUMBERS = /^\d+$/,
 	CREATED = /^\d\d$/,
-	DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
+	DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss',
+	NAME = 'name',
+	ENTRY_DESCRIPTION = 'tskDescription';
 
 var userInfo = {},
 	projects = [],
@@ -138,7 +140,7 @@ modify the project of the task
 */
 var modifyProject = function(){
 	
-	utils.printNames(projects);
+	utils.printArray(projects, NAME);
 	utils.getPromptProject(projects).then(function(pproject){
 		entryToModify.project = pproject;
 		printTimeEntry();
@@ -153,7 +155,7 @@ modify the hour type of an entry
 */
 var getHourType = function(){
 	hourType.getHourType(userInfo.id).then(function(hourTypes){
-		utils.printNames(hourTypes.result);
+		utils.printArray(hourTypes.result, NAME);
 		return utils.getPromptHourType(hourTypes.result);
 
 	}).then(function(phourType){
@@ -219,7 +221,7 @@ var printTimeEntry = function(){
 					modifyTimeIn();
 				}
 				else{
-					colog.log(colog.colorBlue('Error: not valid option'));
+					colog.log(colog.colorRed('Error: not valid option'));
 					printTimeEntry();
 				}
 				break;
@@ -227,6 +229,7 @@ var printTimeEntry = function(){
 				saveTimeEntry();
 				break;
 			case '8':
+				colog.log(colog.colorRed('Canceled'));
 				process.exit(0);
 			break;
 			default:
@@ -255,7 +258,7 @@ var controllerModifyEntry = {
 
 			}).then(function(pprojects){
 				projects = pprojects.result;
-				utils.printNames(projects);
+				utils.printArray(projects, NAME);
 				return utils.getPromptProject(projects);
 
 			}).then(function(projectResult){
@@ -267,7 +270,7 @@ var controllerModifyEntry = {
 				timeEntries = _.filter(periodEntries, function(pentries)
 					{ return pentries.project.id === projectId; });
 
-				utils.printEntries(timeEntries);
+				utils.printArray(timeEntries, ENTRY_DESCRIPTION);
 				return utils.getPromptTimeEntry(timeEntries);
 
 			}).then(function(pentry){

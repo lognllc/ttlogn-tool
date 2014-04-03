@@ -12,8 +12,8 @@ var _ = require('underscore'),
 	utils = require(path.resolve(__dirname,'../lib/utils.js')),
 	hourType = require(path.resolve(__dirname,'../models/hour_type.js'));
 
-var DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
-
+var DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss',
+	NAME = 'name';
 
 /* 
 ptask: the task to save
@@ -116,7 +116,7 @@ var controllerAddEntry = {
 
 			}).then(function(phourType) {
 				billable = hourType.getBillable(phourType.result);
-				utils.printNames(projects);
+				utils.printArray(projects, NAME);
 				getTaskDate(userInfo, projects, billable);
 
 			}).catch(function(error) {

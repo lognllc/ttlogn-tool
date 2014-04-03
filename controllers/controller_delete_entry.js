@@ -10,7 +10,9 @@ var _ = require('underscore'),
 	utils = require(path.resolve(__dirname,'../lib/utils.js')),
 	project = require(path.resolve(__dirname,'../models/project.js'));
 
-var DATE_FORMAT = 'l';
+var DATE_FORMAT = 'l',
+	NAME = 'name',
+	ENTRY_DESCRIPTION = 'tskDescription';
 
 /*
 puser: user information
@@ -51,7 +53,7 @@ var printTimeEntries = function(puser, pproject){
 		timeEntries = _.filter(periodEntries, function(pentries)
 			{ return pentries.project.id === pproject; });
 
-		utils.printEntries(timeEntries);
+		utils.printArray(timeEntries, ENTRY_DESCRIPTION);
 		return utils.getPromptTimeEntry(timeEntries);
 
 	}).then(function(pentry){
@@ -81,7 +83,7 @@ var controllerDeleteEntry = {
 
 			}).then(function(pprojects){
 				projects = pprojects.result;
-				utils.printNames(projects);
+				utils.printArray(projects, NAME);
 				return utils.getPromptProject(projects);
 
 			}).then(function(projectResult){

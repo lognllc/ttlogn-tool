@@ -8,6 +8,8 @@ var path = require('path'),
 	config = require(path.resolve(__dirname,'../models/config.js')),
 	project = require(path.resolve(__dirname,'../models/project.js'));
 
+var NAME = 'name';
+
 var controllerDeleteStories = {
 	
 	/*
@@ -29,7 +31,7 @@ var controllerDeleteStories = {
 					return project.getPivotalProjects(userId);
 
 				}).then(function(pprojects){
-					utils.printNames(pprojects);
+					utils.printArray(pprojects, NAME);
 					return utils.getPromptProject(pprojects);
 
 				}).then(function(pproject){
@@ -42,7 +44,7 @@ var controllerDeleteStories = {
 
 				}).then(function(){
 					storyProject = _.first(storyProject);
-					utils.printNames(storyProject.stories);
+					utils.printArray(storyProject.stories, NAME);
 					return utils.getPromptStory(storyProject.stories);
 
 				}).then(function(pstory){

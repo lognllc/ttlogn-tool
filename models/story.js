@@ -3,9 +3,11 @@ var path = require('path'),
 	pivotal = require('pivotal'),
 	RSVP = require('rsvp'),
 	colog = require('colog'),
-	fs = require('fs');
+	fs = require('fs'),
+	dataAccess = require(path.resolve(__dirname,'../dataAccess/pivotal_data_access.js'));
 
-var configPath;
+var PROJECT = 'projects/',
+	STORIES = '/stories/';
 
 var story = {
 
@@ -88,20 +90,24 @@ var story = {
 	add a new story to the TT 
 	*/
 	addStory: function(pproject, puser, pstory){
-		var promise = new RSVP.Promise(function(resolve, reject){
-			var self = this;
+		//var promise = new RSVP.Promise(function(resolve, reject){
+		//	var self = this;
 
-			pivotal.useToken(puser);
+		/*	pivotal.useToken(puser);
 
 			console.log(pproject.id);
 			console.log(pstory);
 			//console.log(puser);
 
 			console.log(pivotal.updateStory.toString());
-			console.log('antes');
+			console.log('antes');*/
+
+
+			url = 'projects/' + pproject.id + '/stories';
+			return dataAccess.post(puser, url, pstory);
 
 			//pivotal.updateStory(pproject.id, '67880094', pstory, function(err, ret){
-			pivotal.addStory(pproject.id, pstory, function(err, ret){
+			/*pivotal.addStory(pproject.id, pstory, function(err, ret){
 			//pivotal.getStories(pproject.id, pstory, function(err, ret){
 				console.log('entre1');
 				console.log(err);
@@ -116,10 +122,20 @@ var story = {
 					colog.log(colog.colorRed(err.desc));
 					reject(self);
 				}
-			});
+			});*/
 	
-		});
-		return promise;
+		//});
+		//return promise;
+	},
+
+		/* pprojects: project of the user
+	puser: token of the user
+	pstory: new story
+	add a new story to the TT 
+	*/
+	modifyStory: function(pproject, puser, pstory, pstoryId){
+			url = PROJECT + pproject.id + STORIES + pstoryId;
+			return dataAccess.post(puser, url, pstory);
 	},
 
 	/* pprojectId: id of the project
@@ -133,6 +149,31 @@ var story = {
 			
 			pivotal.useToken(puser);
 			pivotal.removeStory(pprojectId, pstoryId, function(err, ret){
+				if(!err){
+					resolve();
+				}
+				else{
+					colog.log(colog.colorRed('Error: Something went wrong on the request: '));
+					colog.log(colog.colorRed(err.desc));
+					reject(self);
+				}
+			});
+		});
+		return promise;
+	},
+
+	/* pprojectId: id of the project
+	puser: token of the user
+	pstoryId: id of the story
+	deliver all the finished stories of a project of an user
+	*/
+	// volver a hacer xq hace deliver a todos los finish hasta donde es requester
+	deliverStories: function(puser, pprojectId){
+		var promise = new RSVP.Promise(function(resolve, reject){
+			var self = this;
+			
+			pivotal.useToken(puser);
+			pivotal.deliverAllFinishedStories(pprojectId, function(err, ret){
 				if(!err){
 					resolve();
 				}

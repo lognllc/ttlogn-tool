@@ -8,6 +8,8 @@ var path = require('path'),
 	config = require(path.resolve(__dirname,'../models/config.js')),
 	project = require(path.resolve(__dirname,'../models/project.js'));
 
+var NAME = 'name';
+
 var controllerAddStory = {
 	
 	/*
@@ -29,7 +31,7 @@ var controllerAddStory = {
 				return project.getPivotalProjects(userId);
 
 			}).then(function(pprojects){
-				utils.printNames(pprojects);
+				utils.printArray(pprojects, NAME);
 				return utils.getPromptProject(pprojects);
 
 			}).then(function(pproject){
@@ -47,12 +49,17 @@ var controllerAddStory = {
 					
 				newStory = {
 				//	project_id: storyProject.id,
-					name: 'add test',
+					/*name: 'add test',
 					story_type: 'feature',
 					estimate: '1',
 					description: 'test description',
 					labels: '',
-					requested_by: pivotalUser
+					requested_by: pivotalUser*/
+					story:{
+						story_type: 'feature',
+						name: 'test4',
+						requested_by: pivotalUser
+					}
 				};
 
 				return story.addStory(storyProject, userId, newStory);

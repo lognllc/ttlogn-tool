@@ -8,7 +8,8 @@ var _ = require('underscore'),
 	utils = require(path.resolve(__dirname,'../lib/utils.js')),
 	user = require(path.resolve(__dirname,'../models/user.js'));
 
-var PROJECT = /^\d+$/;
+var PROJECT = /^\d+$/,
+	NAME = 'name';
 
 
 var controllerListClients = {
@@ -24,7 +25,7 @@ var controllerListClients = {
 					return user.getClients(puser.result.id);
 			
 			}).then(function(pclients) {
-				utils.printNames(pclients.result);
+				utils.printArray(pclients.result, NAME);
 			
 			}).catch(function(error) {
 				colog.log(colog.colorRed(error));

@@ -2,9 +2,13 @@ var path = require('path'),
 	RSVP = require('rsvp'),
 	_ = require('underscore'),
 	pivotal = require('pivotal'),
-	fs = require('fs');
+	fs = require('fs'),
+	dataAccess = require(path.resolve(__dirname,'../dataAccess/pivotal_data_access.js'));
 
-var configPath;
+var UNFINISH = false,
+	PROJECT = 'projects/',
+	STORIES = '/stories/' ,
+	TASKS = '/tasks';
 
 var task = {
 	
@@ -40,7 +44,33 @@ var task = {
 
 		});
 		return promise;
-	}
+	},
+
+	/* pprojects: project of the user
+	puser: token of the user
+	pstory: new story
+	add a new story to the TT 
+	*/
+	addTask: function(pproject, puser, pstory, ptask){
+		
+		ptask.task.complete = UNFINISH;
+		url = PROJECT + pproject.id + STORIES + pstory.id + TASKS;
+		return dataAccess.post(puser, url, ptask);
+	},
+
+	/* pprojects: project of the user
+	puser: token of the user
+	pstory: new story
+	add a new story to the TT 
+	*/
+
+	
+	/*finishTask: function(pproject, puser, pstory, ptask){
+		
+		ptask.task.complete = UNFINISH;
+		url = PROJECT + pproject.id + STORIES + pstory.id + TASKS;
+		return dataAccess.post(puser, url, ptask);
+	}*/
 
 };
 
