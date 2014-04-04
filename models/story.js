@@ -89,11 +89,6 @@ var story = {
 			var self = this,
 				promises = [];
 
-/*		console.log(pprojects);
-		console.log(puser);
-		console.log(puserName);
-		console.log(pfilter);*/
-
 			pivotal.useToken(puser);
 	
 			_.each(pprojects, function(value){

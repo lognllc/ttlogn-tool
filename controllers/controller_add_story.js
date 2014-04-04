@@ -33,7 +33,6 @@ var printOptions = function(pproject, puserId, puser){
 	
 	}).then(function(promptResult){
 		newStory.story.story_type = promptResult.name;
-		//console.log(newStory);
 		return story.addStory(pproject.id, puserId, newStory);
 
 	}).then(function(){

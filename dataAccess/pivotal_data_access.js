@@ -7,34 +7,6 @@ var HOST = 'http://www.pivotaltracker.com/services/v3/';
 
 var apiPivotalDataAccess = {
 
-/*	pparameters: parameters for the get
-	makes a get and send the info receive to pfunction*/
-	get: function(ptoken, pparameters){
-		var promise = new RSVP.Promise(function(resolve, reject){
-			var dataServer = {},
-				self = this,
-				client = new clientTT(),
-				args = {
-					data: pparameters,
-					headers: {
-						'Content-Type': 'application/json',
-						'X-TrackerToken': ptoken
-					}
-				};
-			//console.log(host+pparameters);
-			client.get(HOST+pparameters, args, function(data, response){
-			//	console.log(data);
-			//	dataServer = JSON.parse(data);
-				resolve(dataServer);
-
-			}).on('error',function(err){
-				colog.log(colog.colorRed('Error: Something went wrong on the request', err.request.options));
-				reject(self);
-			});
-		});
-		return promise;
-	},
-
 /*	ptoken: token of the user
 	ppost: post method
 	pparameters: parameters for the post
