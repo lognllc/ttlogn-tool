@@ -54,10 +54,12 @@ pprojects: projects of the user to display
 waits the user to choose a project, then save the repository
 */
 var getProject = function(pprojects){
+	var RESTRICTION = 'Number of the project';
+
 	var repoPath = process.cwd(), //'/mnt/hgfs/Development/repoPrueba', //process.cwd(),
 		newProject = {};
 
-	utils.getPromptProject(pprojects).then(function(pproject){
+	utils.getPromptNumber(RESTRICTION, pprojects).then(function(pproject){
 		newProject = pproject;
 		return commit.getRepoBranches(repoPath);
 

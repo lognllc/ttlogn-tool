@@ -41,11 +41,14 @@ ptask: the task to save
 save the task
 */
 var saveTask = function(ptask, puser, pprojects){
+	var RESTRICTION_PROJECT = 'Number of the project',
+		RESTRICTION_DESCRIPTION = 'Description';
+	
 	var project = {};
 
-	utils.getPromptProject(pprojects).then(function(projectResult){
+	utils.getPromptNumber(RESTRICTION_PROJECT, pprojects).then(function(projectResult){
 		ptask.project_id = projectResult.id;
-		return utils.getPromptDescription();
+		return utils.getPromptText(RESTRICTION_DESCRIPTION);
 
 	}).then(function(pdescription) {
 		ptask.description = pdescription;

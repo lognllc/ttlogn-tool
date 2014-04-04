@@ -17,6 +17,9 @@ var controllerDeleteStories = {
 	delete a story
 	*/
 	deleteStory: function(pfilter){
+		var RESTRICTION_PROJECT = 'Number of the project',
+			RESTRICTION_STORY = 'Number of the story';
+
 		var userId = '',
 			storyProject = [],
 			pivotalUser = '',
@@ -32,7 +35,7 @@ var controllerDeleteStories = {
 
 				}).then(function(pprojects){
 					utils.printArray(pprojects, NAME);
-					return utils.getPromptProject(pprojects);
+					return utils.getPromptNumber(RESTRICTION, pprojects);
 
 				}).then(function(pproject){
 					storyProject.push(pproject);
@@ -45,7 +48,7 @@ var controllerDeleteStories = {
 				}).then(function(){
 					storyProject = _.first(storyProject);
 					utils.printArray(storyProject.stories, NAME);
-					return utils.getPromptStory(storyProject.stories);
+					return utils.getPromptNumber(RESTRICTION, storyProject.stories);
 
 				}).then(function(pstory){
 					selectedStory = pstory;

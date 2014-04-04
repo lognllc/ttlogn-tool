@@ -42,6 +42,8 @@ pproject: project information
 prints the entries
 */
 var printTimeEntries = function(puser, pproject){
+	var RESTRICTION_STORY = 'Number of the story';
+
 	var cancel = 0,
 		periodEntries = [],
 		timeEntries = [],
@@ -54,7 +56,7 @@ var printTimeEntries = function(puser, pproject){
 			{ return pentries.project.id === pproject; });
 
 		utils.printArray(timeEntries, ENTRY_DESCRIPTION);
-		return utils.getPromptTimeEntry(timeEntries);
+		return utils.getPromptNumber(RESTRICTION_STORY, timeEntries);
 
 	}).then(function(pentry){
 		deleteTimeEntry(puser, pentry);
@@ -71,6 +73,8 @@ var controllerDeleteEntry = {
 	deletes a task of an user in the TT
 	*/
 	deleteWork: function(){
+		var RESTRICTION_PROJECT = 'Number of the project';
+
 		var repos = [],
 			userInfo = {},
 			projects = [],
@@ -84,7 +88,7 @@ var controllerDeleteEntry = {
 			}).then(function(pprojects){
 				projects = pprojects.result;
 				utils.printArray(projects, NAME);
-				return utils.getPromptProject(projects);
+				return utils.getPromptNumber(RESTRICTION_PROJECT, projects);
 
 			}).then(function(projectResult){
 				printTimeEntries(userInfo, projectResult.id);

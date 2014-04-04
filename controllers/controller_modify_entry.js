@@ -15,7 +15,8 @@ var NUMBERS = /^\d+$/,
 	CREATED = /^\d\d$/,
 	DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss',
 	NAME = 'name',
-	ENTRY_DESCRIPTION = 'tskDescription';
+	ENTRY_DESCRIPTION = 'tskDescription',
+	RESTRICTION_PROJECT = 'Number of the project';
 
 var userInfo = {},
 	projects = [],
@@ -125,8 +126,9 @@ var modifyTime = function(){
 modify the description of the task
 */
 var modifyDescription = function(){
-	
-	utils.getPromptDescription().then(function(pdescription){
+	var RESTRICTION_DESCRIPTION = 'Description';
+
+	utils.getPromptText(RESTRICTION_DESCRIPTION).then(function(pdescription){
 		entryToModify.tskDescription = pdescription;
 		printTimeEntry();
 
@@ -141,7 +143,7 @@ modify the project of the task
 var modifyProject = function(){
 	
 	utils.printArray(projects, NAME);
-	utils.getPromptProject(projects).then(function(pproject){
+	utils.getPromptNumber(RESTRICTION_PROJECT, projects).then(function(pproject){
 		entryToModify.project = pproject;
 		printTimeEntry();
 
@@ -154,9 +156,11 @@ var modifyProject = function(){
 modify the hour type of an entry
 */
 var getHourType = function(){
+	var	RESTRICTION_HOUR = 'Number of the hour type';
+
 	hourType.getHourType(userInfo.id).then(function(hourTypes){
 		utils.printArray(hourTypes.result, NAME);
-		return utils.getPromptHourType(hourTypes.result);
+		return utils.getPromptNumber(RESTRICTION_PROJECT, hourTypes.result);
 
 	}).then(function(phourType){
 		entryToModify.hour_type = phourType;
@@ -243,6 +247,8 @@ var controllerModifyEntry = {
 
 	/*modify a task of an user in the TT*/
 	modifyWork: function(){
+		var	RESTRICTION_ENTRY = 'Number of the entry';
+
 		var repos = [],
 			configuration = {},
 			projectId = 0,
@@ -259,7 +265,7 @@ var controllerModifyEntry = {
 			}).then(function(pprojects){
 				projects = pprojects.result;
 				utils.printArray(projects, NAME);
-				return utils.getPromptProject(projects);
+				return utils.getPromptNumber(RESTRICTION_PROJECT, projects);
 
 			}).then(function(projectResult){
 				projectId = projectResult.id;
@@ -271,7 +277,7 @@ var controllerModifyEntry = {
 					{ return pentries.project.id === projectId; });
 
 				utils.printArray(timeEntries, ENTRY_DESCRIPTION);
-				return utils.getPromptTimeEntry(timeEntries);
+				return utils.getPromptNumber(RESTRICTION_ENTRY, timeEntries);
 
 			}).then(function(pentry){
 				entryToModify = pentry;
