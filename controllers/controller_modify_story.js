@@ -12,18 +12,57 @@ var path = require('path'),
 var NAME = 'name',
 	NUMBERS = /^\d+$/;
 
-var projectId = 0,
+var storyProject = [],
 	userId = 0,
+	estimations = [],
 	selectedStory = {};
+
+/* get the new name
+*/
+var getEstimations = function(){
+	var estimationsArray = storyProject.point_scale.split(',');
+	_.each(estimationsArray, function(value){
+		estimations.push({name: value});
+	});
+};
+
+/* get the new name
+*/
+var updateStory = function(){
+	var newStory = {story:{}};
+
+	newStory.story.name = selectedStory.name;
+	newStory.story.description = selectedStory.description;
+	newStory.story.estimate = selectedStory.estimate;
+	newStory.story.current_state = selectedStory.current_state;
+
+	story.modifyStory(storyProject.id, userId, newStory, selectedStory.id).then(function(promptResult){
+		colog.log(colog.colorGreen('Story updated.'));
+	}).catch(function(error) {
+		colog.log(colog.colorRed(error));
+	});
+};
+
+/* get the new name
+*/
+var modifyText = function(prestriction, patribute){
+
+	utils.getPromptText(prestriction).then(function(promptResult){
+		selectedStory[patribute] = promptResult;
+		selectOption();
+		
+	}).catch(function(error) {
+		colog.log(colog.colorRed(error));
+	});
+};
 
 /*prints the states, options
 */
-var changeState = function(){
-	states = [{name:'unstarted'}, {name:'started'}, {name:'finished'}, {name:'delivered'},
-		{name:'rejected'}, {name:'accepted'}];
-	utils.printArray(states, NAME);
-	utils.getPromptState(states).then(function(state){
-		selectedStory.current_state = state.name;
+var modifyAtribute = function(parray, prestriction, patribute){
+
+	utils.printArray(parray, NAME);
+	utils.getPromptNumber(prestriction, parray).then(function(item){
+		selectedStory[patribute] = item.name;
 		selectOption();
 
 	}).catch(function(error) {
@@ -34,9 +73,6 @@ var changeState = function(){
 /*prints the story, options
 */
 var printOptions = function(){
-//	console.log(entryToModify);
-//	var date = entryToModify.created.format(DATE_FORMAT);
-
 	colog.log(colog.colorMagenta('Select a field: '));
 	colog.log(colog.colorBlue('1: Change state: ' + selectedStory.current_state));
 	colog.log(colog.colorBlue('2: Change name: ' + selectedStory.name));
@@ -49,6 +85,16 @@ var printOptions = function(){
 /*prints the time entry and waits for an option
 */
 var selectOption = function(){
+	var RESTRICTION_NAME = 'Name',
+		RESTRICTION_DESCRIPTION = 'Description',
+		DESCRIPTION = 'description',
+		ESTIMATE = 'estimate',
+		RESTRICTION_ESTIMATE = 'Select estimate',
+		STATE = 'current_state',
+		STATES = [{name:'unstarted'}, {name:'started'}, {name:'finished'}, {name:'delivered'},
+			{name:'rejected'}, {name:'accepted'}],
+		RESTRICTION_STATE = 'Number of state';
+
 	printOptions();
 	prompt.start();
 	prompt.get({
@@ -63,19 +109,20 @@ var selectOption = function(){
 	}, function (err, resultPrompt) {
 		switch(resultPrompt.field){
 			case '1':
-				changeState();
+				modifyAtribute(STATES, RESTRICTION_STATE, STATE);
 				break;
 			case '2':
-				modifyName();
+				modifyText(RESTRICTION_NAME, NAME);
 				break;
 			case '3':
-				modifyDescription();
+				modifyText(RESTRICTION_DESCRIPTION, DESCRIPTION);
 				break;
 			case '4':
-				getHourType();
+
+				modifyAtribute(estimations, RESTRICTION_ESTIMATE, ESTIMATE);
 				break;
 			case '5':
-				saveStory();
+				updateStory();
 				break;
 			case '6':
 				colog.log(colog.colorRed('Canceled'));
@@ -96,11 +143,10 @@ var controllerModifyStory = {
 	delete a story
 	*/
 	modifyStory: function(pfilter){
-		var //userId = '',
-			storyProject = [],
-			pivotalUser = '',
+		var RESTRICTION = 'Number of the project';
+
+		var pivotalUser = '',
 			configuration = config.getConfig();
-			//selectedStory = {};
 		if(pfilter === '-a' || typeof pfilter === 'undefined'){
 			if(config.existConfig){
 				colog.log(colog.colorGreen('Loading...'));
@@ -111,7 +157,7 @@ var controllerModifyStory = {
 
 				}).then(function(pprojects){
 					utils.printArray(pprojects, NAME);
-					return utils.getPromptProject(pprojects);
+					return utils.getPromptNumber(RESTRICTION, pprojects);
 
 				}).then(function(pproject){
 					storyProject.push(pproject);
@@ -128,7 +174,7 @@ var controllerModifyStory = {
 
 				}).then(function(pstory){
 					selectedStory = pstory;
-					projectId = storyProject.id;
+					getEstimations();
 					selectOption();
 
 				}).catch(function(error) {

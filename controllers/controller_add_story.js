@@ -10,6 +10,40 @@ var path = require('path'),
 
 var NAME = 'name';
 
+var printOptions = function(pproject, puserId, puser){
+	var RESTRICTION_NAME = 'Name',
+		RESTRICTION_DESCRIPTION = 'Description',
+		RESTRICTION_TYPES = 'Select the numbre of the type',
+		TYPES = [{name:'feature'}, {name:'chore'}, {name:'bug'}, {name:'release'}];
+
+	var newStory = {
+			story:{
+				requested_by: puser
+			}
+		};
+
+	utils.getPromptText(RESTRICTION_NAME).then(function(promptResult){
+		newStory.story.name = promptResult;
+		return utils.getPromptText(RESTRICTION_DESCRIPTION);
+
+	}).then(function(promptResult){
+		newStory.story.description = promptResult;
+		utils.printArray(TYPES, NAME);
+		return utils.getPromptNumber(RESTRICTION_TYPES, TYPES);
+	
+	}).then(function(promptResult){
+		newStory.story.story_type = promptResult.name;
+		//console.log(newStory);
+		return story.addStory(pproject.id, puserId, newStory);
+
+	}).then(function(){
+		colog.log(colog.colorGreen('New story saved.'));
+
+	}).catch(function(error) {
+		colog.log(colog.colorRed(error));
+	});
+};
+
 var controllerAddStory = {
 	
 	/*
@@ -17,6 +51,8 @@ var controllerAddStory = {
 	delete a story
 	*/
 	addStory: function(){
+		var RESTRICTION = 'Number of the project';
+
 		var userId = '',
 			storyProject = [],
 			pivotalUser = '',
@@ -32,7 +68,7 @@ var controllerAddStory = {
 
 			}).then(function(pprojects){
 				utils.printArray(pprojects, NAME);
-				return utils.getPromptProject(pprojects);
+				return utils.getPromptNumber(RESTRICTION, pprojects);
 
 			}).then(function(pproject){
 				storyProject.push(pproject);
@@ -41,34 +77,7 @@ var controllerAddStory = {
 			}).then(function(pmemberships){
 				pivotalUser = user.getPivotalUser(configuration.pivotalEmail, pmemberships);
 				storyProject = _.first(storyProject);
-
-					//utils.printNames(storyProject.stories);
-					//return utils.getPromptProject(storyProject.stories);
-
-//				}).then(function(){
-					
-				newStory = {
-				//	project_id: storyProject.id,
-					/*name: 'add test',
-					story_type: 'feature',
-					estimate: '1',
-					description: 'test description',
-					labels: '',
-					requested_by: pivotalUser*/
-					story:{
-						story_type: 'feature',
-						name: 'test4',
-						requested_by: pivotalUser
-					}
-				};
-
-				return story.addStory(storyProject, userId, newStory);
-/*
-			}).then(function(){
-					return ;
-*/
-			}).then(function(){
-				colog.log(colog.colorGreen('New story saved.'));
+				printOptions(storyProject, userId, pivotalUser);
 
 			}).catch(function(error) {
 				colog.log(colog.colorRed(error));
@@ -79,6 +88,9 @@ var controllerAddStory = {
 		}
 	}
 };
+
+module.exports = controllerAddStory;
+
 /*
 {
     name           : Name of this story
@@ -89,4 +101,3 @@ var controllerAddStory = {
     requested_by   : Name of the requester
 }
 */
-module.exports = controllerAddStory;

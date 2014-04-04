@@ -13,9 +13,21 @@ var path = require('path'),
 sort the repo "tree"
 */
 var	deliver = function(puserId, pprojects){
-	promises = [];
+	var FINISHED = 'delivered';
+
+	var promises = [],
+		newStory = {
+			story:{
+				current_state: FINISHED
+			}
+		};
+
 	_.each(pprojects, function(item){
-		promises.push(story.deliverStories(puserId, item.id));
+		_.each(item.stories, function(value){
+			colog.log(colog.colorBlue('Delivering: ' + value.name));
+			promises.push(story.modifyStory(item.id, puserId, newStory, value.id));
+			//promises.push(story.deliverStories(puserId, item.id));
+		});
 	});
 	RSVP.all(promises).then(function() {
 		colog.log(colog.colorGreen('Stories delivered successfully'));
@@ -32,8 +44,10 @@ var controllerAddStory = {
 	delete a story
 	*/
 	deliverStories: function(){
+		var FILTER = '-f';
+
 		var userId = '',
-			storyProject = [],
+			storyProjects = [],
 			pivotalUser = '',
 			configuration = config.getConfig(),
 			newStory = {};
@@ -43,10 +57,22 @@ var controllerAddStory = {
 
 			user.pivotalLogin(configuration).then(function(puserId){
 				userId = puserId;
+				//console.log(userId);
 				return project.getPivotalProjects(userId);
 
 			}).then(function(pprojects){
-				deliver(userId, pprojects);
+				storyProjects = pprojects;
+				//console.log(pprojects);
+				return project.getMemberships(userId, storyProjects);
+
+			}).then(function(pmemberships){
+				//console.log(pmemberships);
+				pivotalUser = user.getPivotalUser(configuration.pivotalEmail, pmemberships);
+				return story.getStories(storyProjects, userId, pivotalUser, FILTER);
+
+			}).then(function(){
+			//	console.log(storyProjects);
+				deliver(userId, storyProjects);
 
 			/*}).then(function(){
 				colog.log(colog.colorGreen('New story saved.'));

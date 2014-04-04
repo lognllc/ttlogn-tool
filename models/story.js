@@ -34,7 +34,27 @@ var story = {
 							pproject.stories.push(ret.story);
 						}
 					}
-					if(pfilter !== '-a'){
+					switch(pfilter)
+					{
+						case '-a':
+						filteredProject = _.filter(pproject.stories, function(pstory)
+							{ return pstory.owned_by === puserName;});
+							break;
+						case '-f':
+						filteredProject = _.filter(pproject.stories, function(pstory)
+							{ return  (pstory.current_state === 'finished' &&
+							pstory.owned_by === puserName);});
+							break;
+						default:
+						filteredProject = _.filter(pproject.stories, function(pstory)
+							{ return  ((pstory.current_state === 'unstarted' || pstory.current_state === 'started') &&
+							pstory.owned_by === puserName);});
+					}
+					pproject.stories = filteredProject;
+
+
+
+					/*if(pfilter !== '-a'){
 						filteredProject = _.filter(pproject.stories, function(pstory)
 							{ return  ((pstory.current_state === 'unstarted' || pstory.current_state === 'started')) &&
 							pstory.owned_by === puserName;});
@@ -44,7 +64,7 @@ var story = {
 						filteredProject = _.filter(pproject.stories, function(pstory)
 							{ return pstory.owned_by === puserName;});
 						pproject.stories = filteredProject;
-					}
+					}*/
 					resolve();
 				}
 				else{
@@ -69,6 +89,11 @@ var story = {
 			var self = this,
 				promises = [];
 
+/*		console.log(pprojects);
+		console.log(puser);
+		console.log(puserName);
+		console.log(pfilter);*/
+
 			pivotal.useToken(puser);
 	
 			_.each(pprojects, function(value){
@@ -89,43 +114,9 @@ var story = {
 	pstory: new story
 	add a new story to the TT 
 	*/
-	addStory: function(pproject, puser, pstory){
-		//var promise = new RSVP.Promise(function(resolve, reject){
-		//	var self = this;
-
-		/*	pivotal.useToken(puser);
-
-			console.log(pproject.id);
-			console.log(pstory);
-			//console.log(puser);
-
-			console.log(pivotal.updateStory.toString());
-			console.log('antes');*/
-
-
-			url = 'projects/' + pproject.id + '/stories';
-			return dataAccess.post(puser, url, pstory);
-
-			//pivotal.updateStory(pproject.id, '67880094', pstory, function(err, ret){
-			/*pivotal.addStory(pproject.id, pstory, function(err, ret){
-			//pivotal.getStories(pproject.id, pstory, function(err, ret){
-				console.log('entre1');
-				console.log(err);
-				console.log(ret);
-				
-				if(!err){
-					console.log('entre');
-					resolve();
-				}
-				else{
-					colog.log(colog.colorRed('Error: Something went wrong on the request: '));
-					colog.log(colog.colorRed(err.desc));
-					reject(self);
-				}
-			});*/
-	
-		//});
-		//return promise;
+	addStory: function(pprojectId, puser, pstory){
+		var url = 'projects/' + pprojectId + '/stories';
+		return dataAccess.post(puser, url, pstory);
 	},
 
 		/* pprojects: project of the user
@@ -133,9 +124,9 @@ var story = {
 	pstory: new story
 	add a new story to the TT 
 	*/
-	modifyStory: function(pproject, puser, pstory, pstoryId){
-			url = PROJECT + pproject.id + STORIES + pstoryId;
-			return dataAccess.post(puser, url, pstory);
+	modifyStory: function(pprojectId, puser, pstory, pstoryId){
+		var url = PROJECT + pprojectId + STORIES + pstoryId;
+		return dataAccess.put(puser, url, pstory);
 	},
 
 	/* pprojectId: id of the project
