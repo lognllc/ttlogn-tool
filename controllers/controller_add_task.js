@@ -19,12 +19,16 @@ var controllerAddTasks = {
 	delete a story
 	*/
 	addTask: function(pfilter){
+		var RESTRICTION_PROJECT = 'Number of the project',
+			RESTRICTION_STORY = 'Number of the story',
+			RESTRICTION_DESCRIPTION = 'Description';
+
 		var userId = '',
 			storyProject = [],
 			pivotalUser = '',
 			configuration = config.getConfig(),
 			selectedStory = {},
-			newTask = {task: {}};
+			newTask = {};
 
 		if(pfilter === '-a' || typeof pfilter === 'undefined'){
 			if(config.existConfig){
@@ -36,7 +40,7 @@ var controllerAddTasks = {
 
 				}).then(function(pprojects){
 					utils.printArray(pprojects, NAME);
-					return utils.getPromptProject(pprojects);
+					return utils.getPromptNumber(RESTRICTION_PROJECT, pprojects);
 
 				}).then(function(pproject){
 					storyProject.push(pproject);
@@ -49,15 +53,15 @@ var controllerAddTasks = {
 				}).then(function(){
 					storyProject = _.first(storyProject);
 					utils.printArray(storyProject.stories, NAME);
-					return utils.getPromptStory(storyProject.stories);
+					return utils.getPromptNumber(RESTRICTION_STORY, storyProject.stories);
 
 				}).then(function(pstory){
 					selectedStory = pstory;
-					return utils.getPromptDescription();
+					return utils.getPromptText(RESTRICTION_DESCRIPTION);
 				//	useCommand(pcommand);
 				}).then(function(description){
-					newTask.task.description = description;
-					task.addTask(storyProject, userId, selectedStory, newTask);
+					newTask.description = description;
+					return task.addTask(storyProject, userId, selectedStory, newTask);
 
 				}).then(function(description){
 					colog.log(colog.colorGreen("Task saved"));

@@ -3,7 +3,7 @@ var prettyjson = require('prettyjson'),
 	RSVP = require('rsvp'),
 	clientTT = require('node-rest-client').Client;
 
-var HOST = 'http://www.pivotaltracker.com/services/v3/';
+var HOST = 'https://www.pivotaltracker.com/services/v5/';
 
 var apiPivotalDataAccess = {
 
@@ -68,3 +68,9 @@ var apiPivotalDataAccess = {
 };
 
 module.exports = apiPivotalDataAccess;
+
+/*
+{"requested_by":"Daniel Solis"
+ "description":"test v5",
+ "name": "test version",
+ "story_type":"feature"}*/

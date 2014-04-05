@@ -17,9 +17,7 @@ var	deliver = function(puserId, pprojects){
 
 	var promises = [],
 		newStory = {
-			story:{
-				current_state: FINISHED
-			}
+			current_state: FINISHED
 		};
 
 	_.each(pprojects, function(item){

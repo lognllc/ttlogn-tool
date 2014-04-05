@@ -29,12 +29,12 @@ var getEstimations = function(){
 /* get the new name
 */
 var updateStory = function(){
-	var newStory = {story:{}};
+	var newStory = {};
 
-	newStory.story.name = selectedStory.name;
-	newStory.story.description = selectedStory.description;
-	newStory.story.estimate = selectedStory.estimate;
-	newStory.story.current_state = selectedStory.current_state;
+	newStory.name = selectedStory.name;
+	newStory.description = selectedStory.description;
+	newStory.estimate = parseInt(selectedStory.estimate);
+	newStory.current_state = selectedStory.current_state;
 
 	story.modifyStory(storyProject.id, userId, newStory, selectedStory.id).then(function(promptResult){
 		colog.log(colog.colorGreen('Story updated.'));
@@ -143,7 +143,8 @@ var controllerModifyStory = {
 	delete a story
 	*/
 	modifyStory: function(pfilter){
-		var RESTRICTION = 'Number of the project';
+		var RESTRICTION = 'Number of the project',
+			RESTRICTION_STORY = 'Number of the story';
 
 		var pivotalUser = '',
 			configuration = config.getConfig();
@@ -170,7 +171,7 @@ var controllerModifyStory = {
 				}).then(function(){
 					storyProject = _.first(storyProject);
 					utils.printArray(storyProject.stories, NAME);
-					return utils.getPromptStory(storyProject.stories);
+					return utils.getPromptNumber(RESTRICTION_STORY, storyProject.stories);
 
 				}).then(function(pstory){
 					selectedStory = pstory;

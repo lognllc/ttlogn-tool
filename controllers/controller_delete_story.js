@@ -35,7 +35,7 @@ var controllerDeleteStories = {
 
 				}).then(function(pprojects){
 					utils.printArray(pprojects, NAME);
-					return utils.getPromptNumber(RESTRICTION, pprojects);
+					return utils.getPromptNumber(RESTRICTION_PROJECT, pprojects);
 
 				}).then(function(pproject){
 					storyProject.push(pproject);
@@ -48,7 +48,7 @@ var controllerDeleteStories = {
 				}).then(function(){
 					storyProject = _.first(storyProject);
 					utils.printArray(storyProject.stories, NAME);
-					return utils.getPromptNumber(RESTRICTION, storyProject.stories);
+					return utils.getPromptNumber(RESTRICTION_STORY, storyProject.stories);
 
 				}).then(function(pstory){
 					selectedStory = pstory;

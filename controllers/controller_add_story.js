@@ -16,23 +16,19 @@ var printOptions = function(pproject, puserId, puser){
 		RESTRICTION_TYPES = 'Select the numbre of the type',
 		TYPES = [{name:'feature'}, {name:'chore'}, {name:'bug'}, {name:'release'}];
 
-	var newStory = {
-			story:{
-				requested_by: puser
-			}
-		};
+	var newStory = {};
 
 	utils.getPromptText(RESTRICTION_NAME).then(function(promptResult){
-		newStory.story.name = promptResult;
+		newStory.name = promptResult;
 		return utils.getPromptText(RESTRICTION_DESCRIPTION);
 
 	}).then(function(promptResult){
-		newStory.story.description = promptResult;
+		newStory.description = promptResult;
 		utils.printArray(TYPES, NAME);
 		return utils.getPromptNumber(RESTRICTION_TYPES, TYPES);
 	
 	}).then(function(promptResult){
-		newStory.story.story_type = promptResult.name;
+		newStory.story_type = promptResult.name;
 		return story.addStory(pproject.id, puserId, newStory);
 
 	}).then(function(){

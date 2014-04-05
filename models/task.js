@@ -53,7 +53,7 @@ var task = {
 	*/
 	addTask: function(pproject, puser, pstory, ptask){
 		
-		ptask.task.complete = UNFINISH;
+		ptask.complete = UNFINISH;
 		url = PROJECT + pproject.id + STORIES + pstory.id + TASKS;
 		return dataAccess.post(puser, url, ptask);
 	},
