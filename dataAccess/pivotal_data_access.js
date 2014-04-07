@@ -7,6 +7,34 @@ var HOST = 'https://www.pivotaltracker.com/services/v5/';
 
 var apiPivotalDataAccess = {
 
+/*	pparameters: parameters for the get
+	makes a get and send the info receive to pfunction*/
+	get: function(pparameters){
+		var promise = new RSVP.Promise(function(resolve, reject){
+			var dataServer = {},
+				self = this,
+				client = new clientTT(),
+				args = {
+					data: pparameters,
+					headers: {
+						'Content-Type': 'application/json',
+						'X-TrackerToken': ptoken
+					}
+				};
+			//console.log(host+pparameters);
+			client.get(HOST+pparameters, function(data, response){
+			//	console.log(data);
+				dataServer = JSON.parse(data);
+				resolve(dataServer);
+
+			}).on('error',function(err){
+				colog.log(colog.colorRed('Error: Something went wrong on the request', err.request.options));
+				reject(self);
+			});
+		});
+		return promise;
+	},
+
 /*	ptoken: token of the user
 	ppost: post method
 	pparameters: parameters for the post
@@ -27,8 +55,9 @@ var apiPivotalDataAccess = {
 			//console.log(pparameters);
 			client.post(HOST + ppost, args, function(data,response){
 			//	console.log(data);
-			//	dataServer = JSON.parse(data);
-				resolve();
+			dataServer = JSON.parse(data);
+			resolve(dataServer);
+			
 			}).on('error',function(err){
 				colog.log(colog.colorRed('Error: Something went wrong on the request', err.request.options));
 				reject(self);
@@ -53,11 +82,13 @@ var apiPivotalDataAccess = {
 						'X-TrackerToken': ptoken
 					}
 				};
-			//console.log(HOST + ppost);
+			//console.log(HOST + pput);
 			//console.log(pparameters);
 			client.put(HOST + pput, args, function(data,response){
-			//	console.log(data);
-				resolve();
+			//console.log(data);
+			dataServer = JSON.parse(data);
+			resolve(dataServer);
+
 			}).on('error',function(err){
 				colog.log(colog.colorRed('Error: Something went wrong on the request', err.request.options));
 				reject(self);
@@ -68,9 +99,3 @@ var apiPivotalDataAccess = {
 };
 
 module.exports = apiPivotalDataAccess;
-
-/*
-{"requested_by":"Daniel Solis"
- "description":"test v5",
- "name": "test version",
- "story_type":"feature"}*/

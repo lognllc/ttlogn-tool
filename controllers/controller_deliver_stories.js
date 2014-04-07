@@ -24,7 +24,6 @@ var	deliver = function(puserId, pprojects){
 		_.each(item.stories, function(value){
 			colog.log(colog.colorBlue('Delivering: ' + value.name));
 			promises.push(story.modifyStory(item.id, puserId, newStory, value.id));
-			//promises.push(story.deliverStories(puserId, item.id));
 		});
 	});
 	RSVP.all(promises).then(function() {
@@ -69,12 +68,8 @@ var controllerAddStory = {
 				return story.getStories(storyProjects, userId, pivotalUser, FILTER);
 
 			}).then(function(){
-			//	console.log(storyProjects);
 				deliver(userId, storyProjects);
 
-			/*}).then(function(){
-				colog.log(colog.colorGreen('New story saved.'));
-*/
 			}).catch(function(error) {
 				colog.log(colog.colorRed(error));
 			});

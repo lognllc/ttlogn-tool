@@ -3,6 +3,7 @@ var path = require('path'),
 	_ = require('underscore'),
 	colog = require('colog'),
 	RSVP = require('rsvp'),
+	prompt = require('prompt'),
 	task = require(path.resolve(__dirname,'../models/task.js')),
 	story = require(path.resolve(__dirname,'../models/story.js')),
 	user = require(path.resolve(__dirname,'../models/user.js')),
@@ -11,27 +12,58 @@ var path = require('path'),
 	project = require(path.resolve(__dirname,'../models/project.js'));
 
 var DESCRIPTION = 'description',
-	NAME = 'name';
+	NAME = 'name',
+	RESTRICTION_DESCRIPTION = 'Description';
 
+/* get the new name
+*/
+var modifyDescription = function(pproject, puserId, pstory, ptask){
+
+	utils.getPromptText(RESTRICTION_DESCRIPTION).then(function(promptResult){
+		ptask.description = promptResult;
+		ptask.complete = (ptask.complete === 'true');
+		return task.modifyTask(pproject, puserId, pstory, ptask);
+
+	}).then(function(promptResult){
+		colog.log(colog.colorGreen('Modified successfully'));
+		
+	}).catch(function(error) {
+		colog.log(colog.colorRed(error));
+	});
+};
+
+/* get the new name
+*/
+var modifyState = function(pproject, puserId, pstory, ptask){
+	var RESTRICTION_COMPLETE = 'Is completed';
+
+	utils.getBoolPrompt(RESTRICTION_COMPLETE).then(function(promptResult){
+		ptask.complete = promptResult;
+		return task.modifyTask(pproject, puserId, pstory, ptask);
+
+	}).then(function(promptResult){
+		colog.log(colog.colorGreen('Modified successfully'));
+		
+	}).catch(function(error) {
+		colog.log(colog.colorRed(error));
+	});
+};
 
 /*prints the story, options
 */
-var printOptions = function(){
+var printOptions = function(ptask){
 	colog.log(colog.colorMagenta('Select a field: '));
-	colog.log(colog.colorBlue('1: Change state: ' + selectedStory.current_state));
-	colog.log(colog.colorBlue('2: Change name: ' + selectedStory.name));
+	colog.log(colog.colorBlue('1: Change state: ' + ptask.complete));
+	colog.log(colog.colorBlue('2: Change name: ' + ptask.description));
 	colog.log(colog.colorBlue('3: Cancel '));
 };
 
 /*prints the time entry and waits for an option
 */
 var selectOption = function(pproject, puserId, pstory, ptask){
-	var RESTRICTION_NAME = 'Name',
-		RESTRICTION_COMPLETE = 'Completation',
-		COMPLETE = 'complete',
-		STATES = [{name:'true'}, {name:'false'}];
+	var NUMBERS = /^\d+$/;
 
-	printOptions();
+	printOptions(ptask);
 	prompt.start();
 	prompt.get({
 		properties: {
@@ -45,10 +77,10 @@ var selectOption = function(pproject, puserId, pstory, ptask){
 	}, function (err, resultPrompt) {
 		switch(resultPrompt.field){
 			case '1':
-				modifyState(STATES, RESTRICTION_STATE);
+				modifyState(pproject, puserId, pstory, ptask);
 				break;
 			case '2':
-				modifyName(RESTRICTION_NAME, NAME);
+				modifyDescription(pproject, puserId, pstory, ptask);
 				break;
 			case '3':
 				colog.log(colog.colorRed('Canceled'));
@@ -56,9 +88,27 @@ var selectOption = function(pproject, puserId, pstory, ptask){
 			break;
 			default:
 				colog.log(colog.colorRed('Error: bad number'));
-				printTimeEntry();
+				selectOption(pproject, puserId, pstory, ptask);
 		}
 	});
+};
+
+/*prints the time entry and waits for an option
+*/
+var selectTask = function(pproject, puserId, pstory){
+	var RESTRICTION_TASK = 'Number of the project';
+
+	task.getTasks(pproject.id, puserId, pstory.id).then(function(ptasks){
+		utils.printArray(ptasks, DESCRIPTION);
+		return utils.getPromptNumber(RESTRICTION_TASK, ptasks);
+
+	}).then(function(ptask){
+		selectOption(pproject, puserId, pstory, ptask);
+
+	}).catch(function(error) {
+			colog.log(colog.colorRed(error));
+	});
+
 };
 
 
@@ -69,15 +119,12 @@ var controllerAddTasks = {
 	*/
 	modifyTask: function(pfilter){
 		var RESTRICTION_PROJECT = 'Number of the project',
-			RESTRICTION_STORY = 'Number of the story',
-			RESTRICTION_DESCRIPTION = 'Description';
+			RESTRICTION_STORY = 'Number of the story';
 
 		var userId = '',
 			storyProject = [],
 			pivotalUser = '',
-			configuration = config.getConfig(),
-			selectedStory = {},
-			newTask = {task: {}};
+			configuration = config.getConfig();
 
 		if(pfilter === '-a' || typeof pfilter === 'undefined'){
 			if(config.existConfig){
@@ -105,16 +152,7 @@ var controllerAddTasks = {
 					return utils.getPromptNumber(RESTRICTION_STORY, storyProject.stories);
 
 				}).then(function(pstory){
-					selectedStory = pstory;
-					selectOption();
-				//	return utils.getPromptText(RESTRICTION_DESCRIPTION);
-				//	useCommand(pcommand);
-				//}).then(function(description){
-				//	newTask.task.description = description;
-				//	return task.addTask(storyProject, userId, selectedStory, newTask);
-
-				}).then(function(description){
-					colog.log(colog.colorGreen("Task saved"));
+					selectTask(storyProject, userId, pstory);
 
 				}).catch(function(error) {
 					colog.log(colog.colorRed(error));

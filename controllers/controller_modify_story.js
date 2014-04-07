@@ -28,6 +28,7 @@ var getEstimations = function(){
 
 /* get the new name
 */
+//modify it
 var updateStory = function(){
 	var newStory = {};
 

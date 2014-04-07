@@ -8,7 +8,7 @@ var path = require('path'),
 var UNFINISH = false,
 	PROJECT = 'projects/',
 	STORIES = '/stories/' ,
-	TASKS = '/tasks';
+	TASKS = '/tasks/';
 
 var task = {
 	
@@ -63,14 +63,12 @@ var task = {
 	pstory: new story
 	add a new story to the TT 
 	*/
-
-	
-	/*finishTask: function(pproject, puser, pstory, ptask){
-		
-		ptask.task.complete = UNFINISH;
-		url = PROJECT + pproject.id + STORIES + pstory.id + TASKS;
-		return dataAccess.post(puser, url, ptask);
-	}*/
+	modifyTask: function(pproject, puser, pstory, ptask){
+		var newTask = _.pick(ptask, 'description', 'complete');
+		ptask.complete = newTask;
+		url = PROJECT + pproject.id + STORIES + pstory.id + TASKS + ptask.id;
+		return dataAccess.put(puser, url, newTask);
+	}
 
 };
 
