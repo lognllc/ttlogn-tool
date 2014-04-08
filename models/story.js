@@ -15,48 +15,44 @@ var story = {
 	pfilter: filter of the stories
 	get the stories of a project of an user 
 	*/
-	getStory: function(pproject, puserName, pfilter){
+	getProjectStories: function(pproject, ptoken, puserId, pfilter){
 		var promise = new RSVP.Promise(function(resolve, reject){
 			var self = this,
 				filteredProject = [];
-				filter = {};
+				url = PROJECT + pproject.project_id + STORIES;
 
-			pivotal.getStories(pproject.id, filter, function(err, ret){
-				if(!err){
-					
-					if(_.isArray(ret.story)){
-						pproject.stories = ret.story;
-					}
-					else{
-						pproject.stories = [];
-						if(typeof ret.story !== 'undefined'){
-							pproject.stories.push(ret.story);
-						}
-					}
-					switch(pfilter)
-					{
-						case '-a':
-						filteredProject = _.filter(pproject.stories, function(pstory)
-							{ return pstory.owned_by === puserName;});
-							break;
-						case '-f':
-						filteredProject = _.filter(pproject.stories, function(pstory)
-							{ return  (pstory.current_state === 'finished' &&
-							pstory.owned_by === puserName);});
-							break;
-						default:
-						filteredProject = _.filter(pproject.stories, function(pstory)
-							{ return  ((pstory.current_state === 'unstarted' || pstory.current_state === 'started') &&
-							pstory.owned_by === puserName);});
-					}
-					pproject.stories = filteredProject;
-					resolve();
+			dataAccess.get(ptoken, url).then(function(pstories){
+			//console.log(pstories);	
+				if(_.isArray(pstories)){
+					pproject.stories = pstories;
 				}
 				else{
-					colog.log(colog.colorRed('Error: Something went wrong on the request: '));
-					colog.log(colog.colorRed(err.desc));
-					reject(self);
+					pproject.stories = [];
+					if(typeof pstories !== 'undefined'){
+						pproject.stories.push(pstories);
+					}
 				}
+				switch(pfilter)
+				{
+					case '-a':
+					filteredProject = _.filter(pproject.stories, function(pstory)
+						{ return pstory.owned_by_id === puserId;});
+						break;
+					case '-f':
+					filteredProject = _.filter(pproject.stories, function(pstory)
+						{ return  (pstory.current_state === 'finished' &&
+						pstory.owned_by_id === puserId);});
+						break;
+					default:
+					filteredProject = _.filter(pproject.stories, function(pstory)
+						{ return  ((pstory.current_state === 'unstarted' || pstory.current_state === 'started') &&
+						pstory.owned_by_id === puserId);});
+				}
+				pproject.stories = filteredProject;
+				//console.log(pproject.stories);
+				resolve();
+			}).catch(function(error) {
+				colog.log(colog.colorRed(error));
 			});
 
 		});
@@ -69,15 +65,13 @@ var story = {
 	pfilter: filter of the stories
 	get the stories of the projects of an user 
 	*/
-	getStories: function(pprojects, puser, puserName, pfilter){
+	getStories: function(pprojects, ptoken, puserId, pfilter){
 		var promise = new RSVP.Promise(function(resolve, reject){
 			var self = this,
 				promises = [];
-
-			pivotal.useToken(puser);
 	
 			_.each(pprojects, function(value){
-				promises.push(story.getStory(value, puserName, pfilter));
+				promises.push(story.getProjectStories(value, ptoken, puserId, pfilter));
 			});
 			RSVP.all(promises).then(function() {
 				resolve();
@@ -95,7 +89,7 @@ var story = {
 	add a new story to the TT 
 	*/
 	addStory: function(pprojectId, puser, pstory){
-		var url = 'projects/' + pprojectId + '/stories';
+		var url = PROJECT + pprojectId + STORIES;
 		return dataAccess.post(puser, url, pstory);
 	},
 
@@ -115,22 +109,8 @@ var story = {
 	delete a story of a project of an user
 	*/
 	deleteStory: function(pprojectId, pstoryId, puser){
-		var promise = new RSVP.Promise(function(resolve, reject){
-			var self = this;
-			
-			pivotal.useToken(puser);
-			pivotal.removeStory(pprojectId, pstoryId, function(err, ret){
-				if(!err){
-					resolve();
-				}
-				else{
-					colog.log(colog.colorRed('Error: Something went wrong on the request: '));
-					colog.log(colog.colorRed(err.desc));
-					reject(self);
-				}
-			});
-		});
-		return promise;
+		var url = PROJECT + pprojectId + STORIES + pstoryId;
+		return dataAccess.delete(puser, url);
 	}
 
 };

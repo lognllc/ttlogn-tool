@@ -9,29 +9,62 @@ var apiPivotalDataAccess = {
 
 /*	pparameters: parameters for the get
 	makes a get and send the info receive to pfunction*/
-	get: function(ptoken, pget, pparameters){
+	login: function(puser, pget){
+		var promise = new RSVP.Promise(function(resolve, reject){
+			var dataServer = {},
+				self = this,
+				options_auth={
+					user:puser.pivotalEmail,
+					password:puser.pivotalPassword
+				},
+				client = new clientTT(options_auth),
+				args = {
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				};
+			client.get(HOST+pget, args,function(data, response){
+				dataServer = JSON.parse(data);
+				if(!dataServer.error){
+					resolve(dataServer);
+				}
+				else{
+					colog.log(colog.colorRed('Error: Something went wrong on the request'));
+					colog.log(colog.colorRed(dataServer.error));
+					reject(self);
+				}
+			}).on('error',function(err){
+				colog.log(colog.colorRed('Error: Something went wrong on the request', err.request.options));
+				reject(self);
+			});
+		});
+		return promise;
+	},
+
+/*	pparameters: parameters for the get
+	makes a get and send the info receive to pfunction*/
+	get: function(ptoken, pget){
 		var promise = new RSVP.Promise(function(resolve, reject){
 			var dataServer = {},
 				self = this,
 				client = new clientTT(),
 				args = {
-					data: pparameters,
 					headers: {
 						'Content-Type': 'application/json',
 						'X-TrackerToken': ptoken
 					}
 				};
-			//console.log(host+pparameters);
-			client.get(HOST+pget, pparameters,function(data, response){
-				console.log(data);
+			//console.log(HOST + pget);
+			client.get(HOST+pget, args,function(data, response){
+			//	console.log(data);
 				dataServer = JSON.parse(data);
-				if(!data.error){
+				if(!dataServer.error){
 					resolve(dataServer);
 				}
 				else{
 					colog.log(colog.colorRed('Error: Something went wrong on the request'));
-					colog.log(colog.colorRed(error));
-					colog.log(colog.colorRed(general_problem));
+					colog.log(colog.colorRed(dataServer.error));
+					reject(self);
 				}
 			}).on('error',function(err){
 				colog.log(colog.colorRed('Error: Something went wrong on the request', err.request.options));
@@ -62,13 +95,13 @@ var apiPivotalDataAccess = {
 			client.post(HOST + ppost, args, function(data,response){
 				//	console.log(data);
 				dataServer = JSON.parse(data);
-				if(!data.error){
+				if(!dataServer.error){
 					resolve(dataServer);
 				}
 				else{
 					colog.log(colog.colorRed('Error: Something went wrong on the request'));
-					colog.log(colog.colorRed(error));
-					colog.log(colog.colorRed(general_problem));
+					colog.log(colog.colorRed(dataServer.error));
+					reject(self);
 				}
 			}).on('error',function(err){
 				colog.log(colog.colorRed('Error: Something went wrong on the request', err.request.options));
@@ -94,18 +127,18 @@ var apiPivotalDataAccess = {
 						'X-TrackerToken': ptoken
 					}
 				};
-			//console.log(HOST + pput);
-			//console.log(pparameters);
+			console.log(ptoken);
+			console.log(HOST + pput);
+			console.log(pparameters);
 			client.put(HOST + pput, args, function(data,response){
 				//console.log(data);
 				dataServer = JSON.parse(data);
-				if(!data.error){
+				if(!dataServer.error){
 					resolve(dataServer);
 				}
 				else{
 					colog.log(colog.colorRed('Error: Something went wrong on the request'));
-					colog.log(colog.colorRed(error));
-					colog.log(colog.colorRed(general_problem));
+					colog.log(colog.colorRed(dataServer.error));
 					reject(self);
 				}
 			}).on('error',function(err){
@@ -114,7 +147,35 @@ var apiPivotalDataAccess = {
 			});
 		});
 		return promise;
-	}
+	},
+
+	/*	ptoken: token of the user
+	pput: put method
+	pparameters: parameters for the post
+	makes a post and send the info receive to pfunction*/
+	delete: function(ptoken, pdelete){
+		var promise = new RSVP.Promise(function(resolve, reject){
+			var client = new clientTT(),
+				dataServer = {},
+				self = this,
+				args = {
+					headers: {
+						'Content-Type': 'application/json',
+						'X-TrackerToken': ptoken
+					}
+				};
+			//console.log(client.delete.toString());
+			//console.log(HOST + pdelete);
+			//console.log(pparameters);
+			client.delete(HOST + pdelete, args, function(data,response){
+				resolve(dataServer);
+			}).on('error',function(err){
+				colog.log(colog.colorRed('Error: Something went wrong on the request', err.request.options));
+				reject(self);
+			});
+		});
+		return promise;
+	},
 };
 
 module.exports = apiPivotalDataAccess;

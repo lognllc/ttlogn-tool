@@ -34,37 +34,10 @@ var user = {
 
 	/* puser: information of the user
 	returns the token of pivotal */
-	pivotalLogin: function (puser)
-	{	var promise = new RSVP.Promise(function(resolve, reject){
-			
-			var TOKEN = 'me';
-
-			var self = this,
-				pivotalUser = _.pick(puser, 'pivotalEmail', 'pivotalPassword'),
-				token = '';
-
-			pivotalDataAccess.get(token, TOKEN, pivotalUser);
-			/*pivotal.getToken(puser.pivotalEmail, puser.pivotalPassword, function(err, ret){
-				if(!err){
-					resolve(ret.guid);
-				}
-				else{
-					colog.log(colog.colorRed('Error: Something went wrong on the request: ' + err.desc));
-					reject(self);
-				}
-			});*/
-
-		});
-		return promise;
-	},
-
-	/* puser: email of the user,
-	pmemberships: memberships of a project
-	returns the information of an user */
-	getPivotalUser: function (puser, pmemberships)
-	{	var pivotalUser = _.find(pmemberships, function(membership){ return puser === membership.person.email; });
-		return pivotalUser.person.name;
-	},
+	pivotalLogin: function (puser){
+		var ME = 'me';
+		return pivotalDataAccess.login(puser, ME);
+	}
 
 };
 module.exports = user;

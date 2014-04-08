@@ -21,10 +21,10 @@ var controllerAddTasks = {
 	addTask: function(pfilter){
 		var RESTRICTION_PROJECT = 'Number of the project',
 			RESTRICTION_STORY = 'Number of the story',
-			RESTRICTION_DESCRIPTION = 'Description';
+			RESTRICTION_DESCRIPTION = 'Description',
+			NAME_PROJECT = 'project_name';
 
-		var userId = '',
-			storyProject = [],
+		var storyProject = [],
 			pivotalUser = '',
 			configuration = config.getConfig(),
 			selectedStory = {},
@@ -34,24 +34,16 @@ var controllerAddTasks = {
 			if(config.existConfig){
 				colog.log(colog.colorGreen('Loading...'));
 
-				user.pivotalLogin(configuration).then(function(puserId){
-					userId = puserId;
-					return project.getPivotalProjects(userId);
-
-				}).then(function(pprojects){
-					utils.printArray(pprojects, NAME);
-					return utils.getPromptNumber(RESTRICTION_PROJECT, pprojects);
+				user.pivotalLogin(configuration).then(function(puser){
+				userInfo = puser;
+				utils.printArray(userInfo.projects, NAME_PROJECT);
+				return utils.getPromptNumber(RESTRICTION_PROJECT, userInfo.projects);
 
 				}).then(function(pproject){
-					storyProject.push(pproject);
-					return project.getMemberships(userId, storyProject);
-
-				}).then(function(pmemberships){
-					pivotalUser = user.getPivotalUser(configuration.pivotalEmail, pmemberships);
-					return story.getStories(storyProject, userId, pivotalUser, pfilter);
+					storyProject = pproject;
+					return story.getProjectStories(storyProject, userInfo.api_token, userInfo.id, pfilter);
 
 				}).then(function(){
-					storyProject = _.first(storyProject);
 					utils.printArray(storyProject.stories, NAME);
 					return utils.getPromptNumber(RESTRICTION_STORY, storyProject.stories);
 
@@ -61,7 +53,7 @@ var controllerAddTasks = {
 				//	useCommand(pcommand);
 				}).then(function(description){
 					newTask.description = description;
-					return task.addTask(storyProject, userId, selectedStory, newTask);
+					return task.addTask(storyProject, userInfo.api_token, selectedStory, newTask);
 
 				}).then(function(description){
 					colog.log(colog.colorGreen("Task saved"));

@@ -10,34 +10,29 @@ var path = require('path'),
 	project = require(path.resolve(__dirname,'../models/project.js'));
 
 var NAME = 'name',
+	NAME_PROJECT = 'project_name',
+	DESCRIPTION = 'description',
+	ESTIMATE = 'estimate',
+	STATE = 'current_state',
 	NUMBERS = /^\d+$/;
 
-var storyProject = [],
-	userId = 0,
+var storyProject = {},
+	userInfo = 0,
 	estimations = [],
 	selectedStory = {};
 
-/* get the new name
-*/
-var getEstimations = function(){
-	var estimationsArray = storyProject.point_scale.split(',');
-	_.each(estimationsArray, function(value){
-		estimations.push({name: value});
-	});
-};
 
 /* get the new name
 */
 //modify it
 var updateStory = function(){
-	var newStory = {};
+	var newStory = _.pick(selectedStory, NAME, DESCRIPTION, ESTIMATE, STATE);
 
-	newStory.name = selectedStory.name;
-	newStory.description = selectedStory.description;
-	newStory.estimate = parseInt(selectedStory.estimate);
-	newStory.current_state = selectedStory.current_state;
+	newStory.estimate = parseInt(newStory.estimate);
 
-	story.modifyStory(storyProject.id, userId, newStory, selectedStory.id).then(function(promptResult){
+	story.modifyStory(storyProject.project_id, userInfo.api_token, newStory, selectedStory.id).then(
+		function(promptResult){
+		
 		colog.log(colog.colorGreen('Story updated.'));
 	}).catch(function(error) {
 		colog.log(colog.colorRed(error));
@@ -88,10 +83,7 @@ var printOptions = function(){
 var selectOption = function(){
 	var RESTRICTION_NAME = 'Name',
 		RESTRICTION_DESCRIPTION = 'Description',
-		DESCRIPTION = 'description',
-		ESTIMATE = 'estimate',
 		RESTRICTION_ESTIMATE = 'Select estimate',
-		STATE = 'current_state',
 		STATES = [{name:'unstarted'}, {name:'started'}, {name:'finished'}, {name:'delivered'},
 			{name:'rejected'}, {name:'accepted'}],
 		RESTRICTION_STATE = 'Number of state';
@@ -136,6 +128,24 @@ var selectOption = function(){
 	});
 };
 
+/* get the new name
+*/
+var getEstimations = function(){
+	var estimationsArray = '';
+
+	project.getPivotalProject(userInfo.api_token, storyProject.project_id).then(
+		function(pproject){
+
+		estimationsArray = pproject.point_scale.split(',');
+		_.each(estimationsArray, function(value){
+			estimations.push({name: value});
+		});
+		selectOption();
+
+	}).catch(function(error) {
+		colog.log(colog.colorRed(error));
+	});
+};
 
 var controllerModifyStory = {
 	
@@ -144,7 +154,7 @@ var controllerModifyStory = {
 	delete a story
 	*/
 	modifyStory: function(pfilter){
-		var RESTRICTION = 'Number of the project',
+		var RESTRICTION_PROJECT = 'Number of the project',
 			RESTRICTION_STORY = 'Number of the story';
 
 		var pivotalUser = '',
@@ -153,31 +163,22 @@ var controllerModifyStory = {
 			if(config.existConfig){
 				colog.log(colog.colorGreen('Loading...'));
 
-				user.pivotalLogin(configuration).then(function(puserId){
-					userId = puserId;
-					return project.getPivotalProjects(userId);
-
-				}).then(function(pprojects){
-					utils.printArray(pprojects, NAME);
-					return utils.getPromptNumber(RESTRICTION, pprojects);
+				user.pivotalLogin(configuration).then(function(puser){
+				userInfo = puser;
+				utils.printArray(userInfo.projects, NAME_PROJECT);
+				return utils.getPromptNumber(RESTRICTION_PROJECT, userInfo.projects);
 
 				}).then(function(pproject){
-					storyProject.push(pproject);
-					return project.getMemberships(userId, storyProject);
-
-				}).then(function(pmemberships){
-					pivotalUser = user.getPivotalUser(configuration.pivotalEmail, pmemberships);
-					return story.getStories(storyProject, userId, pivotalUser, pfilter);
+					storyProject = pproject;
+					return story.getProjectStories(storyProject, userInfo.api_token, userInfo.id, pfilter);
 
 				}).then(function(){
-					storyProject = _.first(storyProject);
 					utils.printArray(storyProject.stories, NAME);
 					return utils.getPromptNumber(RESTRICTION_STORY, storyProject.stories);
 
 				}).then(function(pstory){
 					selectedStory = pstory;
 					getEstimations();
-					selectOption();
 
 				}).catch(function(error) {
 					colog.log(colog.colorRed(error));

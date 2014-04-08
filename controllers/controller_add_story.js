@@ -29,7 +29,7 @@ var printOptions = function(pproject, puserId, puser){
 	
 	}).then(function(promptResult){
 		newStory.story_type = promptResult.name;
-		return story.addStory(pproject.id, puserId, newStory);
+		return story.addStory(pproject.project_id, puserId, newStory);
 
 	}).then(function(){
 		colog.log(colog.colorGreen('New story saved.'));
@@ -46,33 +46,22 @@ var controllerAddStory = {
 	delete a story
 	*/
 	addStory: function(){
-		var RESTRICTION = 'Number of the project';
+		var RESTRICTION = 'Number of the project',
+			NAME_PROJECT = 'project_name';
 
-		var userId = '',
-			storyProject = [],
-			pivotalUser = '',
-			configuration = config.getConfig(),
-			newStory = {};
+		var userInfo = {},
+			configuration = config.getConfig();
 	
 		if(config.existConfig){
 			colog.log(colog.colorGreen('Loading...'));
 
-			user.pivotalLogin(configuration).then(function(puserId){
-				userId = puserId;
-				return project.getPivotalProjects(userId);
-
-			}).then(function(pprojects){
-				utils.printArray(pprojects, NAME);
-				return utils.getPromptNumber(RESTRICTION, pprojects);
+			user.pivotalLogin(configuration).then(function(puser){
+				userInfo = puser;
+				utils.printArray(userInfo.projects, NAME_PROJECT);
+				return utils.getPromptNumber(RESTRICTION, userInfo.projects);
 
 			}).then(function(pproject){
-				storyProject.push(pproject);
-				return project.getMemberships(userId, storyProject);
-
-			}).then(function(pmemberships){
-				pivotalUser = user.getPivotalUser(configuration.pivotalEmail, pmemberships);
-				storyProject = _.first(storyProject);
-				printOptions(storyProject, userId, pivotalUser);
+				printOptions(pproject, userInfo.api_token, userInfo.name);
 
 			}).catch(function(error) {
 				colog.log(colog.colorRed(error));
@@ -85,14 +74,3 @@ var controllerAddStory = {
 };
 
 module.exports = controllerAddStory;
-
-/*
-{
-    name           : Name of this story
-    story_type     : bug, feature, chore, release
-    estimate (int) : number which indicates the level of difficulty of the story
-    description    : description,
-    labels         : Comma-separated list of labels
-    requested_by   : Name of the requester
-}
-*/

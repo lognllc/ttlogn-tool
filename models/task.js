@@ -1,6 +1,7 @@
 var path = require('path'),
 	RSVP = require('rsvp'),
 	_ = require('underscore'),
+	colog = require('colog'),
 	pivotal = require('pivotal'),
 	fs = require('fs'),
 	dataAccess = require(path.resolve(__dirname,'../dataAccess/pivotal_data_access.js'));
@@ -18,6 +19,11 @@ var task = {
 	get the tasks of a story of an user 
 	*/
 	getTasks: function(pprojectId, puser, pstoryId){
+		
+		url = PROJECT + pprojectId + STORIES + pstoryId + TASKS;
+		return dataAccess.get(puser, url);
+
+/*
 		var promise = new RSVP.Promise(function(resolve, reject){
 			var self = this,
 				tasks = [];
@@ -44,7 +50,7 @@ var task = {
 
 		});
 		return promise;
-	},
+	*/},
 
 	/* pprojects: project of the user
 	puser: token of the user
@@ -54,7 +60,7 @@ var task = {
 	addTask: function(pproject, puser, pstory, ptask){
 		
 		ptask.complete = UNFINISH;
-		url = PROJECT + pproject.id + STORIES + pstory.id + TASKS;
+		url = PROJECT + pproject.project_id + STORIES + pstory.id + TASKS;
 		return dataAccess.post(puser, url, ptask);
 	},
 
@@ -66,7 +72,7 @@ var task = {
 	modifyTask: function(pproject, puser, pstory, ptask){
 		var newTask = _.pick(ptask, 'description', 'complete');
 		ptask.complete = newTask;
-		url = PROJECT + pproject.id + STORIES + pstory.id + TASKS + ptask.id;
+		url = PROJECT + pproject.project_id + STORIES + pstory.id + TASKS + ptask.id;
 		return dataAccess.put(puser, url, newTask);
 	}
 

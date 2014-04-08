@@ -17,13 +17,13 @@ var	deliver = function(puserId, pprojects){
 
 	var promises = [],
 		newStory = {
-			current_state: FINISHED
-		};
+				current_state: FINISHED
+			};
 
 	_.each(pprojects, function(item){
 		_.each(item.stories, function(value){
 			colog.log(colog.colorBlue('Delivering: ' + value.name));
-			promises.push(story.modifyStory(item.id, puserId, newStory, value.id));
+			promises.push(story.modifyStory(item.project_id, puserId, newStory, value.id));
 		});
 	});
 	RSVP.all(promises).then(function() {
@@ -43,32 +43,26 @@ var controllerAddStory = {
 	deliverStories: function(){
 		var FILTER = '-f';
 
-		var userId = '',
-			storyProjects = [],
+/*		var userId = '',
+			
 			pivotalUser = '',
 			configuration = config.getConfig(),
+			newStory = {};*/
+
+		var configuration = config.getConfig(),
 			newStory = {};
 	
 		if(config.existConfig){
 			colog.log(colog.colorGreen('Loading...'));
 
-			user.pivotalLogin(configuration).then(function(puserId){
-				userId = puserId;
-				//console.log(userId);
-				return project.getPivotalProjects(userId);
-
-			}).then(function(pprojects){
-				storyProjects = pprojects;
-				//console.log(pprojects);
-				return project.getMemberships(userId, storyProjects);
-
-			}).then(function(pmemberships){
-				//console.log(pmemberships);
-				pivotalUser = user.getPivotalUser(configuration.pivotalEmail, pmemberships);
-				return story.getStories(storyProjects, userId, pivotalUser, FILTER);
+			user.pivotalLogin(configuration).then(function(puser){
+				userInfo = puser;
+				//return story.getProjectStories(storyProject, userInfo.api_token, userInfo.id, pfilter);
+				return story.getStories(userInfo.projects, userInfo.api_token, userInfo.id, FILTER);
 
 			}).then(function(){
-				deliver(userId, storyProjects);
+				console.log(userInfo.projects);
+				deliver(userInfo.api_token, userInfo.projects);
 
 			}).catch(function(error) {
 				colog.log(colog.colorRed(error));

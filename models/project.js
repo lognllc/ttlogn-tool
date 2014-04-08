@@ -4,9 +4,11 @@ var //_ = require('underscore'),
 	RSVP = require('rsvp'),
 	_ = require('underscore'),
 	colog = require('colog'),
-	dataAccess = require(path.resolve(__dirname,'../dataAccess/apitt_data_access.js'));
+	dataAccess = require(path.resolve(__dirname,'../dataAccess/apitt_data_access.js')),
+	pivotalDataAccess = require(path.resolve(__dirname,'../dataAccess/pivotal_data_access.js'));
 
-var PROJECT = '/users/projects.json?id=';
+var PROJECT = '/users/projects.json?id=',
+	PIVOTAL_PROJECT = 'projects/';
 
 var project = {
 
@@ -18,64 +20,12 @@ var project = {
 		return dataAccess.get(message);
 	},
 
-	/* puser: token of the user of pivotal
-	get the projects of pivotal of an user
+	/* puserId: id of the user
+	get the projects of an user
 	*/
-	getPivotalProjects: function(puser){
-		var promise = new RSVP.Promise(function(resolve, reject){
-			var self = this,
-			projects = [];
-			
-			pivotal.useToken(puser);
-			pivotal.getProjects(function(err, ret){
-				if(!err){
-					if(_.isArray(ret.project)){
-						projects = ret.project;
-					}
-					else{
-						if(typeof ret.story !== 'undefined'){
-							projects.push(ret.project);
-						}
-					}
-					resolve(projects);
-				}
-				else{
-					colog.log(colog.colorRed('Error: Something went wrong on the request: ' + err.desc));
-					reject(self);
-				}
-			});
-		});
-		return promise;
-	},
-
-	/* puser: token of the user of pivotal
-	pprojects: list of projects of the user
-	get the projects of pivotal of an user
-	*/
-	getMemberships: function(puser, pprojects){
-		var promise = new RSVP.Promise(function(resolve, reject){
-			var self = this,
-				firstProject = _.first(pprojects),
-				memberships = [];
-
-			pivotal.useToken(puser);
-			pivotal.getMemberships(firstProject.id, function(err, ret){
-				if(!err){
-					if(_.isArray(ret.membership)){
-						memberships = ret.membership;
-					}
-					else{
-						memberships.push(ret.membership);
-					}
-					resolve(memberships);
-				}
-				else{
-					colog.log(colog.colorRed('Error: Something went wrong on the request: ' + err.desc));
-					reject(self);
-				}
-			});
-		});
-		return promise;
+	getPivotalProject: function(puserId, pprojectId){
+		var message	=  PIVOTAL_PROJECT + pprojectId;
+		return pivotalDataAccess.get(puserId, message);
 	}
 };
 
