@@ -9,7 +9,7 @@ var apiPivotalDataAccess = {
 
 /*	pparameters: parameters for the get
 	makes a get and send the info receive to pfunction*/
-	get: function(pparameters){
+	get: function(ptoken, pget, pparameters){
 		var promise = new RSVP.Promise(function(resolve, reject){
 			var dataServer = {},
 				self = this,
@@ -22,11 +22,17 @@ var apiPivotalDataAccess = {
 					}
 				};
 			//console.log(host+pparameters);
-			client.get(HOST+pparameters, function(data, response){
-			//	console.log(data);
+			client.get(HOST+pget, pparameters,function(data, response){
+				console.log(data);
 				dataServer = JSON.parse(data);
-				resolve(dataServer);
-
+				if(!data.error){
+					resolve(dataServer);
+				}
+				else{
+					colog.log(colog.colorRed('Error: Something went wrong on the request'));
+					colog.log(colog.colorRed(error));
+					colog.log(colog.colorRed(general_problem));
+				}
 			}).on('error',function(err){
 				colog.log(colog.colorRed('Error: Something went wrong on the request', err.request.options));
 				reject(self);
@@ -54,10 +60,16 @@ var apiPivotalDataAccess = {
 			//console.log(HOST + ppost);
 			//console.log(pparameters);
 			client.post(HOST + ppost, args, function(data,response){
-			//	console.log(data);
-			dataServer = JSON.parse(data);
-			resolve(dataServer);
-			
+				//	console.log(data);
+				dataServer = JSON.parse(data);
+				if(!data.error){
+					resolve(dataServer);
+				}
+				else{
+					colog.log(colog.colorRed('Error: Something went wrong on the request'));
+					colog.log(colog.colorRed(error));
+					colog.log(colog.colorRed(general_problem));
+				}
 			}).on('error',function(err){
 				colog.log(colog.colorRed('Error: Something went wrong on the request', err.request.options));
 				reject(self);
@@ -85,10 +97,17 @@ var apiPivotalDataAccess = {
 			//console.log(HOST + pput);
 			//console.log(pparameters);
 			client.put(HOST + pput, args, function(data,response){
-			//console.log(data);
-			dataServer = JSON.parse(data);
-			resolve(dataServer);
-
+				//console.log(data);
+				dataServer = JSON.parse(data);
+				if(!data.error){
+					resolve(dataServer);
+				}
+				else{
+					colog.log(colog.colorRed('Error: Something went wrong on the request'));
+					colog.log(colog.colorRed(error));
+					colog.log(colog.colorRed(general_problem));
+					reject(self);
+				}
 			}).on('error',function(err){
 				colog.log(colog.colorRed('Error: Something went wrong on the request', err.request.options));
 				reject(self);

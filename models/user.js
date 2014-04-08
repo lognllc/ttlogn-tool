@@ -1,10 +1,10 @@
 var //_ = require('underscore'),
 	path = require('path'),
 	fs = require('fs'),
-	pivotal = require('pivotal'),
 	RSVP = require('rsvp'),
 	_ = require('underscore'),
 	colog = require('colog'),
+	pivotalDataAccess = require(path.resolve(__dirname,'../dataAccess/pivotal_data_access.js')),
 	dataAccess = require(path.resolve(__dirname, '../dataAccess/apitt_data_access.js'));
 
 var USER_LOGIN = '/login/create.json',
@@ -36,8 +36,15 @@ var user = {
 	returns the token of pivotal */
 	pivotalLogin: function (puser)
 	{	var promise = new RSVP.Promise(function(resolve, reject){
-			var self = this;
-			pivotal.getToken(puser.pivotalEmail, puser.pivotalPassword, function(err, ret){
+			
+			var TOKEN = 'me';
+
+			var self = this,
+				pivotalUser = _.pick(puser, 'pivotalEmail', 'pivotalPassword'),
+				token = '';
+
+			pivotalDataAccess.get(token, TOKEN, pivotalUser);
+			/*pivotal.getToken(puser.pivotalEmail, puser.pivotalPassword, function(err, ret){
 				if(!err){
 					resolve(ret.guid);
 				}
@@ -45,7 +52,7 @@ var user = {
 					colog.log(colog.colorRed('Error: Something went wrong on the request: ' + err.desc));
 					reject(self);
 				}
-			});
+			});*/
 
 		});
 		return promise;

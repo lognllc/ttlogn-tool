@@ -97,11 +97,13 @@ var commit = {
 	/* pdate: -d/-w/-m
 	set the limit date of the commits of the commits */
 	setDateLimit: function (pdate){
+		var MONDAY = 1;
 
 		limitDate = moment().startOf('day');
 
 		if(pdate === '-w'){
-			limitDate = moment().startOf('week');
+			limitDate = moment().isoWeekday(MONDAY);
+			//console.log(limitDate.format('l'));
 		}
 		else if(pdate === '-m'){
 			limitDate = moment().startOf('month');

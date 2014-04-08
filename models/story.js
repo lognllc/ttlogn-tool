@@ -1,6 +1,5 @@
 var path = require('path'),
 	_ = require('underscore'),
-	pivotal = require('pivotal'),
 	RSVP = require('rsvp'),
 	colog = require('colog'),
 	fs = require('fs'),
@@ -51,20 +50,6 @@ var story = {
 							pstory.owned_by === puserName);});
 					}
 					pproject.stories = filteredProject;
-
-
-
-					/*if(pfilter !== '-a'){
-						filteredProject = _.filter(pproject.stories, function(pstory)
-							{ return  ((pstory.current_state === 'unstarted' || pstory.current_state === 'started')) &&
-							pstory.owned_by === puserName;});
-						pproject.stories = filteredProject;
-					}
-					else{
-						filteredProject = _.filter(pproject.stories, function(pstory)
-							{ return pstory.owned_by === puserName;});
-						pproject.stories = filteredProject;
-					}*/
 					resolve();
 				}
 				else{
@@ -135,31 +120,6 @@ var story = {
 			
 			pivotal.useToken(puser);
 			pivotal.removeStory(pprojectId, pstoryId, function(err, ret){
-				if(!err){
-					resolve();
-				}
-				else{
-					colog.log(colog.colorRed('Error: Something went wrong on the request: '));
-					colog.log(colog.colorRed(err.desc));
-					reject(self);
-				}
-			});
-		});
-		return promise;
-	},
-
-	/* pprojectId: id of the project
-	puser: token of the user
-	pstoryId: id of the story
-	deliver all the finished stories of a project of an user
-	*/
-	// volver a hacer xq hace deliver a todos los finish hasta donde es requester
-	deliverStories: function(puser, pprojectId){
-		var promise = new RSVP.Promise(function(resolve, reject){
-			var self = this;
-			
-			pivotal.useToken(puser);
-			pivotal.deliverAllFinishedStories(pprojectId, function(err, ret){
 				if(!err){
 					resolve();
 				}
