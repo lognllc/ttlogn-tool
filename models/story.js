@@ -93,7 +93,7 @@ var story = {
 		return dataAccess.post(puser, url, pstory);
 	},
 
-		/* pprojects: project of the user
+	/* pprojects: project of the user
 	puser: token of the user
 	pstory: new story
 	add a new story to the TT 
@@ -102,6 +102,16 @@ var story = {
 		var url = PROJECT + pprojectId + STORIES + pstoryId;
 		return dataAccess.put(puser, url, pstory);
 	},
+
+	/* pprojects: project of the user
+	puser: token of the user
+	pstory: new story
+	add a new story to the TT 
+	*/
+/*	modifyStoryUrl: function(purls, pprojectId, puser, pstory, pstoryId){
+		var url = PROJECT + pprojectId + STORIES + pstoryId;
+		purls.push(url);
+	},*/
 
 	/* pprojectId: id of the project
 	puser: token of the user

@@ -7,32 +7,52 @@ var path = require('path'),
 	user = require(path.resolve(__dirname,'../models/user.js')),
 	utils = require(path.resolve(__dirname,'../lib/utils.js')),
 	config = require(path.resolve(__dirname,'../models/config.js')),
-	project = require(path.resolve(__dirname,'../models/project.js'));
+	project = require(path.resolve(__dirname,'../models/project.js')),
+	dataAccess = require(path.resolve(__dirname,'../dataAccess/pivotal_data_access.js'));
 
-/* prepo: array of commits
-sort the repo "tree"
+var FINISHED = 'delivered',
+	STATE = { current_state: FINISHED };
+
+/* puserId: user token
+pprojects: projects of pivotal
+deliver all stories
 */
-var	deliver = function(puserId, pprojects){
-	var FINISHED = 'delivered';
+var	deliver = function(puserId, purls){
+	newStory = _.first(purls);
+	newUrls = _.rest(purls);
 
-	var promises = [],
-		newStory = {
-				current_state: FINISHED
-			};
+	story.modifyStory(newStory.project, puserId, STATE, newStory.story).then(function(){
+		if(!_.isEmpty(newUrls)){
+			deliver(puserId, newUrls);
+		}
+		else{
+			colog.log(colog.colorGreen('Stories delivered successfully'));
+		}
 
-	_.each(pprojects, function(item){
-		_.each(item.stories, function(value){
-			colog.log(colog.colorBlue('Delivering: ' + value.name));
-			promises.push(story.modifyStory(item.project_id, puserId, newStory, value.id));
-		});
-	});
-	RSVP.all(promises).then(function() {
-		colog.log(colog.colorGreen('Stories delivered successfully'));
-	}).catch(function(reason){
-		colog.log(colog.colorRed(reason));
+	}).catch(function(error) {
+		colog.log(colog.colorRed(error));
 	});
 };
 
+/* puserId: user token
+pprojects: projects of pivotal
+deliver all stories
+*/
+var	getStories = function(puserId, pprojects){
+	var urls = [];
+
+	_.each(pprojects, function(item){
+		_.each(item.stories, function(value){
+			var newStory = {
+				project: item.project_id,
+				story: value.id
+			};
+			colog.log(colog.colorBlue('Delivering: ' + value.name));
+			urls.push(newStory);
+		});
+	});
+	deliver(puserId, urls);
+};
 
 var controllerAddStory = {
 	
@@ -55,8 +75,7 @@ var controllerAddStory = {
 				return story.getStories(userInfo.projects, userInfo.api_token, userInfo.id, FILTER);
 
 			}).then(function(){
-				console.log(userInfo.projects);
-				deliver(userInfo.api_token, userInfo.projects);
+				getStories(userInfo.api_token, userInfo.projects);
 
 			}).catch(function(error) {
 				colog.log(colog.colorRed(error));
