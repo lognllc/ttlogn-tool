@@ -131,7 +131,7 @@ var apiPivotalDataAccess = {
 			console.log(HOST + pput);
 			console.log(pparameters);
 			client.put(HOST + pput, args, function(data,response){
-				//console.log(data);
+				console.log(data);
 				dataServer = JSON.parse(data);
 				if(!dataServer.error){
 					resolve(dataServer);

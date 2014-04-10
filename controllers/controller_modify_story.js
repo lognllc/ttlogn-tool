@@ -17,7 +17,7 @@ var NAME = 'name',
 	NUMBERS = /^\d+$/;
 
 var storyProject = {},
-	userInfo = 0,
+	userInfo = {},
 	estimations = [],
 	selectedStory = {};
 
@@ -157,8 +157,8 @@ var controllerModifyStory = {
 		var RESTRICTION_PROJECT = 'Number of the project',
 			RESTRICTION_STORY = 'Number of the story';
 
-		var pivotalUser = '',
-			configuration = config.getConfig();
+		var configuration = config.getConfig();
+		
 		if(pfilter === '-a' || typeof pfilter === 'undefined'){
 			if(config.existConfig){
 				colog.log(colog.colorGreen('Loading...'));

@@ -43,21 +43,15 @@ var controllerAddStory = {
 	deliverStories: function(){
 		var FILTER = '-f';
 
-/*		var userId = '',
-			
-			pivotalUser = '',
-			configuration = config.getConfig(),
-			newStory = {};*/
-
 		var configuration = config.getConfig(),
-			newStory = {};
+			newStory = {},
+			userInfo = {};
 	
 		if(config.existConfig){
 			colog.log(colog.colorGreen('Loading...'));
 
 			user.pivotalLogin(configuration).then(function(puser){
 				userInfo = puser;
-				//return story.getProjectStories(storyProject, userInfo.api_token, userInfo.id, pfilter);
 				return story.getStories(userInfo.projects, userInfo.api_token, userInfo.id, FILTER);
 
 			}).then(function(){

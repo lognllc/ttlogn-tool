@@ -123,7 +123,7 @@ var controllerAddTasks = {
 			NAME_PROJECT = 'project_name';
 
 		var storyProject = {},
-			pivotalUser = '',
+			userInfo = {},
 			configuration = config.getConfig();
 
 		if(pfilter === '-a' || typeof pfilter === 'undefined'){
@@ -145,9 +145,6 @@ var controllerAddTasks = {
 
 				}).then(function(pstory){
 					selectedStory = pstory;
-					console.log(storyProject);
-					console.log(pstory);
-
 					selectTask(storyProject, userInfo.api_token, pstory);
 
 				}).catch(function(error) {

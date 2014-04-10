@@ -19,38 +19,9 @@ var task = {
 	get the tasks of a story of an user 
 	*/
 	getTasks: function(pprojectId, puser, pstoryId){
-		
-		url = PROJECT + pprojectId + STORIES + pstoryId + TASKS;
+		var url = PROJECT + pprojectId + STORIES + pstoryId + TASKS;
 		return dataAccess.get(puser, url);
-
-/*
-		var promise = new RSVP.Promise(function(resolve, reject){
-			var self = this,
-				tasks = [];
-
-			pivotal.useToken(puser);
-
-			pivotal.getTasks(pprojectId, pstoryId, function(err, ret){
-				if(!err){
-					if(_.isArray(ret.task)){
-						tasks = ret.task;
-					}
-					else{
-						if(typeof ret.task !== 'undefined'){
-							tasks.push(ret.task);
-						}
-					}
-					resolve(tasks);
-				}
-				else{
-					colog.log(colog.colorRed('Error: Something went wrong on the request: ' + err.desc));
-					reject(self);
-				}
-			});
-
-		});
-		return promise;
-	*/},
+	},
 
 	/* pprojects: project of the user
 	puser: token of the user
@@ -58,9 +29,8 @@ var task = {
 	add a new story to the TT 
 	*/
 	addTask: function(pproject, puser, pstory, ptask){
-		
+		var url = PROJECT + pproject.project_id + STORIES + pstory.id + TASKS;
 		ptask.complete = UNFINISH;
-		url = PROJECT + pproject.project_id + STORIES + pstory.id + TASKS;
 		return dataAccess.post(puser, url, ptask);
 	},
 
@@ -70,9 +40,9 @@ var task = {
 	add a new story to the TT 
 	*/
 	modifyTask: function(pproject, puser, pstory, ptask){
-		var newTask = _.pick(ptask, 'description', 'complete');
+		var newTask = _.pick(ptask, 'description', 'complete'),
+			url = PROJECT + pproject.project_id + STORIES + pstory.id + TASKS + ptask.id;
 		ptask.complete = newTask;
-		url = PROJECT + pproject.project_id + STORIES + pstory.id + TASKS + ptask.id;
 		return dataAccess.put(puser, url, newTask);
 	}
 

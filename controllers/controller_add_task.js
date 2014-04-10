@@ -24,8 +24,8 @@ var controllerAddTasks = {
 			RESTRICTION_DESCRIPTION = 'Description',
 			NAME_PROJECT = 'project_name';
 
-		var storyProject = [],
-			pivotalUser = '',
+		var storyProject = {},
+			userInfo = {},
 			configuration = config.getConfig(),
 			selectedStory = {},
 			newTask = {};

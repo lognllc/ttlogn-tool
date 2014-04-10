@@ -15,13 +15,14 @@ var printStories = function(pprojects){
 	//console.log(pprojects.project);
 	_.each(pprojects, function(pivotalProject){
 		console.log('');
-		colog.log(colog.apply(pivotalProject.name, ['underline', 'bold', 'colorBlue']));
+		colog.log(colog.apply(pivotalProject.project_name, ['underline', 'bold', 'colorBlue']));
 		console.log('-------------------------------');
 		console.log('-------------------------------');
 		_.each(pivotalProject.stories, function(pivotalStory){
 			colog.log(colog.apply(pivotalStory.name + ' - ' + pivotalStory.story_type, ['bold', 'colorBlue']));
-			colog.log(colog.colorBlue(pivotalStory.description));
-			//console.log(pivotalStory);
+			if(!_.isUndefined(pivotalStory.description)){
+				colog.log(colog.colorBlue(pivotalStory.description));
+			}
 			console.log('-------------------------------');
 		});
 	});
@@ -34,28 +35,19 @@ var controllerListStories = {
 	list the stories of an user
 	*/
 	listStories: function(pfilter){
-		var userId = '',
-			projects = [],
-			pivotalUser = '',
-			configuration = config.getConfig();
+		var configuration = config.getConfig(),
+			userInfo = {};
+
 		if(pfilter === '-a' || typeof pfilter === 'undefined'){
 			if(config.existConfig){
 				colog.log(colog.colorGreen('Loading...'));
 
-				user.pivotalLogin(configuration).then(function(puserId){
-					userId = puserId;
-					return project.getPivotalProjects(userId);
-
-				}).then(function(pprojects){
-					projects = pprojects;
-					return project.getMemberships(userId, projects);
-
-				}).then(function(pmemberships){
-					pivotalUser = user.getPivotalUser(configuration.pivotalEmail, pmemberships);
-					return story.getStories(projects, userId, pivotalUser, pfilter);
+				user.pivotalLogin(configuration).then(function(puser){
+				userInfo = puser;
+				return story.getStories(userInfo.projects, userInfo.api_token, userInfo.id, pfilter);
 
 				}).then(function(){
-					printStories(projects);
+					printStories(userInfo.projects);
 
 				}).catch(function(error) {
 					colog.log(colog.colorRed(error));

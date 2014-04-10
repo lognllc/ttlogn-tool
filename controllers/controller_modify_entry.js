@@ -84,12 +84,14 @@ var modifyCreated = function(){
 			}
 		}
 	}, function (err, resultPrompt) {
-		entryToModify.created = moment(entryToModify.created).date(resultPrompt.created);
+		//if(){
+			entryToModify.created = moment(entryToModify.created).date(resultPrompt.created);
+		//}
+
 		//console.log(entryToModify);
 		printTimeEntry();
 	});
 };
-
 
 
 /* 

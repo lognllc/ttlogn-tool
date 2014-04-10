@@ -22,6 +22,7 @@ var controllerDeleteStories = {
 			NAME_PROJECT = 'project_name';
 
 		var storyProject = {},
+			userInfo = {},
 			configuration = config.getConfig(),
 			selectedStory = {};
 		if(pfilter === '-a' || typeof pfilter === 'undefined'){
