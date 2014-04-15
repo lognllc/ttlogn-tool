@@ -8,7 +8,9 @@ var //_ = require('underscore'),
 	dataAccess = require(path.resolve(__dirname, '../dataAccess/apitt_data_access.js'));
 
 var USER_LOGIN = '/login/create.json',
-	GET_CLIENTS = '/users/get_clients.json?id=';
+	GET_CLIENTS = '/users/get_clients.json?id=',
+	PERIOD = '/users/get_actual_period.json?id=';
+
 
 
 var user = {
@@ -29,6 +31,14 @@ var user = {
 	*/
 	getClients: function(puserId){
 		var message	=  GET_CLIENTS + puserId;
+		return dataAccess.get(message);
+	},
+
+	/* pusedId: id of the user
+	get the actual period of an user
+	*/
+	getPeriod: function(pusedId){
+		var message	=  PERIOD + pusedId;
 		return dataAccess.get(message);
 	},
 

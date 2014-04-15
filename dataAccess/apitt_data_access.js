@@ -32,9 +32,9 @@ var apiTTDataAccess = {
 				self = this,
 				client = new clientTT(),
 				host = getHost();
-			//console.log(host+pparameters);
+			console.log(host+pparameters);
 			client.get(host+pparameters, function(data, response){
-			//	console.log(data);
+				console.log(data);
 				dataServer = JSON.parse(data);
 				resolve(dataServer);
 

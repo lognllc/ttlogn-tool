@@ -28,8 +28,7 @@ var storyProject = {},
 var updateStory = function(){
 	var newStory = _.pick(selectedStory, NAME, DESCRIPTION, ESTIMATE, STATE);
 
-	newStory.estimate = parseInt(newStory.estimate);
-
+	newStory.estimate = parseInt(newStory.estimate, 10);
 	story.modifyStory(storyProject.project_id, userInfo.api_token, newStory, selectedStory.id).then(
 		function(promptResult){
 		

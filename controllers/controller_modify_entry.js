@@ -12,13 +12,15 @@ var _ = require('underscore'),
 	hourType = require(path.resolve(__dirname,'../models/hour_type.js'));
 
 var NUMBERS = /^\d+$/,
-	CREATED = /^\d\d$/,
+	TWOWEEKS = /^[0-1]\d\-[0-3]\d$/,
+	MONTHLY = /^[0-3]\d$/,
 	DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss',
 	NAME = 'name',
 	ENTRY_DESCRIPTION = 'tskDescription',
 	RESTRICTION_PROJECT = 'Number of the project';
 
 var userInfo = {},
+	periodInfo = {},
 	projects = [],
 	entryToModify = {};
 
@@ -69,26 +71,56 @@ var modifyTimeIn = function(){
 	});
 };
 
+/*
+modify the created date of the task
+*/
+var validateCreated = function(pdate){
+	var newDate = moment(),
+		today = moment(),
+		month = 0;
+
+	if(periodInfo.name === 'twoweeks'){
+		month = pdate.split(',');
+		newDate.month(_.first(month));
+		pdate = _.last(month);
+	}
+	newDate.date(pdate);
+
+	if(periodInfo.period_start <= newDate && newDate <= periodInfo.period_end && newDate<= today){
+
+		//entryToModify.created = moment(entryToModify.created).date(resultPrompt.created);
+	}
+	//console.log(entryToModify);
+	
+};
 
 /*
 modify the created date of the task
 */
 var modifyCreated = function(){
+	var created = {
+			required: true,
+		},
+		newDate = moment();
+		today = moment();
+
+	if(periodInfo.name === 'twoweeks'){
+		created.pattern = TWOWEEKS;
+		created.message = 'Format: MM-DD'.red;
+		created.description = 'Created the: (MM-DD)'.magenta;
+	}
+	else{
+		created.pattern = MONTHLY;
+		created.message = 'Format: DD'.red;
+		created.description = 'Created the: (DD)'.magenta;
+	}
+
 	prompt.get({
 		properties: {
-			created: {
-				description: "Created the: (DD)".magenta,
-				required: true,
-				pattern: CREATED,
-				message: 'Format: DD'.red
-			}
+			created: created
 		}
 	}, function (err, resultPrompt) {
-		//if(){
-			entryToModify.created = moment(entryToModify.created).date(resultPrompt.created);
-		//}
-
-		//console.log(entryToModify);
+		validateCreated(resultPrompt.created);
 		printTimeEntry();
 	});
 };
@@ -262,6 +294,11 @@ var controllerModifyEntry = {
 
 			user.login(configuration.email, configuration.password).then(function(puser){
 				userInfo = puser.result;
+				return user.getPeriod(userInfo.id);
+
+			}).then(function(pperiod){
+				console.log(pperiod);
+				//periodInfo = pperiod.result;
 				return project.getProjects(userInfo.id);
 
 			}).then(function(pprojects){
