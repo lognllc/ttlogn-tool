@@ -23,10 +23,10 @@ var saveDetailHour = function(ptask){
 	
 	utils.getPromptDetailHour().then(function(timeResult){
 		detailTime.setDetailTime(ptask, ptask.time, timeResult);
-			//console.log(ptask);
-			return timeEntry.postTimeEntry(ptask);
+		return timeEntry.postTimeEntry(ptask);
 
-	}).then(function() {
+	}).then(function(pmessage) {
+		utils.printTTError(pmessage);
 		colog.log(colog.colorGreen('Time entry saved'));
 
 	}).catch(function(error) {
@@ -58,7 +58,8 @@ var saveTask = function(ptask, puser, pprojects){
 		ptask.time = utils.getWorkedHours(ptime);
 		
 		if(puser.devtype !== 'non_exempt'){
-			timeEntry.postTimeEntry(ptask).then(function(){
+			timeEntry.postTimeEntry(ptask).then(function(pmessage) {
+				utils.printTTError(pmessage);
 				colog.log(colog.colorGreen('Time entry saved'));
 			
 			}).catch(function(error) {
@@ -81,7 +82,7 @@ phourType: id of the billable hour
 creates and begins the task
 */
 var	getTaskDate = function(puser, pprojects, phourType){
-	var date = moment().tz("PST8PDT").format(DATE_FORMAT);
+	var date = moment().tz("PST8PDT").startOf('day').format(DATE_FORMAT);
 	
 	var taskToInsert = {};
 
@@ -93,7 +94,6 @@ var	getTaskDate = function(puser, pprojects, phourType){
 		time: '',
 		hour_type_id: phourType.id
 	};
-	//console.log(date);
 	saveTask(taskToInsert, puser, pprojects);
 };
 

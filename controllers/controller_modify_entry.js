@@ -2,7 +2,7 @@ var _ = require('underscore'),
 	path = require('path'),
 	colog = require('colog'),
 	RSVP = require('rsvp'),
-	moment = require('moment'),
+	moment = require('moment-timezone'),
 	prompt = require('prompt'),
 	config = require(path.resolve(__dirname,'../models/config.js')),
 	timeEntry = require(path.resolve(__dirname,'../models/time_entry.js')),
@@ -15,6 +15,7 @@ var NUMBERS = /^\d+$/,
 	TWOWEEKS = /^[0-1]\d\-[0-3]\d$/,
 	MONTHLY = /^[0-3]\d$/,
 	DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss',
+	ZONE_FORMAT = 'YYYY-MM-DD HH:mm:ss Z',
 	NAME = 'name',
 	ENTRY_DESCRIPTION = 'tskDescription',
 	RESTRICTION_PROJECT = 'Number of the project';
@@ -75,26 +76,18 @@ var modifyTimeIn = function(){
 modify the created date of the task
 */
 var validateCreated = function(pdate){
-	var newDate = moment(), //.startOf('day'),
-		today = moment(),
+	var newDate = moment().tz("PST8PDT").startOf('day'), //.startOf('day'),
+		today = moment().tz("PST8PDT").format(),
 		month = 0;
 
 	if(periodInfo.name === 'twoweeks'){
 		month = pdate.split('-');
 		pdate = _.last(month);
 		month = parseInt(_.first(month),10) - 1;
-		//console.log('month: ' + month);
 		newDate.month(month);
-		//console.log('New date: ' + newDate.format());
 	}
 	newDate.date(pdate);
 	newDate = newDate.format();
-	today = today.format();
-
-	/*console.log('New date: ' + newDate);
-	console.log('start: ' + periodInfo.period_start);
-	console.log('end: ' + periodInfo.period_end);
-	console.log('today: ' + today);*/
 
 	if(periodInfo.period_start <= newDate &&
 		newDate <= periodInfo.period_end && newDate <= today){
@@ -111,9 +104,7 @@ modify the created date of the task
 var modifyCreated = function(){
 	var created = {
 			required: true,
-		},
-		newDate = moment();
-		today = moment();
+		};
 
 	if(periodInfo.name === 'twoweeks'){
 		created.pattern = TWOWEEKS;
@@ -218,7 +209,6 @@ var getHourType = function(){
 /*prints the time entry, options
 */
 var printOptions = function(){
-//	console.log(entryToModify);
 	var date = entryToModify.created.format(DATE_FORMAT);
 
 	colog.log(colog.colorMagenta('Select a field: '));

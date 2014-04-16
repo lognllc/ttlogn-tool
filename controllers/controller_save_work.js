@@ -21,14 +21,9 @@ var	saveCommits = function(puser, prepos, phourType, pperiod){
 		periodStart = moment(pperiod.period_start).format(DATE_FORMAT),
 		periodEnd = moment(pperiod.period_end).format(DATE_FORMAT);
 
-		/*console.log(moment().format(DATE_FORMAT));
-		console.log(pperiod.period_start);
-		console.log(pperiod.period_end);
-		console.log('--------');*/
 		/*console.log(periodStart);
 		console.log(periodEnd);
-		console.log(today);
-		console.log(date);*/
+		console.log(today);*/
 
 	_.each(prepos, function(projects){
 		_.each(projects, function(project){
@@ -41,7 +36,7 @@ var	saveCommits = function(puser, prepos, phourType, pperiod){
 					work = utils.getWork(value.message);
 
 				date = value.date.tz("PST8PDT").format(DATE_FORMAT);
-				console.log(date);
+				//console.log(date);
 				commitMessage = value.message.split('\n');
 				value.message = commitMessage[0];
 
@@ -63,8 +58,8 @@ var	saveCommits = function(puser, prepos, phourType, pperiod){
 					date <= periodEnd && date <= today){
 					colog.log(colog.colorBlue('Saving commit: ' +  value.message));
 					commitToInsert.created = value.date.tz("PST8PDT").startOf('day').format(DATE_FORMAT);
-					console.log(commitToInsert.created);
-					//promises.push(timeEntry.postTimeEntry(commitToInsert));
+					//console.log(commitToInsert.created);
+					promises.push(timeEntry.postTimeEntry(commitToInsert));
 				}
 				else {
 					colog.log(colog.colorRed('Invalid date: ' +  value.message));
@@ -73,6 +68,7 @@ var	saveCommits = function(puser, prepos, phourType, pperiod){
 		});
 	});
 	RSVP.all(promises).then(function() {
+			utils.printTTError(promises);
 			colog.log(colog.colorGreen('Saved successful'));
 		}).catch(function(reason){
 			colog.log(colog.colorRed(reason));

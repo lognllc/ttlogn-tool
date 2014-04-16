@@ -3,8 +3,8 @@ var prettyjson = require('prettyjson'),
 	RSVP = require('rsvp'),
 	clientTT = require('node-rest-client').Client;
 
-var HOST_DEVELOPMENT = 'http://10.0.1.80:3000',
-	//HOST_DEVELOPMENT = 'http://192.168.0.120:3000',
+var //HOST_DEVELOPMENT = 'http://10.0.1.80:3000',
+	HOST_DEVELOPMENT = 'http://192.168.0.120:3000',
 	HOST = 'http://ec2-54-226-94-0.compute-1.amazonaws.com',
 	DEVELOPMENT = 'development',
 	TT_ENV = 'TT_ENV';
@@ -59,10 +59,10 @@ var apiTTDataAccess = {
 					data: pparameters,
 					headers: {'Content-Type': 'application/json'}
 				};
-			console.log(host+ppost);
-			console.log(pparameters);
+			//console.log(host+ppost);
+			//console.log(pparameters);
 			client.post(host + ppost, args, function(data,response){
-				console.log(data);
+			//	console.log(data);
 				dataServer = JSON.parse(data);
 				resolve(dataServer);
 			}).on('error',function(err){
