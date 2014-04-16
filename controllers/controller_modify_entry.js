@@ -75,23 +75,34 @@ var modifyTimeIn = function(){
 modify the created date of the task
 */
 var validateCreated = function(pdate){
-	var newDate = moment(),
+	var newDate = moment(), //.startOf('day'),
 		today = moment(),
 		month = 0;
 
 	if(periodInfo.name === 'twoweeks'){
-		month = pdate.split(',');
-		newDate.month(_.first(month));
+		month = pdate.split('-');
 		pdate = _.last(month);
+		month = parseInt(_.first(month),10) - 1;
+		//console.log('month: ' + month);
+		newDate.month(month);
+		//console.log('New date: ' + newDate.format());
 	}
 	newDate.date(pdate);
+	newDate = newDate.format();
+	today = today.format();
 
-	if(periodInfo.period_start <= newDate && newDate <= periodInfo.period_end && newDate<= today){
+	/*console.log('New date: ' + newDate);
+	console.log('start: ' + periodInfo.period_start);
+	console.log('end: ' + periodInfo.period_end);
+	console.log('today: ' + today);*/
 
-		//entryToModify.created = moment(entryToModify.created).date(resultPrompt.created);
+	if(periodInfo.period_start <= newDate &&
+		newDate <= periodInfo.period_end && newDate <= today){
+		entryToModify.created = moment(newDate);
 	}
-	//console.log(entryToModify);
-	
+	else{
+		colog.log(colog.colorRed('Invalid date'));
+	}
 };
 
 /*
@@ -297,8 +308,8 @@ var controllerModifyEntry = {
 				return user.getPeriod(userInfo.id);
 
 			}).then(function(pperiod){
-				console.log(pperiod);
-				//periodInfo = pperiod.result;
+				//console.log(pperiod);
+				periodInfo = pperiod.result;
 				return project.getProjects(userInfo.id);
 
 			}).then(function(pprojects){
@@ -320,6 +331,8 @@ var controllerModifyEntry = {
 
 			}).then(function(pentry){
 				entryToModify = pentry;
+				//console.log(moment.utc(entryToModify.created).format());
+				//console.log(moment(entryToModify.created).format());
 				entryToModify.created = moment.utc(entryToModify.created);
 				printTimeEntry();
 

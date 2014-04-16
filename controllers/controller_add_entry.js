@@ -2,7 +2,7 @@ var _ = require('underscore'),
 	path = require('path'),
 	colog = require('colog'),
 	RSVP = require('rsvp'),
-	moment = require('moment'),
+	moment = require('moment-timezone'),
 	prompt = require('prompt'),
 	config = require(path.resolve(__dirname,'../models/config.js')),
 	timeEntry = require(path.resolve(__dirname,'../models/time_entry.js')),
@@ -12,7 +12,7 @@ var _ = require('underscore'),
 	utils = require(path.resolve(__dirname,'../lib/utils.js')),
 	hourType = require(path.resolve(__dirname,'../models/hour_type.js'));
 
-var DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss',
+var DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss Z',
 	NAME = 'name';
 
 /* 
@@ -81,8 +81,7 @@ phourType: id of the billable hour
 creates and begins the task
 */
 var	getTaskDate = function(puser, pprojects, phourType){
-
-	var date = moment().format(DATE_FORMAT);
+	var date = moment().tz("PST8PDT").format(DATE_FORMAT);
 	
 	var taskToInsert = {};
 
@@ -94,6 +93,7 @@ var	getTaskDate = function(puser, pprojects, phourType){
 		time: '',
 		hour_type_id: phourType.id
 	};
+	//console.log(date);
 	saveTask(taskToInsert, puser, pprojects);
 };
 

@@ -11,11 +11,24 @@ var _ = require('underscore'),
 	utils = require(path.resolve(__dirname,'../lib/utils.js')),
 	commit = require(path.resolve(__dirname,'../models/commit.js'));
 
+var DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
-var	saveCommits = function(puser, prepos, phourType){
+var	saveCommits = function(puser, prepos, phourType, pperiod){
 
-	var date = moment().format('YYYY-MM-DD HH:mm:ss'),
-	promises = [];
+	var date = '',
+		today = moment().tz("PST8PDT").format(DATE_FORMAT),
+		promises = [],
+		periodStart = moment(pperiod.period_start).format(DATE_FORMAT),
+		periodEnd = moment(pperiod.period_end).format(DATE_FORMAT);
+
+		/*console.log(moment().format(DATE_FORMAT));
+		console.log(pperiod.period_start);
+		console.log(pperiod.period_end);
+		console.log('--------');*/
+		/*console.log(periodStart);
+		console.log(periodEnd);
+		console.log(today);
+		console.log(date);*/
 
 	_.each(prepos, function(projects){
 		_.each(projects, function(project){
@@ -25,16 +38,15 @@ var	saveCommits = function(puser, prepos, phourType){
 					timeOut = '',
 					commitMessage = '',
 					hour = 0,
-					work = 0;
+					work = utils.getWork(value.message);
 
-				date = value.date.format('YYYY-MM-DD HH:mm:ss');
-				work = utils.getWork(value.message);
+				date = value.date.tz("PST8PDT").format(DATE_FORMAT);
+				console.log(date);
 				commitMessage = value.message.split('\n');
 				value.message = commitMessage[0];
-				colog.log(colog.colorBlue('Saving commit: ' +  value.message));
 
 				commitToInsert = {
-						created:  date,
+						//created:  date,
 						developer_id: puser.id,
 						project_id: project.id,
 						description: value.message,
@@ -47,7 +59,16 @@ var	saveCommits = function(puser, prepos, phourType){
 					detailTime.setDetailTimeOut(commitToInsert, hour, value.date);
 				}
 				//console.log(commitToInsert);
-				promises.push(timeEntry.postTimeEntry(commitToInsert));
+				if(periodStart <= date &&
+					date <= periodEnd && date <= today){
+					colog.log(colog.colorBlue('Saving commit: ' +  value.message));
+					commitToInsert.created = value.date.tz("PST8PDT").startOf('day').format(DATE_FORMAT);
+					console.log(commitToInsert.created);
+					//promises.push(timeEntry.postTimeEntry(commitToInsert));
+				}
+				else {
+					colog.log(colog.colorRed('Invalid date: ' +  value.message));
+				}
 			});
 		});
 	});
@@ -57,24 +78,6 @@ var	saveCommits = function(puser, prepos, phourType){
 			colog.log(colog.colorRed(reason));
 		});
 };
-
-
-/* parray: array of commits
-sort the repo "tree"
-*/
-var	sortRepos = function(prepos){
-	var repos =[],
-		branches;
-
-	repos = _.sortBy(prepos, function(repository){ return repository.name; });
-
-	_.each(repos, function(repository){
-		branches = _.sortBy(repository.branches, function(branch){ return branch.projectId; });
-		repository.branches = branches;
-	});
-	prepos = repos;
-};
-
 
 var controllerSaveWork = {
 
@@ -111,8 +114,12 @@ var controllerSaveWork = {
 					return commit.getBranchCommits(repos);
 
 				}).then(function(){
+					return user.getPeriod(userInfo.id);
+
+				}).then(function(pperiod){
+					//console.log(pperiod);
 					newRepos = utils.bindCommits(repos, configuration.gitUser);
-					saveCommits(userInfo, newRepos, billable);
+					saveCommits(userInfo, newRepos, billable, pperiod.result);
 
 				}).catch(function(error) {
 					colog.log(colog.colorRed(error));

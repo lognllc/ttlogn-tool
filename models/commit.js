@@ -46,7 +46,7 @@ var commit = {
 							//console.log(pbranch);
 							pbranch.commits = pbranch.commits.concat(commits);
 							numberArray = commits.length - 1;
-							date = commits[numberArray].committed_date;
+							date = _.last(commits).committed_date;
 							skip += NUMBER_COMMITS;
 
 							if(date < limitDate || numberArray !== (NUMBER_COMMITS - 1)) continueWhile = false;
