@@ -22,9 +22,8 @@ var storyProject = {},
 	selectedStory = {};
 
 
-/* get the new name
+/* updates the story
 */
-//modify it
 var updateStory = function(){
 	var newStory = _.pick(selectedStory, NAME, DESCRIPTION, ESTIMATE, STATE);
 
@@ -38,7 +37,9 @@ var updateStory = function(){
 	});
 };
 
-/* get the new name
+/* prestriccion: description of the prompt
+patribute: atrbute to modify
+modify a text atribute
 */
 var modifyText = function(prestriction, patribute){
 
@@ -51,7 +52,10 @@ var modifyText = function(prestriction, patribute){
 	});
 };
 
-/*prints the states, options
+/* parray: array to display
+prestriccion: description of the prompt
+patribute: atrbute to modify
+modify a atribute
 */
 var modifyAtribute = function(parray, prestriction, patribute){
 
@@ -65,7 +69,7 @@ var modifyAtribute = function(parray, prestriction, patribute){
 	});
 };
 
-/*prints the story, options
+/*prints the entry, options
 */
 var printOptions = function(){
 	colog.log(colog.colorMagenta('Select a field: '));
@@ -77,14 +81,15 @@ var printOptions = function(){
 	colog.log(colog.colorBlue('6: Cancel '));
 };
 
-/*prints the time entry and waits for an option
+/*prints the story and waits for an option
 */
+// must get the states
 var selectOption = function(){
 	var RESTRICTION_NAME = 'Name',
 		RESTRICTION_DESCRIPTION = 'Description',
 		RESTRICTION_ESTIMATE = 'Select estimate',
-		STATES = [{name:'unstarted'}, {name:'started'}, {name:'finished'}, {name:'delivered'},
-			{name:'rejected'}, {name:'accepted'}],
+		STATES = [{name:'unscheduled'},{name:'unstarted'}, {name:'started'}, {name:'finished'},
+			{name:'delivered'}, {name:'rejected'}, {name:'accepted'}],
 		RESTRICTION_STATE = 'Number of state';
 
 	printOptions();
@@ -110,7 +115,6 @@ var selectOption = function(){
 				modifyText(RESTRICTION_DESCRIPTION, DESCRIPTION);
 				break;
 			case '4':
-
 				modifyAtribute(estimations, RESTRICTION_ESTIMATE, ESTIMATE);
 				break;
 			case '5':
@@ -127,7 +131,7 @@ var selectOption = function(){
 	});
 };
 
-/* get the new name
+/* get the estimations of the project
 */
 var getEstimations = function(){
 	var estimationsArray = '';
@@ -150,7 +154,7 @@ var controllerModifyStory = {
 	
 	/*
 	pfilter: filter to delete the story
-	delete a story
+	modify a story
 	*/
 	modifyStory: function(pfilter){
 		var RESTRICTION_PROJECT = 'Number of the project',

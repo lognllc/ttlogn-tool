@@ -11,7 +11,8 @@ var PROJECT = 'projects/',
 var story = {
 
 	/* pproject: project of the user
-	puserName: name of the user
+	ptoken: token of the user
+	puserId: id of the user of the user
 	pfilter: filter of the stories
 	get the stories of a project of an user 
 	*/
@@ -22,7 +23,6 @@ var story = {
 				url = PROJECT + pproject.project_id + STORIES;
 
 			dataAccess.get(ptoken, url).then(function(pstories){
-			//console.log(pstories);	
 				if(_.isArray(pstories)){
 					pproject.stories = pstories;
 				}
@@ -60,8 +60,8 @@ var story = {
 	},
 
 	/* pprojects: project of the user
-	puser: token of the user
-	puserName: name of the user
+	ptoken: token of the user
+	puserId: id of the user of the user
 	pfilter: filter of the stories
 	get the stories of the projects of an user 
 	*/

@@ -7,9 +7,7 @@ var path = require('path'),
 	utils = require(path.resolve(__dirname,'../lib/utils.js')),
 	config = require(path.resolve(__dirname,'../models/config.js')),
 	project = require(path.resolve(__dirname,'../models/project.js'));
-
-var NAME = 'name';
-
+	
 var controllerDeleteStories = {
 	
 	/*
@@ -19,7 +17,8 @@ var controllerDeleteStories = {
 	deleteStory: function(pfilter){
 		var RESTRICTION_PROJECT = 'Number of the project',
 			RESTRICTION_STORY = 'Number of the story',
-			NAME_PROJECT = 'project_name';
+			NAME_PROJECT = 'project_name',
+			NAME = 'name';
 
 		var storyProject = {},
 			userInfo = {},

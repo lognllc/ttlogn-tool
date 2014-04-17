@@ -8,10 +8,14 @@ var path = require('path'),
 	config = require(path.resolve(__dirname,'../models/config.js')),
 	project = require(path.resolve(__dirname,'../models/project.js'));
 
-var NAME = 'name';
-
-var printOptions = function(pproject, puserId, puser){
-	var RESTRICTION_NAME = 'Name',
+/*
+pproject: project
+puserId: id of the user
+add a new story
+*/
+var printOptions = function(pproject, puserId){
+	var NAME = 'name',
+		RESTRICTION_NAME = 'Name',
 		RESTRICTION_DESCRIPTION = 'Description',
 		RESTRICTION_TYPES = 'Select the numbre of the type',
 		TYPES = [{name:'feature'}, {name:'chore'}, {name:'bug'}, {name:'release'}];
@@ -42,8 +46,7 @@ var printOptions = function(pproject, puserId, puser){
 var controllerAddStory = {
 	
 	/*
-	pfilter: filter to delete the story
-	delete a story
+	add a new story
 	*/
 	addStory: function(){
 		var RESTRICTION = 'Number of the project',
@@ -61,7 +64,7 @@ var controllerAddStory = {
 				return utils.getPromptNumber(RESTRICTION, userInfo.projects);
 
 			}).then(function(pproject){
-				printOptions(pproject, userInfo.api_token, userInfo.name);
+				printOptions(pproject, userInfo.api_token);
 
 			}).catch(function(error) {
 				colog.log(colog.colorRed(error));

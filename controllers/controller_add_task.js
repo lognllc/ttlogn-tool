@@ -9,20 +9,18 @@ var path = require('path'),
 	utils = require(path.resolve(__dirname,'../lib/utils.js')),
 	config = require(path.resolve(__dirname,'../models/config.js')),
 	project = require(path.resolve(__dirname,'../models/project.js'));
-
-var DESCRIPTION = 'description',
-	NAME = 'name';
-
+	
 var controllerAddTasks = {
 	/*
 	pfilter: filter to delete the story
-	delete a story
+	add task
 	*/
 	addTask: function(pfilter){
 		var RESTRICTION_PROJECT = 'Number of the project',
 			RESTRICTION_STORY = 'Number of the story',
 			RESTRICTION_DESCRIPTION = 'Description',
-			NAME_PROJECT = 'project_name';
+			NAME_PROJECT = 'project_name',
+			NAME = 'name';
 
 		var storyProject = {},
 			userInfo = {},
@@ -50,7 +48,6 @@ var controllerAddTasks = {
 				}).then(function(pstory){
 					selectedStory = pstory;
 					return utils.getPromptText(RESTRICTION_DESCRIPTION);
-				//	useCommand(pcommand);
 				}).then(function(description){
 					newTask.description = description;
 					return task.addTask(storyProject, userInfo.api_token, selectedStory, newTask);

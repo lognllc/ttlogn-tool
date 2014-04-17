@@ -13,7 +13,7 @@ var controllerListStories = {
 	
 	/*
 	pfilter: filter to delete the story
-	delete a story
+	list the tasks of a story
 	*/
 	listTasks: function(pfilter){
 		var RESTRICTION_PROJECT = 'Number of the project',
@@ -25,6 +25,7 @@ var controllerListStories = {
 		var storyProject = [],
 			userInfo = {},
 			configuration = config.getConfig();
+
 		if(pfilter === '-a' || typeof pfilter === 'undefined'){
 			if(config.existConfig){
 				colog.log(colog.colorGreen('Loading...'));

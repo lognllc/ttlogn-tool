@@ -14,12 +14,12 @@ var FINISHED = 'delivered',
 	STATE = { current_state: FINISHED };
 
 /* puserId: user token
-pprojects: projects of pivotal
+purls: urls used to deliver stories
 deliver all stories
 */
 var	deliver = function(puserId, purls){
-	newStory = _.first(purls);
-	newUrls = _.rest(purls);
+	var newStory = _.first(purls);
+		newUrls = _.rest(purls);
 
 	story.modifyStory(newStory.project, puserId, STATE, newStory.story).then(function(){
 		if(!_.isEmpty(newUrls)){
@@ -36,7 +36,7 @@ var	deliver = function(puserId, purls){
 
 /* puserId: user token
 pprojects: projects of pivotal
-deliver all stories
+set all the urls to deliver all stories
 */
 var	getStories = function(puserId, pprojects){
 	var urls = [];
@@ -57,8 +57,7 @@ var	getStories = function(puserId, pprojects){
 var controllerAddStory = {
 	
 	/*
-	pfilter: filter to delete the story
-	delete a story
+	deliver all the stories
 	*/
 	deliverStories: function(){
 		var FILTER = '-f';

@@ -298,7 +298,6 @@ var controllerModifyEntry = {
 				return user.getPeriod(userInfo.id);
 
 			}).then(function(pperiod){
-				//console.log(pperiod);
 				periodInfo = pperiod.result;
 				return project.getProjects(userInfo.id);
 
@@ -321,8 +320,6 @@ var controllerModifyEntry = {
 
 			}).then(function(pentry){
 				entryToModify = pentry;
-				//console.log(moment.utc(entryToModify.created).format());
-				//console.log(moment(entryToModify.created).format());
 				entryToModify.created = moment.utc(entryToModify.created);
 				printTimeEntry();
 

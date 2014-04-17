@@ -15,7 +15,11 @@ var DESCRIPTION = 'description',
 	NAME = 'name',
 	RESTRICTION_DESCRIPTION = 'Description';
 
-/* get the new name
+/*pproject: project id of the user of pivotal
+puserId: user id
+pstory: story id
+ptask: task to modify
+modify the task description
 */
 var modifyDescription = function(pproject, puserId, pstory, ptask){
 
@@ -32,7 +36,11 @@ var modifyDescription = function(pproject, puserId, pstory, ptask){
 	});
 };
 
-/* get the new name
+/*pproject: project id of the user of pivotal
+puserId: user id
+pstory: story id
+ptask: task to modify
+modify the task state
 */
 var modifyState = function(pproject, puserId, pstory, ptask){
 	var RESTRICTION_COMPLETE = 'Is completed';
@@ -49,7 +57,9 @@ var modifyState = function(pproject, puserId, pstory, ptask){
 	});
 };
 
-/*prints the story, options
+/*
+ptask: task to modify
+prints the task, options
 */
 var printOptions = function(ptask){
 	colog.log(colog.colorMagenta('Select a field: '));
@@ -58,7 +68,11 @@ var printOptions = function(ptask){
 	colog.log(colog.colorBlue('3: Cancel '));
 };
 
-/*prints the time entry and waits for an option
+/*pproject: project id of the user of pivotal
+puserId: user id
+pstory: story id
+ptask: task to modify
+prints the task and waits for an option
 */
 var selectOption = function(pproject, puserId, pstory, ptask){
 	var NUMBERS = /^\d+$/;
@@ -93,7 +107,10 @@ var selectOption = function(pproject, puserId, pstory, ptask){
 	});
 };
 
-/*prints the time entry and waits for an option
+/*pproject: project of the user of pivotal
+puserId: user id
+pstory: pstory
+selects a task to display and modify
 */
 var selectTask = function(pproject, puserId, pstory){
 	var RESTRICTION_TASK = 'Number of the project';
@@ -115,7 +132,7 @@ var selectTask = function(pproject, puserId, pstory){
 var controllerAddTasks = {
 	/*
 	pfilter: filter to delete the story
-	delete a story
+	modify a task
 	*/
 	modifyTask: function(pfilter){
 		var RESTRICTION_PROJECT = 'Number of the project',

@@ -3,19 +3,27 @@ ttlogn-tool
 
 ttlogn is a software that helps the worker managing his tasks. It shows and manage the tasks finished and to do, of the worker in an easy way. Also it helps the with the log of his tasks in a Timetracker.
 
+* [Installation](#Installation)
 * [help](#--help)
 * [login](#login)
-* [logout](#logout_ttlogn)
+* [logout](#logout)
 * [add repo](#add_repo)
-* [delete repo](#delete_repo)
-* [ls](#ls)
-* [save](#save)
 * [add entry](#add_entry)
-* [modify entry](#modify_entry)
-* [delete entry](#delete_entry)
+* [add story](#add_story)
+* [add task](#add_task)
 * [clients](#clients)
-* [story ls](#story_ls)
+* [delete entry](#delete_entry)
+* [delete repo](#delete_repo)
 * [delete story](#delete_story)
+* [ls](#ls)
+* [modify entry](#modify_entry)
+* [modify story](#modify_story)
+* [modify task](#modify_task)
+* [save](#save)
+* [story ls](#story_ls)
+* [story deliver](#story_deliver)
+* [task ls](#task_ls)
+
 
 ## Installation
 npm install -g ttlogn
@@ -45,7 +53,7 @@ Adding user:
 user@logn.com, user@gmail.com, git_user
 Success: configuration file saved
 ```
-## <a name="logout_ttlogn"/>logout
+## logout
 Erase and reset all of the information the user has supplied to the app.
 
 ### Example
@@ -264,6 +272,35 @@ Description
 -------------------------------
 ```
 
+## <a name="add_story"/>add story
+Add a new story to Pivotal.
+
+### Parameters
+* Project: project of Pivotal that will store the story
+* Name: name of the story
+* Description: description of the story
+* Type: type of the story
+
+### Examples
+```Shell
+ttlogn add story
+Loading...
+1: Project 1
+2: Project 2
+3: Cancel
+prompt: Number of the project:  1
+prompt: Name:  As an user, I want to ...
+prompt: Description:  New feature
+1: feature
+2: chore
+3: bug
+4: release
+5: Cancel
+prompt: Select the numbre of the type:  1
+New story saved.
+
+```
+
 ## <a name="delete_story"/>delete story
 Deletes an existing story in Pivotal Tracker.
 
@@ -289,3 +326,132 @@ prompt: (y or n):  y
 Story deleted
 ```
 
+## <a name="modify_story"/>modify story
+Modify a story of Pivotal.
+
+### Parameters
+* [-a]: Flag to modify any story, where the user is an owner (Optional) 
+* Project: project of Pivotal that will store the story
+* Name: name of the story
+* Description: description of the story
+* State: state of the story (accepted, delivered, finished, started, rejected, unstarted, unscheduled)
+* Estimation: number for the estimation of the story
+
+### Examples
+```Shell
+ttlogn modify story -a
+Loading...
+1: Project 1
+2: Project 2
+3: Cancel
+prompt: Number of the project:  1
+1: Story 1
+2: Story 2
+3: Cancel
+prompt: Number of the story:  1
+Select a field: 
+1: Change state: started
+2: Change name: Story 1
+3: Change description: Test story description
+4: Change estimation: 2
+5: Save 
+6: Cancel 
+prompt: Number of field:  (1) 1
+1: unstarted
+2: started
+3: finished
+4: delivered
+5: rejected
+6: accepted
+7: Cancel
+prompt: Number of state:  3
+Select a field: 
+1: Change state: finished
+2: Change name: test story 3
+3: Change description: Test story description
+4: Change estimation: 2
+5: Save 
+6: Cancel 
+prompt: Number of field:  (1) 5
+Story updated.
+
+```
+
+## <a name="story_deliver"/>story deliver
+Searches for all the finished stories of the user in Pivotal Tracker and delivers all of them.
+
+### Parameters
+
+### Examples
+```Shell
+ttlogn story deliver
+Loading...
+Delivering: Story 5
+Delivering: Story 8
+Stories delivered successfully
+```
+
+## <a name="add_task"/>add task
+Add a new task to a story of Pivotal.
+
+### Parameters
+* [-a]: Flag to modify any story, where the user is an owner (Optional) 
+* Project: project of Pivotal
+* Story: story of Pivotal that will store the task
+* Description: description of the task
+
+### Examples
+```Shell
+ttlogn add task -a
+Loading...
+1: Timetracker Tool
+2: Test project
+3: Cancel
+prompt: Number of the project:  2
+1: test ching modify
+2: test deliver
+3: As an user, I want to ...
+4: Cancel
+prompt: Number of the story:  3
+prompt: Description:  Task of story 1
+Task saved
+
+```
+
+## <a name="modify_task"/>modify task
+Add a new task to a story of Pivotal.
+
+### Parameters
+* [-a]: Flag to modify any story, where the user is an owner (Optional) 
+* Project: project of Pivotal
+* Story: story of Pivotal that will store the task
+* Task: task to modify
+* Name: name of the task
+* State: state of the task, "t" (true) or "f" (false)
+
+### Examples
+```Shell
+ttlogn modify task -a
+Loading...
+1: Project 1
+2: Project 2
+3: Cancel
+prompt: Number of the project:  2
+1: Story 1
+2: Story 2
+3: Story 3
+4: Cancel
+prompt: Number of the story:  1
+1: Task 1
+2: Task 2
+4: Cancel
+prompt: Number of the project:  2
+Select a field: 
+1: Change state: false
+2: Change name: Task 2
+3: Cancel 
+prompt: Number of field:  (1) 1
+prompt: Is completed:  t
+Modified successfully
+
+```

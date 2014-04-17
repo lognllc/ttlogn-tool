@@ -12,7 +12,6 @@ pprojects: projects to print
 print the list the stories of the projects
 */
 var printStories = function(pprojects){
-	//console.log(pprojects.project);
 	_.each(pprojects, function(pivotalProject){
 		console.log('');
 		colog.log(colog.apply(pivotalProject.project_name, ['underline', 'bold', 'colorBlue']));

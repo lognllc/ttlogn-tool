@@ -25,7 +25,8 @@ var task = {
 
 	/* pprojects: project of the user
 	puser: token of the user
-	pstory: new story
+	pstory: story of the project and the user
+	ptask: new task
 	add a new story to the TT 
 	*/
 	addTask: function(pproject, puser, pstory, ptask){
@@ -36,8 +37,9 @@ var task = {
 
 	/* pprojects: project of the user
 	puser: token of the user
-	pstory: new story
-	add a new story to the TT 
+	pstory: story of the project and the user story
+	ptask: modified task
+	modify a task in pivotal 
 	*/
 	modifyTask: function(pproject, puser, pstory, ptask){
 		var newTask = _.pick(ptask, 'description', 'complete'),
