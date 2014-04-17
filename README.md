@@ -3,7 +3,7 @@ ttlogn-tool
 
 ttlogn is a software that helps the worker managing his tasks. It shows and manage the tasks finished and to do, of the worker in an easy way. Also it helps the with the log of his tasks in a Timetracker.
 
-* [Installation](#Installation)
+* [Installation](#InstallationTTlogn)
 * [help](#--help)
 * [login](#login)
 * [logout](#logout)
@@ -25,7 +25,7 @@ ttlogn is a software that helps the worker managing his tasks. It shows and mana
 * [task ls](#task_ls)
 
 
-## Installation
+## <a name="InstallationTTlogn"/>Installation
 npm install -g ttlogn
 
 ## --help
@@ -302,9 +302,10 @@ New story saved.
 ```
 
 ## <a name="delete_story"/>delete story
-Deletes an existing story in Pivotal Tracker.
+Deletes an existing story in Pivotal Tracker. If the parameter received is '-a', print all the stories of the user. If there isn't a parameter print a list of the started and unstarted stories of the user.
 
 ### Parameters
+* [-a]: print all stories of the user
 * Project: project of Pivotal Tracker that has the entry to delete
 * Story: story in the Pivotal Tracker to delete
 
@@ -327,7 +328,7 @@ Story deleted
 ```
 
 ## <a name="modify_story"/>modify story
-Modify a story of Pivotal.
+Modify a story of Pivotal. If the parameter received is '-a', print all the stories of the user. If there isn't a parameter print a list of the started and unstarted stories of the user.
 
 ### Parameters
 * [-a]: Flag to modify any story, where the user is an owner (Optional) 
@@ -392,7 +393,7 @@ Stories delivered successfully
 ```
 
 ## <a name="add_task"/>add task
-Add a new task to a story of Pivotal.
+Add a new task to a story of Pivotal. If the parameter received is '-a', print all the stories of the user. If there isn't a parameter print a list of the started and unstarted stories of the user.
 
 ### Parameters
 * [-a]: Flag to modify any story, where the user is an owner (Optional) 
@@ -419,7 +420,7 @@ Task saved
 ```
 
 ## <a name="modify_task"/>modify task
-Add a new task to a story of Pivotal.
+Modifies a existing task of a story in Pivotal. If the parameter received is '-a', print all the stories of the user. If there isn't a parameter print a list of the started and unstarted stories of the user.
 
 ### Parameters
 * [-a]: Flag to modify any story, where the user is an owner (Optional) 
@@ -454,4 +455,31 @@ prompt: Number of field:  (1) 1
 prompt: Is completed:  t
 Modified successfully
 
+```
+
+## <a name="task_ls"/> task ls [-a]
+Lists the tasks of a story in Pivotal Tracker. If the parameter received is '-a', print all the stories of the user. If there isn't a parameter print a list of the started and unstarted stories of the user.
+
+### Parameters
+* [-a]: Flag to modify any story, where the user is an owner (Optional) 
+* Project: project of Pivotal
+* Story: story of Pivotal that will store the task
+
+### Examples
+```Shell
+ttlogn task ls -a
+Loading...
+1: Timetracker Tool
+2: Test project
+3: Cancel
+prompt: Number of the project:  2
+1: test ching modify
+2: test deliver
+3: As an user, I want to ...
+4: dsadasdad
+5: Cancel
+prompt: Number of the story:  1
+1: test modify
+2: test modify 2
+3: new task v5
 ```
