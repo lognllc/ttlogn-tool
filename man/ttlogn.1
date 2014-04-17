@@ -27,9 +27,20 @@ a Timetracker.
 .IP "modify entry"
 .IP "delete entry"
 .IP clients
-.IP "story ls" 
+.IP "story ls"
 [-a]
+.IP "add story"
 .IP "delete story"
+[-a]
+.IP "add task"
+[-a]
+.IP "modify story"
+[-a]
+.IP "modify task"
+[-a]
+.IP "story deliver"
+.IP "task ls"
+[-a]
 
 .SH OPTIONS
 .IP --help
@@ -58,6 +69,18 @@ List the clients of an User in the Timetracker.
 List the Pivotal's stories of an user.
 .IP "delete story"
 Delete an existing story in Pivotal Tracker.
+.IP "add story"
+Add new story in Pivotal Tracker. 
+.IP "add task" [-a]
+Add new task to a story in Pivotal Tracker. 
+.IP "modify story" [-a]
+Modify an existing story in Pivotal Tracker. 
+.IP "modify task" [-a]
+Modify an existing task in Pivotal Tracker. 
+.IP "story deliver"
+Deliver all finished stories of an user in Pivotal Tracker. 
+.IP "task ls" [-a]
+List the tasks of an user's story in Pivotal Tracker.
 
 .SH FILES
 .IP ~/.ttlogn
