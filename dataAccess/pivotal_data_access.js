@@ -1,6 +1,7 @@
 var prettyjson = require('prettyjson'),
 	colog = require('colog'),
 	RSVP = require('rsvp'),
+	_ = require('underscore'),
 	clientTT = require('node-rest-client').Client;
 
 var HOST = 'https://www.pivotaltracker.com/services/v5/';
@@ -12,7 +13,6 @@ var apiPivotalDataAccess = {
 	login: function(puser, pget){
 		var promise = new RSVP.Promise(function(resolve, reject){
 			var dataServer = {},
-				self = this,
 				options_auth={
 					user:puser.pivotalEmail,
 					password:puser.pivotalPassword
@@ -30,12 +30,12 @@ var apiPivotalDataAccess = {
 				}
 				else{
 					colog.log(colog.colorRed('Error: Something went wrong on the request'));
-					colog.log(colog.colorRed(dataServer.error));
-					reject(self);
+					//colog.log(colog.colorRed(dataServer.error));
+					reject(dataServer.error);
 				}
 			}).on('error',function(err){
-				colog.log(colog.colorRed('Error: Something went wrong on the request', err.request.options));
-				reject(self);
+				colog.log(colog.colorRed('Error: Something went wrong on the request'));
+				reject(err.stack);
 			});
 		});
 		return promise;
@@ -46,7 +46,6 @@ var apiPivotalDataAccess = {
 	get: function(ptoken, pget){
 		var promise = new RSVP.Promise(function(resolve, reject){
 			var dataServer = {},
-				self = this,
 				client = new clientTT(),
 				args = {
 					headers: {
@@ -63,12 +62,12 @@ var apiPivotalDataAccess = {
 				}
 				else{
 					colog.log(colog.colorRed('Error: Something went wrong on the request'));
-					colog.log(colog.colorRed(dataServer.error));
-					reject(self);
+				//	colog.log(colog.colorRed(dataServer.error));
+					reject(dataServer.error);
 				}
 			}).on('error',function(err){
-				colog.log(colog.colorRed('Error: Something went wrong on the request', err.request.options));
-				reject(self);
+				colog.log(colog.colorRed('Error: Something went wrong on the request'));
+				reject(err.stack);
 			});
 		});
 		return promise;
@@ -82,7 +81,6 @@ var apiPivotalDataAccess = {
 		var promise = new RSVP.Promise(function(resolve, reject){
 			var client = new clientTT(),
 				dataServer = {},
-				self = this,
 				args = {
 					data: pparameters,
 					headers: {
@@ -100,12 +98,12 @@ var apiPivotalDataAccess = {
 				}
 				else{
 					colog.log(colog.colorRed('Error: Something went wrong on the request'));
-					colog.log(colog.colorRed(dataServer.error));
-					reject(self);
+				//	colog.log(colog.colorRed(dataServer.error));
+					reject(dataServer.error);
 				}
 			}).on('error',function(err){
-				colog.log(colog.colorRed('Error: Something went wrong on the request', err.request.options));
-				reject(self);
+				colog.log(colog.colorRed('Error: Something went wrong on the request'));
+				reject(err.stack);
 			});
 		});
 		return promise;
@@ -119,7 +117,6 @@ var apiPivotalDataAccess = {
 		var promise = new RSVP.Promise(function(resolve, reject){
 			var client = new clientTT(),
 				dataServer = {},
-				self = this,
 				args = {
 					data: pparameters,
 					headers: {
@@ -138,12 +135,12 @@ var apiPivotalDataAccess = {
 				}
 				else{
 					colog.log(colog.colorRed('Error: Something went wrong on the request'));
-					colog.log(colog.colorRed(dataServer.error));
-					reject(self);
+				//	colog.log(colog.colorRed(dataServer.error));
+					reject(dataServer.error);
 				}
 			}).on('error',function(err){
-				colog.log(colog.colorRed('Error: Something went wrong on the request', err.request.options));
-				reject(self);
+				colog.log(colog.colorRed('Error: Something went wrong on the request'));
+				reject(err.stack);
 			});
 		});
 		return promise;
@@ -157,7 +154,6 @@ var apiPivotalDataAccess = {
 		var promise = new RSVP.Promise(function(resolve, reject){
 			var client = new clientTT(),
 				dataServer = {},
-				self = this,
 				args = {
 					headers: {
 						'Content-Type': 'application/json',
@@ -168,10 +164,16 @@ var apiPivotalDataAccess = {
 			//console.log(HOST + pdelete);
 			//console.log(pparameters);
 			client.delete(HOST + pdelete, args, function(data,response){
-				resolve(dataServer);
+				if(_.isEmpty(data)){
+					resolve(data);
+				}
+				else{
+					dataServer = JSON.parse(data);
+					reject(dataServer.error);
+				}
 			}).on('error',function(err){
-				colog.log(colog.colorRed('Error: Something went wrong on the request', err.request.options));
-				reject(self);
+				colog.log(colog.colorRed('Error: Something went wrong on the request'));
+				reject(err.stack);
 			});
 		});
 		return promise;

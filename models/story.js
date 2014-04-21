@@ -34,19 +34,23 @@ var story = {
 				}
 				switch(pfilter)
 				{
+					case '-r':
+					filteredProject = _.filter(pproject.stories, function(pstory)
+						{ return pstory.requested_by_id === puserId;});
+						break;
 					case '-a':
 					filteredProject = _.filter(pproject.stories, function(pstory)
-						{ return pstory.owned_by_id === puserId;});
+						{ return _.contains(pstory.owner_ids, puserId);});
 						break;
 					case '-f':
 					filteredProject = _.filter(pproject.stories, function(pstory)
 						{ return  (pstory.current_state === 'finished' &&
-						pstory.owned_by_id === puserId);});
+						_.contains(pstory.owner_ids, puserId));});
 						break;
 					default:
 					filteredProject = _.filter(pproject.stories, function(pstory)
 						{ return  ((pstory.current_state === 'unstarted' || pstory.current_state === 'started') &&
-						pstory.owned_by_id === puserId);});
+						_.contains(pstory.owner_ids, puserId));});
 				}
 				pproject.stories = filteredProject;
 				//console.log(pproject.stories);

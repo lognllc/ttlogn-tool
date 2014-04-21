@@ -14,6 +14,7 @@ var NAME = 'name',
 	DESCRIPTION = 'description',
 	ESTIMATE = 'estimate',
 	STATE = 'current_state',
+	OWNER = 'owner_ids',
 	NUMBERS = /^\d+$/;
 
 var storyProject = {},
@@ -25,7 +26,7 @@ var storyProject = {},
 /* updates the story
 */
 var updateStory = function(){
-	var newStory = _.pick(selectedStory, NAME, DESCRIPTION, ESTIMATE, STATE);
+	var newStory = _.pick(selectedStory, NAME, DESCRIPTION, ESTIMATE, STATE, OWNER);
 
 	newStory.estimate = parseInt(newStory.estimate, 10);
 	story.modifyStory(storyProject.project_id, userInfo.api_token, newStory, selectedStory.id).then(
@@ -41,6 +42,7 @@ var updateStory = function(){
 patribute: atrbute to modify
 modify a text atribute
 */
+
 var modifyText = function(prestriction, patribute){
 
 	utils.getPromptText(prestriction).then(function(promptResult){
@@ -69,6 +71,19 @@ var modifyAtribute = function(parray, prestriction, patribute){
 	});
 };
 
+/* 
+push the user id to owners ids
+*/
+var modifyOwner = function(){
+	if(_.contains(selectedStory[OWNER], userInfo.id)){
+		colog.log(colog.colorGreen('You are already an owner'));
+	}
+	else{
+		selectedStory[OWNER].push(userInfo.id);
+	}
+	selectOption();
+};
+
 /*prints the entry, options
 */
 var printOptions = function(){
@@ -77,8 +92,9 @@ var printOptions = function(){
 	colog.log(colog.colorBlue('2: Change name: ' + selectedStory.name));
 	colog.log(colog.colorBlue('3: Change description: ' + selectedStory.description));
 	colog.log(colog.colorBlue('4: Change estimation: ' + selectedStory.estimate));
-	colog.log(colog.colorBlue('5: Save '));
-	colog.log(colog.colorBlue('6: Cancel '));
+	colog.log(colog.colorBlue('5: Change owner: ' + _.contains(selectedStory.owner_ids, userInfo.id)));
+	colog.log(colog.colorBlue('6: Save '));
+	colog.log(colog.colorBlue('7: Cancel '));
 };
 
 /*prints the story and waits for an option
@@ -118,9 +134,12 @@ var selectOption = function(){
 				modifyAtribute(estimations, RESTRICTION_ESTIMATE, ESTIMATE);
 				break;
 			case '5':
-				updateStory();
+				modifyOwner();
 				break;
 			case '6':
+				updateStory();
+				break;
+			case '7':
 				colog.log(colog.colorRed('Canceled'));
 				process.exit(0);
 			break;
@@ -162,7 +181,7 @@ var controllerModifyStory = {
 
 		var configuration = config.getConfig();
 		
-		if(pfilter === '-a' || typeof pfilter === 'undefined'){
+		if(pfilter === '-a' || pfilter === '-r' || typeof pfilter === 'undefined'){
 			if(config.existConfig){
 				colog.log(colog.colorGreen('Loading...'));
 
@@ -192,7 +211,7 @@ var controllerModifyStory = {
 			}
 		}
 		else{
-			colog.log(colog.colorRed("Error: list story [-a]"));
+			colog.log(colog.colorRed("Error: modify story [-a|-r]"));
 		}
 	}
 };

@@ -332,6 +332,7 @@ Modify a story of Pivotal. If the parameter received is '-a', print all the stor
 
 ### Parameters
 * [-a]: Flag to modify any story, where the user is an owner (Optional) 
+* [-r]: Return all the stories in which the user is the requester (Optional) 
 * Project: project of Pivotal that will store the story
 * Name: name of the story
 * Description: description of the story
@@ -355,8 +356,9 @@ Select a field:
 2: Change name: Story 1
 3: Change description: Test story description
 4: Change estimation: 2
-5: Save 
-6: Cancel 
+5: Change owner: true
+6: Save 
+7: Cancel
 prompt: Number of field:  (1) 1
 1: unstarted
 2: started
@@ -371,9 +373,10 @@ Select a field:
 2: Change name: test story 3
 3: Change description: Test story description
 4: Change estimation: 2
-5: Save 
-6: Cancel 
-prompt: Number of field:  (1) 5
+5: Change owner: true
+6: Save 
+7: Cancel
+prompt: Number of field:  (1) 6
 Story updated.
 
 ```

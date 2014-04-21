@@ -60,7 +60,7 @@ var controllerDeleteStories = {
 			}
 		}
 		else{
-			colog.log(colog.colorRed("Error: list story [-a]"));
+			colog.log(colog.colorRed("Error: story delete [-a]"));
 		}
 	}
 };

@@ -62,7 +62,7 @@ var commit = {
 					return ret; },
 				function (err) {
 					if(err){
-						reject(self);
+						reject(err);
 						return false;
 					}
 					resolve();
@@ -75,8 +75,7 @@ var commit = {
 	gets commits of a branch */
 	getBranchCommits: function(prepos){
 		var promise = new RSVP.Promise(function(resolve, reject){
-			var promises = [],
-				self = this;
+			var promises = [];
 
 			_.each(prepos, function(repository){
 				_.each(repository.branches, function(branch){
@@ -88,7 +87,7 @@ var commit = {
 				resolve();
 			}).catch(function(reason){
 				colog.log(colog.colorRed(reason));
-				reject(self);
+				reject(reason);
 			});
 		});
 		return promise;
@@ -115,8 +114,7 @@ var commit = {
 	getBranch: function(prepo){
 		var promise = new RSVP.Promise(function(resolve, reject){
 			var repo = [],
-				objectBrach = {},
-				self = this;
+				objectBrach = {};
 					
 			if(_.isArray(prepo.configBranches)){
 				//console.log('entre branches');
@@ -138,7 +136,7 @@ var commit = {
 				repo.branches(function (err, branches){
 					if(err){
 						colog.log(colog.colorRed(err));
-						reject(self);
+						reject(err);
 					}
 					else{
 						_.each(branches, function(value){
@@ -163,8 +161,7 @@ var commit = {
 	get the branches of the repositories */
 	getBranches: function(prepos){
 		var promise = new RSVP.Promise(function(resolve, reject){
-			var promises = [],
-				self = this;
+			var promises = [];
 
 			_.each(prepos, function(item){
 				promises.push(commit.getBranch(item));
@@ -173,7 +170,7 @@ var commit = {
 			RSVP.all(promises).then(function(){
 				resolve();
 			}).catch(function(reason){
-				reject(self);
+				reject(reason);
 			});
 		});
 		return promise;
@@ -184,14 +181,13 @@ var commit = {
 	getRepoBranches: function(prepo){
 		var promise = new RSVP.Promise(function(resolve, reject){
 			var repo = [],
-				self = this,
 				objectBrach = {};
 				
 			repo = git(prepo);
 			repo.branches(function (err, branches){
 				if(err){
 					colog.log(colog.colorRed('Error: ' + err));
-					reject(self);
+					reject(err);
 				}
 				else{
 					resolve(branches);
@@ -209,14 +205,13 @@ var commit = {
 		var promise = new RSVP.Promise(function(resolve, reject){
 
 			var repo = {},
-				self = this,
 				objectRepo = {};
 
 			repo = git(prepo.path);
 			repo.config(function (err, config){
 				if(err){
 					colog.log(colog.colorRed(err));
-					reject(self);
+					reject(err);
 				}
 				else{
 					objectRepo = {
@@ -239,8 +234,7 @@ var commit = {
 	*/
 	getReposConfig: function(prepos, pnewRepos){
 		var promise = new RSVP.Promise(function(resolve, reject){
-			var promises = [],
-				self = this;
+			var promises = [];
 
 			_.each(prepos, function(item){
 				promises.push(commit.getRepoConfig(item, pnewRepos));
@@ -252,7 +246,7 @@ var commit = {
 				});
 				resolve();
 			}).catch(function(reason){
-				reject(self);
+				reject(reason);
 			});
 		});
 		return promise;

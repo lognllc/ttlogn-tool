@@ -29,7 +29,6 @@ var apiTTDataAccess = {
 	get: function(pparameters){
 		var promise = new RSVP.Promise(function(resolve, reject){
 			var dataServer = {},
-				self = this,
 				client = new clientTT(),
 				host = getHost();
 			//console.log(host+pparameters);
@@ -39,8 +38,8 @@ var apiTTDataAccess = {
 				resolve(dataServer);
 
 			}).on('error',function(err){
-				colog.log(colog.colorRed('Error: Something went wrong on the request', err.request.options));
-				reject(self);
+				colog.log(colog.colorRed('Error: Something went wrong on the request'));
+				reject(err.stack);
 			});
 		});
 		return promise;
@@ -53,7 +52,6 @@ var apiTTDataAccess = {
 		var promise = new RSVP.Promise(function(resolve, reject){
 			var client = new clientTT(),
 				dataServer = {},
-				self = this,
 				host = getHost(),
 				args = {
 					data: pparameters,
@@ -66,8 +64,9 @@ var apiTTDataAccess = {
 				dataServer = JSON.parse(data);
 				resolve(dataServer);
 			}).on('error',function(err){
-				colog.log(colog.colorRed('Error: Something went wrong on the request', err.request.options));
-				reject(self);
+				colog.log(colog.colorRed('Error: Something went wrong on the request'));
+				//reject(err.errno);
+				reject(err.stack);
 			});
 		});
 		return promise;

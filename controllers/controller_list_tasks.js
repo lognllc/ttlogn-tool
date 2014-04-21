@@ -59,7 +59,7 @@ var controllerListStories = {
 			}
 		}
 		else{
-			colog.log(colog.colorRed("Error: list story [-a]"));
+			colog.log(colog.colorRed("Error: list tasks [-a]"));
 		}
 	}
 };
