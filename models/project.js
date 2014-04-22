@@ -1,6 +1,5 @@
 var //_ = require('underscore'),
 	path = require('path'),
-	pivotal = require('pivotal'),
 	RSVP = require('rsvp'),
 	_ = require('underscore'),
 	colog = require('colog'),

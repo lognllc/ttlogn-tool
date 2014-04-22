@@ -2,7 +2,6 @@ var path = require('path'),
 	RSVP = require('rsvp'),
 	_ = require('underscore'),
 	colog = require('colog'),
-	pivotal = require('pivotal'),
 	fs = require('fs'),
 	dataAccess = require(path.resolve(__dirname,'../dataAccess/pivotal_data_access.js'));
 

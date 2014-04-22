@@ -21,9 +21,9 @@
     "moment": "~2.5.1",
     "prompt": "~0.2.12",
     "moment-timezone": "0.0.3",
-    "pivotal": "~0.2.0",
-    "show-help": "~1.0.0",
-    "line-reader": "~0.2.3"
+    "line-reader": "~0.2.3",
+    "google-oauth": "0.0.2",
+    "google-oauth2": "~0.1.0"
   },
   "devDependencies": {},
   "scripts": {
