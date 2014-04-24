@@ -308,15 +308,13 @@ var controllerModifyEntry = {
 
 			}).then(function(projectResult){
 				projectId = projectResult.id;
-				return timeEntry.getUserPeriodTimeEntry(userInfo.id);
+				return timeEntry.getUserPeriodTimeEntry(userInfo.id, projectId);
 
 			}).then(function(entries) {
 				periodEntries = entries.result.not_confirmed_dates.concat(entries.result.confirmed_dates);
-				timeEntries = _.filter(periodEntries, function(pentries)
-					{ return pentries.project.id === projectId; });
 
-				utils.printArray(timeEntries, ENTRY_DESCRIPTION);
-				return utils.getPromptNumber(RESTRICTION_ENTRY, timeEntries);
+				utils.printArray(periodEntries, ENTRY_DESCRIPTION);
+				return utils.getPromptNumber(RESTRICTION_ENTRY, periodEntries);
 
 			}).then(function(pentry){
 				entryToModify = pentry;

@@ -46,17 +46,14 @@ var printTimeEntries = function(puser, pproject){
 
 	var cancel = 0,
 		periodEntries = [],
-		timeEntries = [],
 		timeEntryToDelete = {},
 		date = moment();
 
-	timeEntry.getUserPeriodTimeEntry(puser.id).then(function(entries){
+	timeEntry.getUserPeriodTimeEntry(puser.id, pproject).then(function(entries){
 		periodEntries = entries.result.not_confirmed_dates.concat(entries.result.confirmed_dates);
-		timeEntries = _.filter(periodEntries, function(pentries)
-			{ return pentries.project.id === pproject; });
 
-		utils.printArray(timeEntries, ENTRY_DESCRIPTION);
-		return utils.getPromptNumber(RESTRICTION_STORY, timeEntries);
+		utils.printArray(periodEntries, ENTRY_DESCRIPTION);
+		return utils.getPromptNumber(RESTRICTION_STORY, periodEntries);
 
 	}).then(function(pentry){
 		deleteTimeEntry(puser, pentry);

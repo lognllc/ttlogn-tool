@@ -4,7 +4,8 @@ var //_ = require('underscore'),
 
 var TIME_ENTRY = '/time_entries/createUpdate.json',
 	USER_TIME_ENTRIES = '/users/get_this_period_entries.json?id=',
-	DELETE_TIME_ENTRIES = '/users/delete_time_entry.json';
+	DELETE_TIME_ENTRIES = '/users/delete_time_entry.json',
+	PROJECT = '&project_id=';
 
 var time_entry = {
 	
@@ -23,8 +24,8 @@ var time_entry = {
 	/* puserId: user's id
 	get the time entries of this period
 	*/
-	getUserPeriodTimeEntry: function(puserId){
-		var message = USER_TIME_ENTRIES + puserId;
+	getUserPeriodTimeEntry: function(puserId, pprojectId){
+		var message = USER_TIME_ENTRIES + puserId + PROJECT + pprojectId;
 		return dataAccess.get(message);
 	}
 };

@@ -3,8 +3,8 @@ var prettyjson = require('prettyjson'),
 	RSVP = require('rsvp'),
 	clientTT = require('node-rest-client').Client;
 
-var //HOST_DEVELOPMENT = 'http://10.0.1.80:3000',
-	HOST_DEVELOPMENT = 'http://192.168.0.120:3000',
+var HOST_DEVELOPMENT = 'http://10.0.1.80:3000',
+	//HOST_DEVELOPMENT = 'http://192.168.0.120:3000',
 	HOST = 'http://ec2-54-226-94-0.compute-1.amazonaws.com',
 	DEVELOPMENT = 'development',
 	TT_ENV = 'TT_ENV';
