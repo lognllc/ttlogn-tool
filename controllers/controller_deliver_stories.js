@@ -51,7 +51,12 @@ var	getStories = function(puserId, pprojects){
 			urls.push(newStory);
 		});
 	});
-	deliver(puserId, urls);
+	if(!_.isEmpty(urls)){
+		deliver(puserId, urls);
+	}
+	else{
+		colog.log(colog.colorGreen('No stories to deliver'));
+	}
 };
 
 var controllerAddStory = {

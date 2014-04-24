@@ -37,7 +37,7 @@ var controllerListStories = {
 
 				}).then(function(pproject){
 					storyProject = pproject;
-					return story.getProjectStories(storyProject, userInfo.api_token, userInfo.id, pfilter);
+					return story.getStoriesFiltered(storyProject, userInfo.api_token, userInfo.id, pfilter);
 
 				}).then(function(){
 					utils.printArray(storyProject.stories, NAME);
