@@ -3,7 +3,7 @@ var path = require('path'),
 	_ = require('underscore'),
 	git  = require('gift'),
 	async = require('async'),
-	moment = require('moment'),
+	moment = require('moment-timezone'),
 	RSVP = require('rsvp');
 
 var NUMBER_COMMITS = 10,
@@ -48,8 +48,9 @@ var commit = {
 							numberArray = commits.length - 1;
 							date = _.last(commits).committed_date;
 							skip += NUMBER_COMMITS;
+							//console.log(date);
 
-							if(date < limitDate || numberArray !== (NUMBER_COMMITS - 1)) continueWhile = false;
+							if(moment(limitDate).isAfter(date) || numberArray !== (NUMBER_COMMITS - 1)) continueWhile = false;
 						}
 						callback(err);
 					});
@@ -101,8 +102,8 @@ var commit = {
 		limitDate = moment().startOf('day');
 
 		if(pdate === '-w'){
-			limitDate = moment().isoWeekday(MONDAY);
-			//console.log(limitDate.format('l'));
+			limitDate = moment().isoWeekday(MONDAY).startOf('day');
+			//console.log(limitDate.format('YYYY-MM-DD:HH:mm Z'));
 		}
 		else if(pdate === '-m'){
 			limitDate = moment().startOf('month');

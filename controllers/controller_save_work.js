@@ -13,25 +13,58 @@ var _ = require('underscore'),
 
 var DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
-var	saveCommits = function(puser, prepos, phourType, pperiod, lastDate){
+var validateParameters = function(plimit1, plimit2){
+	var validation = false;
+	
+	if((plimit1 === '-w' || plimit1 === '-m' || plimit1 === '-d' ||
+		plimit1 === '-f' || _.isUndefined(plimit1)) &&
+		(plimit2 === '-f' || _.isUndefined(plimit2))){
+
+		validation = true;
+	}
+	return validation;
+};
+
+var getForce = function(plimit1, plimit2){
+	var force = plimit2 || plimit1;
+		validation = false;
+	
+	if(force === '-f'){
+		validation = true;
+	}
+	return validation;
+};
+
+var validateDate = function(pdate, plastDate, pforce){
+	var canPass = false;
+	if(pforce){
+		canPass = true;
+	}
+	else if (_.isUndefined(plastDate) || pdate.isAfter(plastDate)){
+		canPass = true;
+	}
+	return canPass;
+};
+
+var	saveCommits = function(puser, prepos, phourType, pperiod, plastDate, pforce){
 	var promise = new RSVP.Promise(function(resolve, reject){
 		var date = '',
-			today = moment().tz("PST8PDT").format(DATE_FORMAT),
+			today = moment().tz("PST8PDT"),
 			promises = [],
-			periodStart = moment(pperiod.period_start).format(DATE_FORMAT),
-			periodEnd = moment(pperiod.period_end).format(DATE_FORMAT);
+			periodStart = moment(pperiod.period_start),
+			periodEnd = moment(pperiod.period_end),
+			newLastDate = plastDate,
+			validation = false;
 
 		_.each(prepos, function(projects){
 			_.each(projects, function(project){
 				_.each(project.commits, function(value){
 					var commitToInsert = {},
-						timeIn = '',
-						timeOut = '',
 						commitMessage = '',
 						hour = 0,
 						work = utils.getWork(value.message);
 
-					date = value.date.tz("PST8PDT").format(DATE_FORMAT);
+					//date = value.date.tz("PST8PDT");//.format(DATE_FORMAT);
 					//console.log(date);
 					commitMessage = value.message.split('\n');
 					value.message = commitMessage[0];
@@ -48,12 +81,18 @@ var	saveCommits = function(puser, prepos, phourType, pperiod, lastDate){
 						hour = parseFloat(work);
 						detailTime.setDetailTimeOut(commitToInsert, hour, value.date);
 					}
-					//console.log(commitToInsert);
-					if(periodStart <= date &&
-						date <= periodEnd && date <= today){
+					
+					validation = validateDate(value.date, plastDate, pforce);
+
+					if( value.date.isAfter(periodStart) &&
+						periodEnd.isAfter(value.date) && today.isAfter(value.date) &&
+						validation){
 						colog.log(colog.colorBlue('Saving commit: ' +  value.message));
+						
+						if(_.isUndefined(newLastDate) || value.date.isAfter(newLastDate)){
+							newLastDate = moment(value.date.format());
+						}
 						commitToInsert.created = value.date.tz("PST8PDT").startOf('day').format(DATE_FORMAT);
-						//console.log(commitToInsert.created);
 						promises.push(timeEntry.postTimeEntry(commitToInsert));
 					}
 					else {
@@ -62,12 +101,10 @@ var	saveCommits = function(puser, prepos, phourType, pperiod, lastDate){
 				});
 			});
 		});
-		RSVP.all(promises).then(function() {
-			//utils.printTTError(promises);
+		RSVP.all(promises).then(function(){
 			colog.log(colog.colorGreen('Saved successful'));
-			resolve();
+			resolve(newLastDate.format());
 		}).catch(function(reason){
-			//colog.log(colog.colorRed(reason));
 			reject(reason);
 		});
 	});
@@ -76,25 +113,28 @@ var	saveCommits = function(puser, prepos, phourType, pperiod, lastDate){
 
 var controllerSaveWork = {
 
-	/*pdate: sets the limit date [-d|-w|-m]
+	/*plimit1: sets the limit date [-d|-w|-m][-f]
+	plimit2: sets the limit date [-f]
 	saves the commits of an user in the TT*/
-	saveWork: function(pdate){
+	saveWork: function(plimit1, plimit2){
 		var repos = [],
-			reposConfig = [],
 			userInfo = {},
 			billable = 0,
 			newRepos = [],
 			lastDate = '',
+			force = false,
 			configuration = {};
 
-		if(pdate === '-w' || pdate === '-m' || pdate === '-d' || typeof pdate === 'undefined'){
+		if(validateParameters(plimit1, plimit2)){
 
 			if(config.existConfig){
 
 				colog.log(colog.colorGreen('Loading...'));
 				configuration = config.getConfig();
-				commit.setDateLimit(pdate);
-				reposConfig = configuration.repositories;
+				commit.setDateLimit(plimit1);
+				force = getForce(plimit1, plimit2);
+				lastDate = (!_.isUndefined(configuration.lastDate)) ? lastDate = moment(configuration.lastDate) :
+					lastDate = configuration.lastDate;
 
 				user.login(configuration.email, configuration.password).then(function(puser){
 					userInfo = puser.result;
@@ -102,7 +142,7 @@ var controllerSaveWork = {
 
 				}).then(function(phourType){
 					billable = hourType.getBillable(phourType.result);
-					return commit.getReposConfig(reposConfig, repos);
+					return commit.getReposConfig(configuration.repositories, repos);
 
 				}).then(function(){
 					return commit.getBranches(repos);
@@ -115,12 +155,10 @@ var controllerSaveWork = {
 
 				}).then(function(pperiod){
 					newRepos = utils.bindCommits(repos, configuration.gitUser);
-					saveCommits(userInfo, newRepos, billable, pperiod.result, configuration.lastDate);
+					return saveCommits(userInfo, newRepos, billable, pperiod.result, lastDate, force);
 
-				}).then(function(){
-					//momentary date
-					date = moment();
-					config.saveLastDate(configuration, date);
+				}).then(function(lastDate){
+					config.saveLastDate(configuration, lastDate);
 
 				}).catch(function(error) {
 					colog.log(colog.colorRed(error));
@@ -131,7 +169,7 @@ var controllerSaveWork = {
 			}
 		}
 		else{
-			colog.log(colog.colorRed('Error: ttlogn ls [-d/-w/-m]'));
+			colog.log(colog.colorRed('Error: ttlogn ls [-d|-w|-m][-f]'));
 		}
 	}
 

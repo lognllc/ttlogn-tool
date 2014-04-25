@@ -20,10 +20,10 @@ var configDataAccess = {
 	saves the configuration file in an asynchronous way
 	pdata: data to save
 	*/
-	saveConfig: function(pdata){
-		dataFile = JSON.stringify(pdata, null, 4);
+	saveConfig: function(pdata, psimpleSave){
+		var dataFile = JSON.stringify(pdata, null, 4),
+			relativePath = configPath();
 		
-		var relativePath = configPath();
 		fs.writeFile(relativePath, dataFile, 'utf8', '0777',function(err){
             if(err) {
 				colog.log(colog.colorRed('Error: saving file.'));
@@ -31,9 +31,10 @@ var configDataAccess = {
                 process.exit(1);
             }
             else{
-				colog.log(colog.colorGreen('Success: configuration file saved'));
+				if(psimpleSave){
+					colog.log(colog.colorGreen('Success: configuration file saved'));
+				}
 			}
-
         });
 	},
 

@@ -7,7 +7,9 @@ var path = require('path'),
 	sha1 = require('sha1'),
 	dataAccess = require('../dataAccess/config_data_access.js');
 
-var EMAIL = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]+$/i;
+var EMAIL = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]+$/i,
+	SIMPLE_SAVE = true,
+	UPDATE_DATE = false;
 
 /* 
 register a branch in the configuration file
@@ -47,7 +49,7 @@ var registerBranch = function(pproject, pbranch, pdataFile, pdata){
 				branch: pbranch
 			});
 		}
-	dataAccess.saveConfig(pdataFile);
+	dataAccess.saveConfig(pdataFile, SIMPLE_SAVE);
 };
 
 
@@ -118,7 +120,7 @@ var config = {
 				dataFile.pivotalEmail = resultPrompt.pivotalEmail;
 				dataFile.pivotalPassword = resultPrompt.pivotalPassword;
 
-				dataAccess.saveConfig(dataFile);
+				dataAccess.saveConfig(dataFile, SIMPLE_SAVE);
 			}
 			else{
 				colog.log(colog.colorRed('Error: ' + err));
@@ -149,7 +151,7 @@ var config = {
 				}
 			};
 			dataFile.repositories.push(dataRepo);
-			dataAccess.saveConfig(dataFile);
+			dataAccess.saveConfig(dataFile, SIMPLE_SAVE);
 		}
 		else{
 			registerBranch(pproject, pbranch, dataFile, data);
@@ -174,10 +176,8 @@ var config = {
 	saves the repositories in the configuration file
 	*/
 	saveLastDate: function(pconfig, pdate){
-		var dataFile = {};
-		
 		pconfig.lastDate = pdate;
-		dataAccess.saveConfig(dataFile);
+		dataAccess.saveConfig(pconfig, UPDATE_DATE);
 	},
 
 	/* 
@@ -203,10 +203,8 @@ var config = {
 	saves the repositories in the configuration file
 	*/
 	saveRepos: function(pconfig, prepos){
-		var dataFile = {};
-
 		pconfig.repositories = prepos;
-		dataAccess.saveConfig(dataFile);
+		dataAccess.saveConfig(pconfig, SIMPLE_SAVE);
 	},
 
 
