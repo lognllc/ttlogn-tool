@@ -16,9 +16,8 @@ sort the commits by time
 var	sortProjects = function(prepos){
 	_.each(prepos, function(projects){
 		_.each(projects, function(project){
-			var sortedProject = _.sortBy(project.commits, function(sortedCommit)
-				{ return sortedCommit.date; });
-			project.commits = sortedProject.reverse();
+			project.commits.sort(function(first, second){
+				return second.date.diff(first.date); });
 		});
 	});
 };
