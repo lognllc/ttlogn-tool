@@ -47,7 +47,6 @@ var registerBranch = function(pproject, pbranch, pdataFile, pdata){
 				branch: pbranch
 			});
 		}
-	pdataFile = JSON.stringify(pdataFile, null, 4);
 	dataAccess.saveConfig(pdataFile);
 };
 
@@ -119,7 +118,6 @@ var config = {
 				dataFile.pivotalEmail = resultPrompt.pivotalEmail;
 				dataFile.pivotalPassword = resultPrompt.pivotalPassword;
 
-				dataFile = JSON.stringify(dataFile, null, 4);
 				dataAccess.saveConfig(dataFile);
 			}
 			else{
@@ -151,7 +149,6 @@ var config = {
 				}
 			};
 			dataFile.repositories.push(dataRepo);
-			dataFile = JSON.stringify(dataFile, null, 4);
 			dataAccess.saveConfig(dataFile);
 		}
 		else{
@@ -169,6 +166,18 @@ var config = {
 			colog.log(colog.colorRed('Error: Make a configuration file'));
 		}
 		return data;
+	},
+
+	/* 
+	pconfig: configuration
+	pdate: new repos to insert
+	saves the repositories in the configuration file
+	*/
+	saveLastDate: function(pconfig, pdate){
+		var dataFile = {};
+		
+		pconfig.lastDate = pdate;
+		dataAccess.saveConfig(dataFile);
 	},
 
 	/* 
@@ -197,9 +206,9 @@ var config = {
 		var dataFile = {};
 
 		pconfig.repositories = prepos;
-		dataFile = JSON.stringify(pconfig, null, 4);
 		dataAccess.saveConfig(dataFile);
 	},
+
 
 	/* 
 	returns a boolean with saying if the config file exists 

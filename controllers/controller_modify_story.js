@@ -97,6 +97,21 @@ var printOptions = function(){
 	colog.log(colog.colorBlue('7: Cancel '));
 };
 
+var getState = function(){
+	var STATES_FEATURES_BUG = [{name:'unstarted'}, {name:'started'}, {name:'finished'},
+			{name:'delivered'}, {name:'rejected'}, {name:'accepted'}],
+		STATE_CHORE = [{name:'unstarted'}, {name:'started'}, {name:'accepted'}],
+		CHORE = 'chore';
+		//STATES_RELEASE = [{name:'unstarted'}, {name:'accepted'}],
+
+	if(selectedStory.story_type !== CHORE){
+		return STATES_FEATURES_BUG;
+	}
+	else{
+		return STATE_CHORE;
+	}
+};
+
 /*prints the story and waits for an option
 */
 // must get the states
@@ -104,9 +119,9 @@ var selectOption = function(){
 	var RESTRICTION_NAME = 'Name',
 		RESTRICTION_DESCRIPTION = 'Description',
 		RESTRICTION_ESTIMATE = 'Select estimate',
-		STATES = [{name:'unscheduled'},{name:'unstarted'}, {name:'started'}, {name:'finished'},
-			{name:'delivered'}, {name:'rejected'}, {name:'accepted'}],
 		RESTRICTION_STATE = 'Number of state';
+
+	var state = '';
 
 	printOptions();
 	prompt.start();
@@ -122,7 +137,8 @@ var selectOption = function(){
 	}, function (err, resultPrompt) {
 		switch(resultPrompt.field){
 			case '1':
-				modifyAtribute(STATES, RESTRICTION_STATE, STATE);
+				state = getState();
+				modifyAtribute(state, RESTRICTION_STATE, STATE);
 				break;
 			case '2':
 				modifyText(RESTRICTION_NAME, NAME);

@@ -112,10 +112,10 @@ var controllerConfigFile = {
 	delete the configuration file.
 	*/
 	deleteConfig: function(){
-		var configFile = 'the information you have supplied';
+		var message = 'the information you have supplied';
 
 		colog.log(colog.colorRed('This will erase and reset all of the information you have supplied to the app.'));
-		utils.getConfirmation(configFile).then(function() {
+		utils.getConfirmation(message).then(function() {
 			config.deleteConfig();
 			colog.log(colog.colorGreen("Information erased, you've logged out succesfully."));
 		}).catch(function(error) {

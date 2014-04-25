@@ -14,15 +14,17 @@ var configPath = function () {
 	return pathResult;
 };
 
+var configDataAccess = {
 
 	/* 
-	saves the a file in an asynchronous way
-	ppath: path 
+	saves the configuration file in an asynchronous way
 	pdata: data to save
 	*/
-var saveFile = function (pdata){
-	var relativePath = configPath();
-	fs.writeFile(relativePath, pdata, 'utf8', '0777',function(err){
+	saveConfig: function(pdata){
+		dataFile = JSON.stringify(pdata, null, 4);
+		
+		var relativePath = configPath();
+		fs.writeFile(relativePath, dataFile, 'utf8', '0777',function(err){
             if(err) {
 				colog.log(colog.colorRed('Error: saving file.'));
                 colog.log(colog.colorRed(err));
@@ -33,16 +35,6 @@ var saveFile = function (pdata){
 			}
 
         });
-};
-
-var configDataAccess = {
-
-	/* 
-	saves the configuration file in an asynchronous way
-	pdata: data to save
-	*/
-	saveConfig: function(pdata){
-		saveFile(pdata);
 	},
 
 	/* 

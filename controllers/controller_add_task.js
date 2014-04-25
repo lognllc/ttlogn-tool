@@ -28,7 +28,7 @@ var controllerAddTasks = {
 			selectedStory = {},
 			newTask = {};
 
-		if(pfilter === '-a' || typeof pfilter === 'undefined'){
+		if(pfilter === '-a' || pfilter === '-r' || typeof pfilter === 'undefined'){
 			if(config.existConfig){
 				colog.log(colog.colorGreen('Loading...'));
 

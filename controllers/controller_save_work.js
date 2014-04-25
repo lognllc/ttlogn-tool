@@ -13,66 +13,65 @@ var _ = require('underscore'),
 
 var DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
-var	saveCommits = function(puser, prepos, phourType, pperiod){
+var	saveCommits = function(puser, prepos, phourType, pperiod, lastDate){
+	var promise = new RSVP.Promise(function(resolve, reject){
+		var date = '',
+			today = moment().tz("PST8PDT").format(DATE_FORMAT),
+			promises = [],
+			periodStart = moment(pperiod.period_start).format(DATE_FORMAT),
+			periodEnd = moment(pperiod.period_end).format(DATE_FORMAT);
 
-	var date = '',
-		today = moment().tz("PST8PDT").format(DATE_FORMAT),
-		promises = [],
-		periodStart = moment(pperiod.period_start).format(DATE_FORMAT),
-		periodEnd = moment(pperiod.period_end).format(DATE_FORMAT);
+		_.each(prepos, function(projects){
+			_.each(projects, function(project){
+				_.each(project.commits, function(value){
+					var commitToInsert = {},
+						timeIn = '',
+						timeOut = '',
+						commitMessage = '',
+						hour = 0,
+						work = utils.getWork(value.message);
 
-		/*console.log(periodStart);
-		console.log(periodEnd);
-		console.log(today);*/
+					date = value.date.tz("PST8PDT").format(DATE_FORMAT);
+					//console.log(date);
+					commitMessage = value.message.split('\n');
+					value.message = commitMessage[0];
 
-	_.each(prepos, function(projects){
-		_.each(projects, function(project){
-			_.each(project.commits, function(value){
-				var commitToInsert = {},
-					timeIn = '',
-					timeOut = '',
-					commitMessage = '',
-					hour = 0,
-					work = utils.getWork(value.message);
+					commitToInsert = {
+							developer_id: puser.id,
+							project_id: project.id,
+							description: value.message,
+							time: work,
+							hour_type_id: phourType.id
+						};
 
-				date = value.date.tz("PST8PDT").format(DATE_FORMAT);
-				//console.log(date);
-				commitMessage = value.message.split('\n');
-				value.message = commitMessage[0];
-
-				commitToInsert = {
-						//created:  date,
-						developer_id: puser.id,
-						project_id: project.id,
-						description: value.message,
-						time: work,
-						hour_type_id: phourType.id
-					};
-
-				if(puser.devtype === 'non_exempt'){
-					hour = parseFloat(work);
-					detailTime.setDetailTimeOut(commitToInsert, hour, value.date);
-				}
-				//console.log(commitToInsert);
-				if(periodStart <= date &&
-					date <= periodEnd && date <= today){
-					colog.log(colog.colorBlue('Saving commit: ' +  value.message));
-					commitToInsert.created = value.date.tz("PST8PDT").startOf('day').format(DATE_FORMAT);
-					//console.log(commitToInsert.created);
-					promises.push(timeEntry.postTimeEntry(commitToInsert));
-				}
-				else {
-					colog.log(colog.colorRed('Invalid date: ' +  value.message));
-				}
+					if(puser.devtype === 'non_exempt'){
+						hour = parseFloat(work);
+						detailTime.setDetailTimeOut(commitToInsert, hour, value.date);
+					}
+					//console.log(commitToInsert);
+					if(periodStart <= date &&
+						date <= periodEnd && date <= today){
+						colog.log(colog.colorBlue('Saving commit: ' +  value.message));
+						commitToInsert.created = value.date.tz("PST8PDT").startOf('day').format(DATE_FORMAT);
+						//console.log(commitToInsert.created);
+						promises.push(timeEntry.postTimeEntry(commitToInsert));
+					}
+					else {
+						colog.log(colog.colorRed('Invalid date: ' +  value.message));
+					}
+				});
 			});
 		});
-	});
-	RSVP.all(promises).then(function() {
-			utils.printTTError(promises);
+		RSVP.all(promises).then(function() {
+			//utils.printTTError(promises);
 			colog.log(colog.colorGreen('Saved successful'));
+			resolve();
 		}).catch(function(reason){
-			colog.log(colog.colorRed(reason));
+			//colog.log(colog.colorRed(reason));
+			reject(reason);
 		});
+	});
+	return promise;
 };
 
 var controllerSaveWork = {
@@ -85,13 +84,15 @@ var controllerSaveWork = {
 			userInfo = {},
 			billable = 0,
 			newRepos = [],
-			configuration = config.getConfig();
+			lastDate = '',
+			configuration = {};
 
 		if(pdate === '-w' || pdate === '-m' || pdate === '-d' || typeof pdate === 'undefined'){
 
 			if(config.existConfig){
 
 				colog.log(colog.colorGreen('Loading...'));
+				configuration = config.getConfig();
 				commit.setDateLimit(pdate);
 				reposConfig = configuration.repositories;
 
@@ -113,9 +114,13 @@ var controllerSaveWork = {
 					return user.getPeriod(userInfo.id);
 
 				}).then(function(pperiod){
-					//console.log(pperiod);
 					newRepos = utils.bindCommits(repos, configuration.gitUser);
-					saveCommits(userInfo, newRepos, billable, pperiod.result);
+					saveCommits(userInfo, newRepos, billable, pperiod.result, configuration.lastDate);
+
+				}).then(function(){
+					//momentary date
+					date = moment();
+					config.saveLastDate(configuration, date);
 
 				}).catch(function(error) {
 					colog.log(colog.colorRed(error));

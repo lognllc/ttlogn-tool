@@ -45,15 +45,12 @@ var printTimeEntries = function(puser, pproject){
 	var RESTRICTION_STORY = 'Number of the story';
 
 	var cancel = 0,
-		periodEntries = [],
 		timeEntryToDelete = {},
 		date = moment();
 
 	timeEntry.getUserPeriodTimeEntry(puser.id, pproject).then(function(entries){
-		periodEntries = entries.result.not_confirmed_dates.concat(entries.result.confirmed_dates);
-
-		utils.printArray(periodEntries, ENTRY_DESCRIPTION);
-		return utils.getPromptNumber(RESTRICTION_STORY, periodEntries);
+		utils.printArray(entries.result.not_confirmed_dates, ENTRY_DESCRIPTION);
+		return utils.getPromptNumber(RESTRICTION_STORY, entries.result.not_confirmed_dates);
 
 	}).then(function(pentry){
 		deleteTimeEntry(puser, pentry);
