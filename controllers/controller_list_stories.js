@@ -18,9 +18,14 @@ var printStories = function(pprojects){
 		console.log('-------------------------------');
 		console.log('-------------------------------');
 		_.each(pivotalProject.stories, function(pivotalStory){
-			colog.log(colog.apply(pivotalStory.name + ' - ' + pivotalStory.story_type, ['bold', 'colorBlue']));
-			if(!_.isUndefined(pivotalStory.description)){
-				colog.log(colog.colorBlue(pivotalStory.description));
+			if(pivotalStory.story_type !== 'release'){
+				colog.log(colog.apply(pivotalStory.name + ' - ' + pivotalStory.story_type, ['bold', 'colorBlue']));
+				if(!_.isUndefined(pivotalStory.description)){
+					colog.log(colog.colorBlue(pivotalStory.description));
+				}
+			}
+			else{
+				colog.log(colog.apply('-------- ' + pivotalStory.name + ' --------', ['bold', 'colorBlue']));
 			}
 			console.log('-------------------------------');
 		});
