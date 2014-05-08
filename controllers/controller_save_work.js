@@ -133,9 +133,9 @@ var controllerSaveWork = {
 				configuration = config.getConfig();
 				commit.setDateLimit(plimit1);
 				force = getForce(plimit1, plimit2);
-				lastDate = (!_.isUndefined(configuration.lastDate)) ? lastDate = moment(configuration.lastDate) :
-					lastDate = configuration.lastDate;
-
+				lastDate = (_.isUndefined(configuration.lastDate)) ? moment().subtract('months', 1) :
+					moment(configuration.lastDate);
+				
 				user.login(configuration.email, configuration.password).then(function(puser){
 					userInfo = puser.result;
 					return hourType.getHourType(userInfo.id);
@@ -169,7 +169,7 @@ var controllerSaveWork = {
 			}
 		}
 		else{
-			colog.log(colog.colorRed('Error: ttlogn ls [-d|-w|-m][-f]'));
+			colog.log(colog.colorRed('Error: ttlogn save [-d|-w|-m][-f]'));
 		}
 	}
 

@@ -1,6 +1,6 @@
 {
   "name": "ttlogn",
-  "version": "0.0.13",
+  "version": "0.0.18",
   "description": "timetracker helper tool",
   "main": "./lib/main",
   "man": [

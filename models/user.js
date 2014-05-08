@@ -9,6 +9,8 @@ var //_ = require('underscore'),
 
 var USER_LOGIN = '/login/create.json',
 	GET_CLIENTS = '/users/get_clients.json?id=',
+	TEXTUAL_SEARCH = '/users/get_textual_search.json?id=',
+	TEXT = '&text=',
 	PERIOD = '/users/get_actual_period.json?id=';
 
 var user = {
@@ -37,6 +39,15 @@ var user = {
 	*/
 	getPeriod: function(pusedId){
 		var message	=  PERIOD + pusedId;
+		return dataAccess.get(message);
+	},
+
+	/* pusedId: id of the user
+	ptext: text to search
+	get the actual period of an user
+	*/
+	getTextualSearch: function(pusedId, ptext){
+		var message	=  TEXTUAL_SEARCH + pusedId + TEXT + ptext;
 		return dataAccess.get(message);
 	},
 

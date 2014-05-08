@@ -29,7 +29,7 @@ var deleteTimeEntry = function(puser, pentry){
 	utils.getConfirmation(pentry.tskDescription).then(function(){
 		return timeEntry.deleteTimeEntry(entryToDelete);
 	}).then(function(){
-		colog.log(colog.colorGreen('Time entry deleted'));
+		colog.log(colog.colorGreen('Time entry was deleted'));
 	}).catch(function(error) {
 		colog.log(colog.colorRed(error));
 	});
@@ -42,7 +42,7 @@ pproject: project information
 prints the entries
 */
 var printTimeEntries = function(puser, pproject){
-	var RESTRICTION_STORY = 'Number of the story';
+	var RESTRICTION_STORY = 'Number of the entry';
 
 	var cancel = 0,
 		timeEntryToDelete = {},

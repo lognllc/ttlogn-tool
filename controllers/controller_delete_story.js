@@ -49,7 +49,7 @@ var controllerDeleteStories = {
 						return story.deleteStory(storyProject.project_id, selectedStory.id, userInfo.api_token);
 
 				}).then(function(){
-					colog.log(colog.colorGreen("Story deleted"));
+					colog.log(colog.colorGreen("Story was deleted"));
 
 				}).catch(function(error) {
 					colog.log(colog.colorRed(error));

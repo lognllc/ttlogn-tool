@@ -284,8 +284,7 @@ var controllerModifyEntry = {
 	modifyWork: function(){
 		var	RESTRICTION_ENTRY = 'Number of the entry';
 
-		var repos = [],
-			configuration = {},
+		var configuration = {},
 			projectId = 0;
 	
 		if(config.existConfig){

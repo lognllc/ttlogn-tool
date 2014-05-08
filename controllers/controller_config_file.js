@@ -117,7 +117,7 @@ var controllerConfigFile = {
 		colog.log(colog.colorRed('This will erase and reset all of the information you have supplied to the app.'));
 		utils.getConfirmation(message).then(function() {
 			config.deleteConfig();
-			colog.log(colog.colorGreen("Information erased, you've logged out succesfully."));
+			colog.log(colog.colorGreen("Information was deleted, you've logged out succesfully."));
 		}).catch(function(error) {
 			colog.log(colog.colorRed(error));
 		});
@@ -148,7 +148,6 @@ var controllerConfigFile = {
 
 			utils.getNumberPrompt(restriction, configuration.repositories).then(function(prepo){
 				deletePath = path.basename(prepo.path);
-				//colog.log(colog.colorBlue('Deleting: ' + deletePath));
 				newRepos = config.deleteRepo(configuration.repositories, prepo);
 				return utils.getConfirmation(deletePath);
 
