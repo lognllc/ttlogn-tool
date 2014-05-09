@@ -147,7 +147,13 @@ var selectOption = function(){
 				modifyText(RESTRICTION_DESCRIPTION, DESCRIPTION);
 				break;
 			case '4':
-				modifyAtribute(estimations, RESTRICTION_ESTIMATE, ESTIMATE);
+				if(selectedStory.story_type === 'feature'){
+					modifyAtribute(estimations, RESTRICTION_ESTIMATE, ESTIMATE);
+				}
+				else{
+					colog.log(colog.colorRed('Invalid option'));
+					selectOption();
+				}
 				break;
 			case '5':
 				modifyOwner();
@@ -211,6 +217,8 @@ var controllerModifyStory = {
 					return story.getStoriesFiltered(storyProject, userInfo.api_token, userInfo.id, pfilter);
 
 				}).then(function(){
+					storyProject.stories = _.filter(storyProject.stories, function(pstory)
+						{ return pstory.story_type !== 'release';});
 					utils.printArray(storyProject.stories, NAME);
 					return utils.getPromptNumber(RESTRICTION_STORY, storyProject.stories);
 
