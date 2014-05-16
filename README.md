@@ -489,7 +489,7 @@ prompt: Number of the story:  1
 ```
 
 ## search
-Lists the tasks of a story in Pivotal Tracker. If the parameter received is '-a', print all the stories of the user. If there isn't a parameter print a list of the started and unstarted stories of the user.
+Does a textual search of the time entries of an user.
 
 ### Parameters
 * text [text]: Text to search in the time entries
