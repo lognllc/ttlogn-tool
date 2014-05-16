@@ -41,6 +41,7 @@ a Timetracker.
 .IP "story deliver"
 .IP "task ls"
 [-a]
+.IP "search text_to_search"
 
 .SH OPTIONS
 .IP --help
@@ -81,6 +82,8 @@ Modify an existing task in Pivotal Tracker.
 Deliver all finished stories of an user in Pivotal Tracker. 
 .IP "task ls [-a]"
 List the tasks of an user's story in Pivotal Tracker.
+.IP "search text_to_search"
+Does a textual search of the time entries of an user.
 
 .SH FILES
 .IP ~/.ttlogn
@@ -88,7 +91,7 @@ The configuration file of ttlogn.
 
 .SH ENVIRONMENT
 .IP TT_ENV
-Flag to know what Data Base to use.
+Flag to know what API use for requests.
 
 .SH BUGS
 

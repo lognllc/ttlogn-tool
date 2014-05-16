@@ -5,7 +5,8 @@ var prettyjson = require('prettyjson'),
 
 var HOST_DEVELOPMENT = 'http://10.0.1.80:3000',
 	//HOST_DEVELOPMENT = 'http://192.168.0.120:3000',
-	HOST = 'http://ec2-54-226-94-0.compute-1.amazonaws.com',
+	//HOST = 'http://ec2-54-226-94-0.compute-1.amazonaws.com',
+	HOST = 'http://ec2-54-237-47-87.compute-1.amazonaws.com',
 	DEVELOPMENT = 'development',
 	TT_ENV = 'TT_ENV';
 
@@ -36,7 +37,6 @@ var apiTTDataAccess = {
 			//	console.log(data);
 				dataServer = JSON.parse(data);
 				resolve(dataServer);
-
 			}).on('error',function(err){
 				colog.log(colog.colorRed('Error: Something went wrong on the request'));
 				reject(err.stack);
@@ -65,7 +65,6 @@ var apiTTDataAccess = {
 				resolve(dataServer);
 			}).on('error',function(err){
 				colog.log(colog.colorRed('Error: Something went wrong on the request'));
-				//reject(err.errno);
 				reject(err.stack);
 			});
 		});

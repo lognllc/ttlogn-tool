@@ -18,7 +18,7 @@ pbranch: branch to bind
 pdataFile: data of the file
 pdata: path of the project
 */
-var registerBranch = function(pproject, pbranch, pdataFile, pdata){
+var registerBranch = function(pproject, pbranch, pdataFile, pdata, prepoName){
 	var dataRepo = {},
 		newProject = {},
 		projectsList = {};
@@ -34,6 +34,7 @@ var registerBranch = function(pproject, pbranch, pdataFile, pdata){
 		if(typeof newProject === 'undefined' || projectsList.length === 0){
 			dataRepo = {
 				path: pdata,
+				name: prepoName,
 				project: [{
 					name: pproject.name,
 					id: pproject.id,
@@ -133,18 +134,18 @@ var config = {
 	pbranch: name of the branch 
 	saves a project bind to a project or to a branch
 	*/
-	registerRepo: function(pproject, pbranch){
+	registerRepo: function(pproject, pbranch, prepoName){
 		var data = '',
 			dataFile = {},
 			dataRepo = {};
 
 		dataFile = getJson();
 		data = process.cwd();
-//		data = '/mnt/hgfs/Development/repoPrueba';
 		if(typeof pbranch === 'undefined'){
 			colog.log(colog.colorBlue('Adding repository: ' + data +', and project: '+ pproject.name +' to configuration file'));
 			dataRepo = {
 				path: data,
+				name: prepoName,
 				project: {
 					name: pproject.name,
 					id: pproject.id
@@ -154,7 +155,7 @@ var config = {
 			dataAccess.saveConfig(dataFile, SIMPLE_SAVE);
 		}
 		else{
-			registerBranch(pproject, pbranch, dataFile, data);
+			registerBranch(pproject, pbranch, dataFile, data, prepoName);
 		}
 	},
 
@@ -186,7 +187,7 @@ var config = {
 	returns the array of repos without the deleted repo.
 	*/
 	deleteRepo: function(prepos, prepo){
-		var repos = _.reject(prepos, function(repository){ return repository.path === prepo.path;});
+		var repos = _.reject(prepos, function(repository){ return repository.name === prepo.name;});
 		return repos;
 	},
 

@@ -204,8 +204,11 @@ var commit = {
 	*/
 	getRepoConfig: function(prepo){
 		var promise = new RSVP.Promise(function(resolve, reject){
+			var EXTENSION = '.git';
 
 			var repo = {},
+				repoName = '',
+				repoPath = '',
 				objectRepo = {};
 
 			repo = git(prepo.path);
@@ -217,10 +220,12 @@ var commit = {
 				else{
 					objectRepo = {
 						path: prepo.path,
-						name: config.items['remote.origin.url'],
 						configBranches: prepo.project,
 						branches: []
 					};
+					repoName = path.basename(config.items['remote.origin.url'], EXTENSION);
+					repoPath = path.basename(path.dirname(config.items['remote.origin.url']));
+					objectRepo.name = repoPath + '/' +repoName;
 					resolve(objectRepo);
 				}
 			});

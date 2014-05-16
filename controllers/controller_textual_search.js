@@ -10,22 +10,29 @@ var _ = require('underscore'),
 
 var	ENTRY_DESCRIPTION = 'tskDescription';
 
-/*prints the time entry, options
+/*
+puser: user
+pentry: time entry
+prints the time entry
 */
 var printOptions = function(puser, pentry){
 	var DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
 	var date = pentry.created.format(DATE_FORMAT);
 
-	colog.log(colog.colorBlue('1: Created: ' + date));
-	colog.log(colog.colorBlue('2: Description: ' + pentry[ENTRY_DESCRIPTION]));
-	colog.log(colog.colorBlue('3: Time: ' + pentry.time));
-	colog.log(colog.colorBlue('4: Hour Type: ' + pentry.hour_type.name));
-	colog.log(colog.colorBlue('5: Proyect: ' + pentry.project.name));
+	colog.log(colog.colorBlue('Created: ' + date));
+	colog.log(colog.colorBlue('Description: ' + pentry[ENTRY_DESCRIPTION]));
+	colog.log(colog.colorBlue('Time: ' + pentry.time));
+	colog.log(colog.colorBlue('Hour Type: ' + pentry.hour_type.name));
+	colog.log(colog.colorBlue('Proyect: ' + pentry.project.name));
 	if(puser.devtype === 'non_exempt'){
-		colog.log(colog.colorBlue('6: Begin of task: ' + pentry.detail_hours.time_in));
+		colog.log(colog.colorBlue('Begin of task: ' + pentry.detail_hours.time_in));
 	}
 };
+
+/* ptext: console parameters to search
+   makes one text with all the parameters 
+*/
 
 var getText = function(ptext){
 	var newArray = _.rest(ptext),
@@ -43,8 +50,9 @@ var getText = function(ptext){
 
 var controllerTextualSearch = {
 
-	/*modify a task of an user in the TT*/
-	search: function(ptext){
+	/* ptext: text to search
+	searches in the TT for the entries with a text*/
+	textualSearch: function(ptext){
 		var	RESTRICTION_ENTRY = 'Number of the entry';
 
 		var configuration = {},

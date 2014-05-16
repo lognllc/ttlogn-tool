@@ -24,7 +24,7 @@ var controllerDeleteStories = {
 			userInfo = {},
 			configuration = config.getConfig(),
 			selectedStory = {};
-		if(pfilter === '-a' || typeof pfilter === 'undefined'){
+		if(pfilter === '-a' || pfilter === '-r' || typeof pfilter === 'undefined'){
 			if(config.existConfig){
 				colog.log(colog.colorGreen('Loading...'));
 
@@ -60,7 +60,7 @@ var controllerDeleteStories = {
 			}
 		}
 		else{
-			colog.log(colog.colorRed("Error: story delete [-a]"));
+			colog.log(colog.colorRed("Error: story delete [-a|-r]"));
 		}
 	}
 };

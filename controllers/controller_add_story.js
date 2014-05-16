@@ -17,7 +17,7 @@ var printOptions = function(pproject, puserId){
 	var NAME = 'name',
 		RESTRICTION_NAME = 'Name',
 		RESTRICTION_DESCRIPTION = 'Description',
-		RESTRICTION_TYPES = 'Select the numbre of the type',
+		RESTRICTION_TYPES = 'Select the number of the type',
 		TYPES = [{name:'feature'}, {name:'chore'}, {name:'bug'}, {name:'release'}];
 
 	var newStory = {};

@@ -22,6 +22,7 @@ ttlogn is a software that helps the worker managing his tasks. It shows and mana
 * [save](#save)
 * [story ls](#story_ls)
 * [story deliver](#story_deliver)
+* [search](#search)
 * [task ls](#task_ls)
 
 
@@ -296,16 +297,17 @@ prompt: Description:  New feature
 3: bug
 4: release
 5: Cancel
-prompt: Select the numbre of the type:  1
+prompt: Select the number of the type:  1
 New story saved.
 
 ```
 
 ## <a name="delete_story"/>delete story
-Deletes an existing story in Pivotal Tracker. If the parameter received is '-a', print all the stories of the user. If there isn't a parameter print a list of the started and unstarted stories of the user.
+Deletes an existing story in Pivotal Tracker. If the parameter received is '-a', prints all the stories of the user. If the paremeter is '-r', it prints all the stories that the user request. If there isn't a parameter print a list of the started and unstarted stories of the user.
 
 ### Parameters
 * [-a]: print all stories of the user
+* [-r]: print all stories of the user
 * Project: project of Pivotal Tracker that has the entry to delete
 * Story: story in the Pivotal Tracker to delete
 
@@ -408,13 +410,13 @@ Add a new task to a story of Pivotal. If the parameter received is '-a', print a
 ```Shell
 ttlogn add task -a
 Loading...
-1: Timetracker Tool
-2: Test project
+1: Project 1
+2: Project 2
 3: Cancel
 prompt: Number of the project:  2
-1: test ching modify
-2: test deliver
-3: As an user, I want to ...
+1: Story 1
+2: Story 2
+3: Story 3
 4: Cancel
 prompt: Number of the story:  3
 prompt: Description:  Task of story 1
@@ -448,7 +450,7 @@ prompt: Number of the project:  2
 prompt: Number of the story:  1
 1: Task 1
 2: Task 2
-4: Cancel
+3: Cancel
 prompt: Number of the project:  2
 Select a field: 
 1: Change state: false
@@ -472,17 +474,38 @@ Lists the tasks of a story in Pivotal Tracker. If the parameter received is '-a'
 ```Shell
 ttlogn task ls -a
 Loading...
-1: Timetracker Tool
-2: Test project
+1: Project 1
+2: Project 2
 3: Cancel
 prompt: Number of the project:  2
-1: test ching modify
-2: test deliver
-3: As an user, I want to ...
-4: dsadasdad
-5: Cancel
+1: Story 1
+2: Story 2
+3: Story 3
+4: Cancel
 prompt: Number of the story:  1
-1: test modify
-2: test modify 2
-3: new task v5
+1: Task 1
+2: Task 2
+3: Cancel
+```
+
+## search
+Lists the tasks of a story in Pivotal Tracker. If the parameter received is '-a', print all the stories of the user. If there isn't a parameter print a list of the started and unstarted stories of the user.
+
+### Parameters
+* text [text]: Text to search in the time entries
+
+### Examples
+```Shell
+ttlogn search test
+1: test of ...
+2: test of ...
+3: test of ...
+4: Cancel
+prompt: Number of the entry:  1
+Created: 2014-03-28 00:00:00
+Description: test of ..
+Time: 1
+Hour Type: Billable
+Proyect: Proyect 1
+Begin of task: 9.05
 ```

@@ -16,7 +16,7 @@ pbranches: branches to select and bind
 pproject: project to save
 waits the user to choose a project, then save the repository
 */
-var saveRepo = function(pbranches, pproject){
+var saveRepo = function(pbranches, pproject, prepoName){
 	newBranch = {};
 
 	colog.log(colog.colorBlue('Select a branch: '));
@@ -44,7 +44,7 @@ var saveRepo = function(pbranches, pproject){
 			if(resultPrompt.branch <= pbranches.length){
 				newBranch = pbranches[resultPrompt.branch - 1];
 			}
-			config.registerRepo(pproject, newBranch.name);
+			config.registerRepo(pproject, newBranch.name, prepoName);
 		}
 	});
 };
@@ -57,17 +57,22 @@ var getProject = function(pprojects){
 	var RESTRICTION = 'Number of the project';
 
 	var repoPath = process.cwd(), //'/mnt/hgfs/Development/repoPrueba', //process.cwd(),
-		newProject = {};
+		newProject = {},
+		branches = [],
+		repos = [],
+		repo = [{path: repoPath}];
 
 	utils.getPromptNumber(RESTRICTION, pprojects).then(function(pproject){
 		newProject = pproject;
 		return commit.getRepoBranches(repoPath);
 
 	}).then(function(pbranches){
-		saveRepo(pbranches, newProject);
-	
-	}).catch(function(error) {
-		colog.log(colog.colorRed(error));
+		branches = pbranches;
+		return commit.getReposConfig(repo, repos);
+
+	}).then(function(){
+		repos = _.first(repos);
+		saveRepo(branches, newProject, repos.name);
 	});
 };
 
@@ -130,9 +135,8 @@ var controllerConfigFile = {
 	deleteRepo: function(){
 		var configuration = {},
 		newRepos = [],
-
 		restriction = {
-			description: "Number of the repository: ".magenta,
+			description: "Number of the repository".magenta,
 			required: true,
 			pattern: INTEGER
 		};
@@ -140,14 +144,9 @@ var controllerConfigFile = {
 		if(config.existConfig()){
 			configuration = config.getConfig();
 
-			_.each(configuration.repositories, function(repo, index){
-				index++;
-				repoPath = path.basename(repo.path);
-				colog.log(colog.colorBlue(index + ': ' + repoPath));
-			});
-
+			utils.printArray(configuration.repositories, NAME);
 			utils.getNumberPrompt(restriction, configuration.repositories).then(function(prepo){
-				deletePath = path.basename(prepo.path);
+				deletePath = path.basename(prepo.name);
 				newRepos = config.deleteRepo(configuration.repositories, prepo);
 				return utils.getConfirmation(deletePath);
 
