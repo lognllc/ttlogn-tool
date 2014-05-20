@@ -63,7 +63,6 @@ var getJson = function(){
 
 	if(config.existConfig()){
 		dataFile = dataAccess.readConfig();
-		//console.log(dataFile);
 		jsonData = JSON.parse(dataFile);
 	}
 	else{
