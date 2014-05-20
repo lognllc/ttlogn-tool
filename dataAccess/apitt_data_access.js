@@ -70,6 +70,7 @@ var apiTTDataAccess = {
 		});
 		return promise;
 	}
+	
 };
 
 module.exports = apiTTDataAccess;
