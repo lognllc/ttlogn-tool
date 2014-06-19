@@ -32,8 +32,9 @@ var saveRepo = function(pbranches, pproject, prepoName){
 	prompt.get({
 		properties: {
 			branch: {
-				description: "Number of the branch: ".magenta,
-				required: true
+				description: "Number of the branch ".magenta,
+				required: true,
+				pattern: INTEGER
 			}
 		}
 	}, function (err, resultPrompt) {

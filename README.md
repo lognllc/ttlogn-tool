@@ -84,7 +84,7 @@ Select a branch:
 1: master
 2: branch 1
 3: All
-prompt: Number of the branch: :  3
+prompt: Number of the branch:  3
 Adding repository: repo_path, and project: Project 1
 Success: configuration file saved
 ```
@@ -138,12 +138,13 @@ Hours worked: 2
 ```
 
 ## save
-Searches for the repositories in the configuration file. Then, depending on the parameter received: [-d/-w/-m], saves the commits of the branches of the different repositories. If there isn't a parameter the default value is '-d'. The commits need to have a specific format, test (worked_hours h). Ex: Test commit (2h) 
+Searches for the repositories in the configuration file. Then, depending on the parameter received: [-d/-w/-m], and [-f], saves the commits of the branches of the different repositories. If there isn't a parameter the default value is '-d'. The commits need to have a specific format, test (worked_hours h). Ex: Test commit (2h) 
 
 ### Parameters
-* [-d]: print the commits of the day
-* [-w]: print the commits of the week
-* [-m]: print the commits of the month
+* [-d]: save the commits of the day
+* [-w]: save the commits of the week
+* [-m]: save the commits of the month
+* [-f]: force to resave the commits
 
 ### Examples
 ```Shell
