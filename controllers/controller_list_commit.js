@@ -26,7 +26,7 @@ var	sortProjects = function(prepos){
 return the limite date
 */
 var	setPrintDateLimit = function(pdate){
-	var limitDate = moment().startOf('day');
+	var limitDate = moment().tz("PST8PDT").startOf('day');
 	limitDate.date(pdate.get('date'));
 	limitDate.month(pdate.get('month'));
 	limitDate.year(pdate.get('year'));
@@ -37,14 +37,14 @@ var	setPrintDateLimit = function(pdate){
 prints the information of the commits 
 */
 var	printCommits = function(prepos){
-	var date = moment(),
+	var date = moment().tz("PST8PDT"),
 		message = '',
-		limitDate = moment(),
+		limitDate = moment().tz("PST8PDT"),
 		hoursPerDate = 0,
 		hoursPerTask = 0,
 		firstCommit = {};
 
-		limitDate = moment().startOf('day');
+		limitDate = moment().tz("PST8PDT").startOf('day');
 		sortProjects(prepos);
 
 	_.each(prepos, function(projects){
