@@ -93,7 +93,7 @@ var	saveCommits = function(puser, prepos, phourType, pperiod, plastDate, pforce)
 							newLastDate = moment(date.format());
 						}
 						commitToInsert.created = date.startOf('day').format(DATE_FORMAT);
-						promises.push(timeEntry.postTimeEntry(commitToInsert));
+						promises.push(timeEntry.postTimeEntry(commitToInsert, puser.token));
 					}
 					else {
 						colog.log(colog.colorRed('Invalid date: ' +  value.message));
@@ -137,8 +137,12 @@ var controllerSaveWork = {
 					moment(configuration.lastDate);
 				
 				user.login(configuration.email, configuration.password).then(function(puser){
-					userInfo = puser.result;
-					return hourType.getHourType(userInfo.id);
+					userInfo = puser.result.user;
+					userInfo.token = {
+						token: puser.result.token,
+						email: configuration.email
+					};
+					return hourType.getHourType(userInfo.id, userInfo.token);
 
 				}).then(function(phourType){
 					billable = hourType.getBillable(phourType.result);
@@ -151,7 +155,7 @@ var controllerSaveWork = {
 					return commit.getBranchCommits(repos);
 
 				}).then(function(){
-					return user.getPeriod(userInfo.id);
+					return user.getPeriod(userInfo.id, userInfo.token);
 
 				}).then(function(pperiod){
 					newRepos = utils.bindCommits(repos, configuration.gitUser);

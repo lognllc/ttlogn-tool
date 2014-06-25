@@ -57,7 +57,7 @@ waits the user to choose a project, then save the repository
 var getProject = function(pprojects){
 	var RESTRICTION = 'Number of the project';
 
-	var repoPath = process.cwd(), //'/mnt/hgfs/Development/repoPrueba', //process.cwd(),
+	var repoPath = process.cwd(), //'/mnt/hgfs/Development/repoPrueba',
 		newProject = {},
 		branches = [],
 		repos = [],

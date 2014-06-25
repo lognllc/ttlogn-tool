@@ -19,11 +19,11 @@ var DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss Z',
 ptask: the task to save
 save the task and the detail hour
 */
-var saveDetailHour = function(ptask){
+var saveDetailHour = function(ptask, puser){
 	
 	utils.getPromptDetailHour().then(function(timeResult){
 		detailTime.setDetailTime(ptask, ptask.time, timeResult);
-		return timeEntry.postTimeEntry(ptask);
+		return timeEntry.postTimeEntry(ptask, puser.token);
 
 	}).then(function(pmessage) {
 		utils.printTTError(pmessage);
@@ -58,7 +58,7 @@ var saveTask = function(ptask, puser, pprojects){
 		ptask.time = utils.getWorkedHours(ptime);
 		
 		if(puser.devtype !== 'non_exempt'){
-			timeEntry.postTimeEntry(ptask).then(function(pmessage) {
+			timeEntry.postTimeEntry(ptask, puser.token).then(function(pmessage) {
 				utils.printTTError(pmessage);
 				colog.log(colog.colorGreen('Time entry saved'));
 			
@@ -67,7 +67,7 @@ var saveTask = function(ptask, puser, pprojects){
 			});
 		}
 		else{
-			saveDetailHour(ptask);
+			saveDetailHour(ptask, puser);
 		}
 	}).catch(function(error) {
 		colog.log(colog.colorRed(error));
@@ -110,12 +110,16 @@ var controllerAddEntry = {
 	
 		if(config.existConfig){
 			user.login(configuration.email, configuration.password).then(function(puser){
-				userInfo = puser.result;
-				return project.getProjects(userInfo.id);
+				userInfo = puser.result.user;
+				userInfo.token = {
+					token: puser.result.token,
+					email: configuration.email
+				};
+				return project.getProjects(userInfo.id, userInfo.token);
 
 			}).then(function(pprojects) {
 				projects = pprojects.result;
-				return hourType.getHourType(userInfo.id);
+				return hourType.getHourType(userInfo.id, userInfo.token);
 
 			}).then(function(phourType) {
 				billable = hourType.getBillable(phourType.result);

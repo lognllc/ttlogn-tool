@@ -27,7 +27,7 @@ var deleteTimeEntry = function(puser, pentry){
 		};
 		//console.log(entryToDelete);
 	utils.getConfirmation(pentry.tskDescription).then(function(){
-		return timeEntry.deleteTimeEntry(entryToDelete);
+		return timeEntry.deleteTimeEntry(entryToDelete, puser.token);
 	}).then(function(){
 		colog.log(colog.colorGreen('Time entry was deleted'));
 	}).catch(function(error) {
@@ -48,9 +48,9 @@ var printTimeEntries = function(puser, pproject){
 		timeEntryToDelete = {},
 		date = moment();
 
-	timeEntry.getUserPeriodTimeEntry(puser.id, pproject).then(function(entries){
-		utils.printArray(entries.result.not_confirmed_dates, ENTRY_DESCRIPTION);
-		return utils.getPromptNumber(RESTRICTION_STORY, entries.result.not_confirmed_dates);
+	timeEntry.getUserPeriodTimeEntry( puser.id, pproject, puser.token ).then( function( entries ){
+		utils.printArray( entries.result.not_confirmed_dates, ENTRY_DESCRIPTION );
+		return utils.getPromptNumber( RESTRICTION_STORY, entries.result.not_confirmed_dates );
 
 	}).then(function(pentry){
 		deleteTimeEntry(puser, pentry);
@@ -76,8 +76,13 @@ var controllerDeleteEntry = {
 	
 		if(config.existConfig){
 			user.login(configuration.email, configuration.password).then(function(puser){
-				userInfo = puser.result;
-				return project.getProjects(userInfo.id);
+				userInfo = puser.result.user;
+				userInfo.token = {
+					token: puser.result.token,
+					email: configuration.email
+				};
+				console.log(userInfo.token);
+				return project.getProjects(userInfo.id, userInfo.token);
 
 			}).then(function(pprojects){
 				projects = pprojects.result;

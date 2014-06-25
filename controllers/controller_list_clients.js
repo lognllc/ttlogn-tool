@@ -18,11 +18,14 @@ var controllerListClients = {
 	list clients of an user
 	*/
 	listClients: function(){
-		var configuration = config.getConfig();
+		var configuration = config.getConfig(),
+			token = {};
 	
 		if(config.existConfig){
-				user.login(configuration.email, configuration.password).then(function(puser){
-					return user.getClients(puser.result.id);
+			user.login(configuration.email, configuration.password).then(function(puser){
+				token.token = puser.result.token;
+				token.email = configuration.email;
+				return user.getClients(puser.result.user.id, token);
 			
 			}).then(function(pclients) {
 				utils.printArray(pclients.result, NAME);

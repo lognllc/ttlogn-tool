@@ -10,23 +10,27 @@ var TIME_ENTRY = '/time_entries/createUpdate.json',
 var time_entry = {
 	
 	/* pentry: object with the information need to post the time entry
+	ptoken: token for the api validation
 	post the time entry of an user's project 
 	*/
-	postTimeEntry: function(pentry){
-		return dataAccess.post(TIME_ENTRY, pentry);
+	postTimeEntry: function(pentry, ptoken){
+		return dataAccess.post(TIME_ENTRY, pentry, ptoken);
 	},
 	/* pentry: object with the information need to delete the time entry
+	ptoken: token for the api validation
 	delete a time entry of an user
 	*/
-	deleteTimeEntry: function(pentry){
-		return dataAccess.post(DELETE_TIME_ENTRIES, pentry);
+	deleteTimeEntry: function(pentry, ptoken){
+		return dataAccess.post(DELETE_TIME_ENTRIES, pentry, ptoken);
 	},
 	/* puserId: user's id
+	pprojectId: project's id
+	ptoken: token for the api validation
 	get the time entries of this period
 	*/
-	getUserPeriodTimeEntry: function(puserId, pprojectId){
+	getUserPeriodTimeEntry: function(puserId, pprojectId, ptoken){
 		var message = USER_TIME_ENTRIES + puserId + PROJECT + pprojectId;
-		return dataAccess.get(message);
+		return dataAccess.get(message, ptoken);
 	}
 };
 

@@ -8,11 +8,12 @@ var hourType = {
 
 	/* 
 	puserId: user's id
+	ptoken: token for the api validation
 	get the hour types of an user
 	*/
-	getHourType: function(puserId){
+	getHourType: function(puserId, ptoken){
 		var message	=  HOUR_TYPE + puserId;
-		return dataAccess.get(message);
+		return dataAccess.get(message, ptoken);
 	},
 
 	/* phours: array of type of hours

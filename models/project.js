@@ -12,11 +12,12 @@ var PROJECT = '/users/projects.json?id=',
 var project = {
 
 	/* puserId: id of the user
+	ptoken: token for the api validation
 	get the projects of an user
 	*/
-	getProjects: function(puserId){
+	getProjects: function(puserId, ptoken){
 		var message	=  PROJECT + puserId;
-		return dataAccess.get(message);
+		return dataAccess.get(message, ptoken);
 	},
 
 	/* puserId: id of the user

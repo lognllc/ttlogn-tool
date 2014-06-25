@@ -12,13 +12,14 @@ var _ = require('underscore'),
 	hourType = require(path.resolve(__dirname,'../models/hour_type.js'));
 
 var NUMBERS = /^\d+$/,
-	TWOWEEKS = /^[0-1]\d\-[0-3]\d$/,
+	TWO_WEEKS_PATTERN = /^[0-1]\d\-[0-3]\d$/,
 	MONTHLY = /^[0-3]\d$/,
 	DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss',
 	ZONE_FORMAT = 'YYYY-MM-DD HH:mm:ss Z',
 	NAME = 'name',
 	ENTRY_DESCRIPTION = 'tskDescription',
-	RESTRICTION_PROJECT = 'Number of the project';
+	RESTRICTION_PROJECT = 'Number of the project',
+	TWO_WEEKS = 'twoweeks';
 
 var userInfo = {},
 	periodInfo = {},
@@ -47,7 +48,7 @@ var saveTimeEntry = function(){
 		task.time_out = entryToModify.detail_hours.time_out;
 	}
 
-	timeEntry.postTimeEntry(task).then(function(){
+	timeEntry.postTimeEntry(task, userInfo.token).then(function(){
 		colog.log(colog.colorGreen('Time entry saved'));
 	});
 };
@@ -80,7 +81,7 @@ var validateCreated = function(pdate){
 		today = moment().tz("PST8PDT").format(),
 		month = 0;
 
-	if(periodInfo.name === 'twoweeks'){
+	if(periodInfo.name === TWO_WEEKS){
 		month = pdate.split('-');
 		pdate = _.last(month);
 		month = parseInt(_.first(month),10) - 1;
@@ -106,8 +107,8 @@ var modifyCreated = function(){
 			required: true,
 		};
 
-	if(periodInfo.name === 'twoweeks'){
-		created.pattern = TWOWEEKS;
+	if(periodInfo.name === TWO_WEEKS){
+		created.pattern = TWO_WEEKS_PATTERN;
 		created.message = 'Format: MM-DD'.red;
 		created.description = 'Created the: (MM-DD)'.magenta;
 	}
@@ -194,7 +195,7 @@ modify the hour type of an entry
 var getHourType = function(){
 	var	RESTRICTION_HOUR = 'Number of the hour type';
 
-	hourType.getHourType(userInfo.id).then(function(hourTypes){
+	hourType.getHourType(userInfo.id, userInfo.token).then(function(hourTypes){
 		utils.printArray(hourTypes.result, NAME);
 		return utils.getPromptNumber(RESTRICTION_PROJECT, hourTypes.result);
 
@@ -291,25 +292,29 @@ var controllerModifyEntry = {
 			configuration = config.getConfig();
 
 			user.login(configuration.email, configuration.password).then(function(puser){
-				userInfo = puser.result;
-				return user.getPeriod(userInfo.id);
+				userInfo = puser.result.user;
+				userInfo.token = {
+					token: puser.result.token,
+					email: configuration.email
+				};
+				return user.getPeriod(userInfo.id, userInfo.token);
 
 			}).then(function(pperiod){
 				periodInfo = pperiod.result;
-				return project.getProjects(userInfo.id);
+				return project.getProjects(userInfo.id, userInfo.token);
 
 			}).then(function(pprojects){
 				projects = pprojects.result;
 				utils.printArray(projects, NAME);
-				return utils.getPromptNumber(RESTRICTION_PROJECT, projects);
+				return utils.getPromptNumber( RESTRICTION_PROJECT, projects );
 
 			}).then(function(projectResult){
 				projectId = projectResult.id;
-				return timeEntry.getUserPeriodTimeEntry(userInfo.id, projectId);
+				return timeEntry.getUserPeriodTimeEntry( userInfo.id, projectId, userInfo.token );
 
 			}).then(function(entries) {
-				utils.printArray(entries.result.not_confirmed_dates, ENTRY_DESCRIPTION);
-				return utils.getPromptNumber(RESTRICTION_ENTRY, entries.result.not_confirmed_dates);
+				utils.printArray( entries.result.not_confirmed_dates, ENTRY_DESCRIPTION );
+				return utils.getPromptNumber( RESTRICTION_ENTRY, entries.result.not_confirmed_dates );
 
 			}).then(function(pentry){
 				entryToModify = pentry;

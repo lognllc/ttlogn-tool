@@ -27,28 +27,31 @@ var user = {
 	},
 
 	/* puserId: id of the user
+	ptoken: token for the api validation
 	get the clients of an user
 	*/
-	getClients: function(puserId){
+	getClients: function(puserId, ptoken){
 		var message	=  GET_CLIENTS + puserId;
-		return dataAccess.get(message);
+		return dataAccess.get(message, ptoken);
 	},
 
 	/* pusedId: id of the user
+	ptoken: token for the api validation
 	get the actual period of an user
 	*/
-	getPeriod: function(pusedId){
+	getPeriod: function(pusedId, ptoken){
 		var message	=  PERIOD + pusedId;
-		return dataAccess.get(message);
+		return dataAccess.get(message, ptoken);
 	},
 
 	/* pusedId: id of the user
 	ptext: text to search
+	ptoken: token for the api validation
 	get the actual period of an user
 	*/
-	getTextualSearch: function(pusedId, ptext){
+	getTextualSearch: function(pusedId, ptext, ptoken){
 		var message	=  TEXTUAL_SEARCH + pusedId + TEXT + ptext;
-		return dataAccess.get(message);
+		return dataAccess.get(message, ptoken);
 	},
 
 	/* puser: information of the user
