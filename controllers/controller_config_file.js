@@ -92,12 +92,17 @@ var controllerConfigFile = {
 	register a repo in the configuration file
 	*/
 	registerRepo: function(pbranch){
-		var configuration = {};
+		var configuration = {},
+			userInfo = {};
 		
 		if(config.existConfig()){
 			configuration = config.getConfig();
 			user.login(configuration.email, configuration.password).then(function(puser){
-				return project.getProjects(puser.result.id);
+				userInfo = {
+					token: puser.result.token,
+					email: configuration.email
+				};
+				return project.getProjects(puser.result.user.id, userInfo);
 
 			}).then(function(pprojects) {
 				utils.printArray(pprojects.result, NAME);

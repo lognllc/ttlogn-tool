@@ -44,6 +44,7 @@ var apiTTDataAccess = {
 			// console.log(host+pparameters);
 			// console.log(args);
 			client.get(host+pparameters, args, function(data, response){
+				// console.log(data);
 				try {
 					dataServer = JSON.parse(data);
 					resolve(dataServer);
