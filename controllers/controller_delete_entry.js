@@ -81,7 +81,6 @@ var controllerDeleteEntry = {
 					token: puser.result.token,
 					email: configuration.email
 				};
-				console.log(userInfo.token);
 				return project.getProjects(userInfo.id, userInfo.token);
 
 			}).then(function(pprojects){
