@@ -11,7 +11,7 @@ var HOST_DEVELOPMENT = 'http://ec2-54-226-94-0.compute-1.amazonaws.com',
 	APP_JSON = 'application/json';
 
 var getHost = function(){
-	return tt_env === process.env[TT_ENV] ? HOST_DEVELOPMENT : HOST;
+	return process.env[TT_ENV] === DEVELOPMENT ? HOST_DEVELOPMENT : HOST;
 };
 
 var apiTTDataAccess = {
