@@ -4,24 +4,14 @@ var prettyjson = require('prettyjson'),
 	_ = require('underscore'),
 	clientTT = require('node-rest-client').Client;
 
-var //HOST_DEVELOPMENT = 'http://10.0.1.80:3000',
-	HOST_DEVELOPMENT = 'http://192.168.0.120:3000',
-	HOST = 'http://ec2-54-226-94-0.compute-1.amazonaws.com',
+var HOST_DEVELOPMENT = 'http://ec2-54-226-94-0.compute-1.amazonaws.com',
+	HOST = 'http://ec2-54-90-229-12.compute-1.amazonaws.com',
 	DEVELOPMENT = 'development',
 	TT_ENV = 'TT_ENV',
 	APP_JSON = 'application/json';
 
 var getHost = function(){
-	var tt_env = process.env[TT_ENV],
-		host = '';
-	if(tt_env === DEVELOPMENT){
-		host = HOST_DEVELOPMENT;
-	}
-	else{
-		host = HOST;
-	}
-	//console.log(host);
-	return host;
+	return tt_env === process.env[TT_ENV] ? HOST_DEVELOPMENT : HOST;
 };
 
 var apiTTDataAccess = {
@@ -34,17 +24,14 @@ var apiTTDataAccess = {
 			var dataServer = {},
 				client = new clientTT(),
 				host = getHost(),
-				//token = ,
 				args = {
 					headers: {
 						'Content-Type': APP_JSON,
 						Authorization: 'Token  token="'+ ptoken.email + '@' + ptoken.token + '"'
 					}
 				};
-			// console.log(host+pparameters);
-			// console.log(args);
 			client.get(host+pparameters, args, function(data, response){
-				// console.log(data);
+				console.log(data);
 				try {
 					dataServer = JSON.parse(data);
 					resolve(dataServer);
@@ -80,10 +67,7 @@ var apiTTDataAccess = {
 			if (!_.isUndefined(ptoken)) {
 				args.headers.Authorization = 'Token  token="'+ ptoken.email + '@' + ptoken.token + '"';
 			}
-			// console.log(host+ppost);
-			// console.log(args);
 			client.post(host + ppost, args, function(data,response){
-				// console.log(data);
 				try {
 					dataServer = JSON.parse(data);
 					resolve(dataServer);

@@ -30,7 +30,6 @@ var apiPivotalDataAccess = {
 				}
 				else{
 					colog.log(colog.colorRed('Error: Something went wrong on the request'));
-					//colog.log(colog.colorRed(dataServer.error));
 					reject(dataServer.error);
 				}
 			}).on('error',function(err){
@@ -53,16 +52,13 @@ var apiPivotalDataAccess = {
 						'X-TrackerToken': ptoken
 					}
 				};
-			//console.log(HOST + pget);
 			client.get(HOST+pget, args,function(data, response){
-			//	console.log(data);
 				dataServer = JSON.parse(data);
 				if(!dataServer.error){
 					resolve(dataServer);
 				}
 				else{
 					colog.log(colog.colorRed('Error: Something went wrong on the request'));
-				//	colog.log(colog.colorRed(dataServer.error));
 					reject(dataServer.error);
 				}
 			}).on('error',function(err){
@@ -88,17 +84,13 @@ var apiPivotalDataAccess = {
 						'X-TrackerToken': ptoken
 					}
 				};
-			//console.log(HOST + ppost);
-			//console.log(pparameters);
 			client.post(HOST + ppost, args, function(data,response){
-				//	console.log(data);
 				dataServer = JSON.parse(data);
 				if(!dataServer.error){
 					resolve(dataServer);
 				}
 				else{
 					colog.log(colog.colorRed('Error: Something went wrong on the request'));
-				//	colog.log(colog.colorRed(dataServer.error));
 					reject(dataServer.error);
 				}
 			}).on('error',function(err){
@@ -124,18 +116,13 @@ var apiPivotalDataAccess = {
 						'X-TrackerToken': ptoken
 					}
 				};
-			//console.log(ptoken);
-			//console.log(HOST + pput);
-			//console.log(pparameters);
 			client.put(HOST + pput, args, function(data,response){
-			//	console.log(data);
 				dataServer = JSON.parse(data);
 				if(!dataServer.error){
 					resolve(dataServer);
 				}
 				else{
 					colog.log(colog.colorRed('Error: Something went wrong on the request'));
-				//	colog.log(colog.colorRed(dataServer.error));
 					reject(dataServer.error);
 				}
 			}).on('error',function(err){
@@ -160,9 +147,6 @@ var apiPivotalDataAccess = {
 						'X-TrackerToken': ptoken
 					}
 				};
-			//console.log(client.delete.toString());
-			//console.log(HOST + pdelete);
-			//console.log(pparameters);
 			client.delete(HOST + pdelete, args, function(data,response){
 				if(_.isEmpty(data)){
 					resolve(data);
