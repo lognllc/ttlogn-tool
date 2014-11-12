@@ -87,7 +87,7 @@ var	saveCommits = function(puser, prepos, phourType, pperiod, plastDate, pforce)
 					if( date.isAfter(periodStart) &&
 						periodEnd.isAfter(date) && today.isAfter(date)){
 						if(validation){
-							colog.log(colog.colorBlue('Saving commit: ' +  value.message));
+							colog.log(colog.colorMagenta('Saving commit: ' +  value.message));
 							
 							if(_.isUndefined(newLastDate) || date.isAfter(newLastDate)){
 								newLastDate = moment(date.format());
