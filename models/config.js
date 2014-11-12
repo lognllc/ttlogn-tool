@@ -23,7 +23,7 @@ var registerBranch = function(pproject, pbranch, pdataFile, pdata, prepoName){
 		newProject = {},
 		projectsList = {};
 
-		colog.log(colog.colorBlue('Adding branch: ' + pbranch +', and project: '+ pproject.name +' to configuration file'));
+		colog.log(colog.colorMagenta('Adding branch: ' + pbranch +', and project: '+ pproject.name +' to configuration file'));
 		projectsList = _.filter(pdataFile.repositories, function(repository)
 			{ return _.isArray(repository.project); });
 			
@@ -109,8 +109,8 @@ var config = {
 			}
 		}, function (err, resultPrompt) {
 			if(!err){
-				colog.log(colog.colorBlue('Adding user:'));
-				colog.log(colog.colorBlue(resultPrompt.email + ', ' + resultPrompt.pivotalEmail+ ', ' +resultPrompt.gitUser));
+				colog.log(colog.colorMagenta('Adding user:'));
+				colog.log(colog.colorMagenta(resultPrompt.email + ', ' + resultPrompt.pivotalEmail+ ', ' +resultPrompt.gitUser));
 
 				dataFile = getJson();
 				pass = sha1('RtB8gDm'+ resultPrompt.ttPassword);
@@ -141,7 +141,7 @@ var config = {
 		dataFile = getJson();
 		data = process.cwd();
 		if(typeof pbranch === 'undefined'){
-			colog.log(colog.colorBlue('Adding repository: ' + data +', and project: '+ pproject.name +' to configuration file'));
+			colog.log(colog.colorMagenta('Adding repository: ' + data +', and project: '+ pproject.name +' to configuration file'));
 			dataRepo = {
 				path: data,
 				name: prepoName,

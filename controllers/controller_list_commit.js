@@ -52,7 +52,7 @@ var	printCommits = function(prepos){
 			if(project.commits.length !== 0){
 
 				console.log('\n-------------------------------');
-				colog.log(colog.apply(project.name, ['underline', 'bold', 'colorBlue']));
+				colog.log(colog.apply(project.name, ['underline', 'bold', 'colorMagenta']));
 				console.log('-------------------------------\n');
 
 				firstCommit = _.first(project.commits);
@@ -60,7 +60,7 @@ var	printCommits = function(prepos){
 				limitDate = setPrintDateLimit(date);
 				date = date.format(DATE_FORMAT);
 				
-				colog.log(colog.apply(date, ['bold', 'colorBlue']));
+				colog.log(colog.apply(date, ['bold', 'colorMagenta']));
 
 				_.each(project.commits, function(value){
 					
@@ -70,13 +70,13 @@ var	printCommits = function(prepos){
 						limitDate = setPrintDateLimit(value.date);
 
 						date = value.date.format(DATE_FORMAT);
-						colog.log(colog.apply(date, ['bold', 'colorBlue']));
+						colog.log(colog.apply(date, ['bold', 'colorMagenta']));
 					}
 					hoursPerTask = parseFloat(utils.getWork(value.message));
 					hoursPerDate += hoursPerTask;
 					message = value.message.split('\n');
 					value.message = message[0];
-					colog.log(colog.colorBlue('\t' + value.message));
+					colog.log(colog.colorMagenta('\t' + value.message));
 				});
 				colog.log(colog.apply('Hours worked: '+ hoursPerDate, ['colorGreen']));
 				hoursPerDate = 0;

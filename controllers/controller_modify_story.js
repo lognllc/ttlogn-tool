@@ -88,13 +88,13 @@ var modifyOwner = function(){
 */
 var printOptions = function(){
 	colog.log(colog.colorMagenta('Select a field: '));
-	colog.log(colog.colorBlue('1: Change state: ' + selectedStory.current_state));
-	colog.log(colog.colorBlue('2: Change name: ' + selectedStory.name));
-	colog.log(colog.colorBlue('3: Change description: ' + selectedStory.description));
-	colog.log(colog.colorBlue('4: Change estimation: ' + selectedStory.estimate));
-	colog.log(colog.colorBlue('5: Change owner: ' + _.contains(selectedStory.owner_ids, userInfo.id)));
-	colog.log(colog.colorBlue('6: Save '));
-	colog.log(colog.colorBlue('7: Cancel '));
+	colog.log(colog.colorMagenta('1: Change state: ' + selectedStory.current_state));
+	colog.log(colog.colorMagenta('2: Change name: ' + selectedStory.name));
+	colog.log(colog.colorMagenta('3: Change description: ' + selectedStory.description));
+	colog.log(colog.colorMagenta('4: Change estimation: ' + selectedStory.estimate));
+	colog.log(colog.colorMagenta('5: Change owner: ' + _.contains(selectedStory.owner_ids, userInfo.id)));
+	colog.log(colog.colorMagenta('6: Save '));
+	colog.log(colog.colorMagenta('7: Cancel '));
 };
 
 var getState = function(){

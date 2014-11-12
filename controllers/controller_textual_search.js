@@ -20,13 +20,13 @@ var printOptions = function(puser, pentry){
 
 	var date = pentry.created.format(DATE_FORMAT);
 
-	colog.log(colog.colorBlue('Created: ' + date));
-	colog.log(colog.colorBlue('Description: ' + pentry[ENTRY_DESCRIPTION]));
-	colog.log(colog.colorBlue('Time: ' + pentry.time));
-	colog.log(colog.colorBlue('Hour Type: ' + pentry.hour_type.name));
-	colog.log(colog.colorBlue('Proyect: ' + pentry.project.name));
+	colog.log(colog.colorMagenta('Created: ' + date));
+	colog.log(colog.colorMagenta('Description: ' + pentry[ENTRY_DESCRIPTION]));
+	colog.log(colog.colorMagenta('Time: ' + pentry.time));
+	colog.log(colog.colorMagenta('Hour Type: ' + pentry.hour_type.name));
+	colog.log(colog.colorMagenta('Proyect: ' + pentry.project.name));
 	if(puser.devtype === 'non_exempt'){
-		colog.log(colog.colorBlue('Begin of task: ' + pentry.detail_hours.time_in));
+		colog.log(colog.colorMagenta('Begin of task: ' + pentry.detail_hours.time_in));
 	}
 };
 

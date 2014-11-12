@@ -19,13 +19,13 @@ var printStories = function(pprojects){
 		console.log('-------------------------------');
 		_.each(pivotalProject.stories, function(pivotalStory){
 			if(pivotalStory.story_type !== 'release'){
-				colog.log(colog.apply(pivotalStory.name + ' - ' + pivotalStory.story_type, ['bold', 'colorBlue']));
+				colog.log(colog.apply(pivotalStory.name + ' - ' + pivotalStory.story_type, ['bold', 'colorMagenta']));
 				if(!_.isUndefined(pivotalStory.description)){
-					colog.log(colog.colorBlue(pivotalStory.description));
+					colog.log(colog.colorMagenta(pivotalStory.description));
 				}
 			}
 			else{
-				colog.log(colog.apply('-------- ' + pivotalStory.name + ' --------', ['bold', 'colorBlue']));
+				colog.log(colog.apply('-------- ' + pivotalStory.name + ' --------', ['bold', 'colorMagenta']));
 			}
 			console.log('-------------------------------');
 		});

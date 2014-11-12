@@ -63,9 +63,9 @@ prints the task, options
 */
 var printOptions = function(ptask){
 	colog.log(colog.colorMagenta('Select a field: '));
-	colog.log(colog.colorBlue('1: Change state: ' + ptask.complete));
-	colog.log(colog.colorBlue('2: Change name: ' + ptask.description));
-	colog.log(colog.colorBlue('3: Cancel '));
+	colog.log(colog.colorMagenta('1: Change state: ' + ptask.complete));
+	colog.log(colog.colorMagenta('2: Change name: ' + ptask.description));
+	colog.log(colog.colorMagenta('3: Cancel '));
 };
 
 /*pproject: project id of the user of pivotal

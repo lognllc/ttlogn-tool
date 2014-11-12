@@ -213,16 +213,16 @@ var printOptions = function(){
 	var date = entryToModify.created.format(DATE_FORMAT);
 
 	colog.log(colog.colorMagenta('Select a field: '));
-	colog.log(colog.colorBlue('1: Created: ' + date));
-	colog.log(colog.colorBlue('2: Description: ' + entryToModify.tskDescription));
-	colog.log(colog.colorBlue('3: Time: ' + entryToModify.time));
-	colog.log(colog.colorBlue('4: Hour Type: ' + entryToModify.hour_type.name));
-	colog.log(colog.colorBlue('5: Proyect: ' + entryToModify.project.name));
+	colog.log(colog.colorMagenta('1: Created: ' + date));
+	colog.log(colog.colorMagenta('2: Description: ' + entryToModify.tskDescription));
+	colog.log(colog.colorMagenta('3: Time: ' + entryToModify.time));
+	colog.log(colog.colorMagenta('4: Hour Type: ' + entryToModify.hour_type.name));
+	colog.log(colog.colorMagenta('5: Proyect: ' + entryToModify.project.name));
 	if(userInfo.devtype === 'non_exempt'){
-		colog.log(colog.colorBlue('6: Begin of task: ' + entryToModify.detail_hours.time_in));
+		colog.log(colog.colorMagenta('6: Begin of task: ' + entryToModify.detail_hours.time_in));
 	}
-	colog.log(colog.colorBlue('7: Save '));
-	colog.log(colog.colorBlue('8: Cancel '));
+	colog.log(colog.colorMagenta('7: Save '));
+	colog.log(colog.colorMagenta('8: Cancel '));
 };
 
 /*prints the time entry and waits for an option

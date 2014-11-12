@@ -47,7 +47,7 @@ var	getStories = function(puserId, pprojects){
 				project: item.project_id,
 				story: value.id
 			};
-			colog.log(colog.colorBlue('Delivering: ' + value.name));
+			colog.log(colog.colorMagenta('Delivering: ' + value.name));
 			urls.push(newStory);
 		});
 	});

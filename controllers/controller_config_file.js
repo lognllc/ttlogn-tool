@@ -19,13 +19,13 @@ waits the user to choose a project, then save the repository
 var saveRepo = function(pbranches, pproject, prepoName){
 	newBranch = {};
 
-	colog.log(colog.colorBlue('Select a branch: '));
+	colog.log(colog.colorMagenta('Select a branch: '));
 	_.each(pbranches, function(branch, index){
 		index++;
-		colog.log(colog.colorBlue(index + ': ' + branch.name));
+		colog.log(colog.colorMagenta(index + ': ' + branch.name));
 	});
 	all = pbranches.length + 1;
-	colog.log(colog.colorBlue(all + ': All'));
+	colog.log(colog.colorMagenta(all + ': All'));
 
 	prompt.start();
 
