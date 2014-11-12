@@ -64,8 +64,8 @@ var	saveCommits = function(puser, prepos, phourType, pperiod, plastDate, pforce)
 						hour = 0,
 						work = utils.getWork(value.message);
 
-					date = value.date.tz("PST8PDT");//.format(DATE_FORMAT);
-					// console.log(date.format(DATE_FORMAT));
+					date = value.date.tz("PST8PDT");
+
 					commitMessage = value.message.split('\n');
 					value.message = commitMessage[0];
 
@@ -85,17 +85,19 @@ var	saveCommits = function(puser, prepos, phourType, pperiod, plastDate, pforce)
 					validation = validateDate(date, plastDate, pforce);
 
 					if( date.isAfter(periodStart) &&
-						periodEnd.isAfter(date) && today.isAfter(date) &&
-						validation){
-						colog.log(colog.colorBlue('Saving commit: ' +  value.message));
-						
-						if(_.isUndefined(newLastDate) || date.isAfter(newLastDate)){
-							newLastDate = moment(date.format());
+						periodEnd.isAfter(date) && today.isAfter(date)){
+						if(validation){
+							colog.log(colog.colorBlue('Saving commit: ' +  value.message));
+							
+							if(_.isUndefined(newLastDate) || date.isAfter(newLastDate)){
+								newLastDate = moment(date.format());
+							}
+							commitToInsert.created = date.startOf('day').format(DATE_FORMAT);
+							promises.push(timeEntry.postTimeEntry(commitToInsert, puser.token));
+						} else {
+							colog.log(colog.colorRed('Commit already stored: ' +  value.message));
 						}
-						commitToInsert.created = date.startOf('day').format(DATE_FORMAT);
-						promises.push(timeEntry.postTimeEntry(commitToInsert, puser.token));
-					}
-					else {
+					} else {
 						colog.log(colog.colorRed('Invalid date: ' +  value.message));
 					}
 				});
