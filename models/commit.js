@@ -132,7 +132,6 @@ var commit = {
 				resolve();
 			}
 			else{
-		//		console.log('entre all');
 				repo = git(prepo.path);
 				repo.branches(function (err, branches){
 					if(err){
