@@ -39,7 +39,6 @@ var PROJECT = 'projects/',
 		return newFilter;
 	};
 
-
 	/* pproject: project of the user
 	ptoken: token of the user
 	puserId: id of the user of the user
