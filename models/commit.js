@@ -103,7 +103,6 @@ var commit = {
 
 		if(pdate === '-w'){
 			limitDate = moment().isoWeekday(MONDAY).startOf('day');
-			//console.log(limitDate.format('YYYY-MM-DD:HH:mm Z'));
 		}
 		else if(pdate === '-m'){
 			limitDate = moment().startOf('month');
