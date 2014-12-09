@@ -93,7 +93,7 @@ var config = {
 					hidden: true
 				},
 				gitUser:{
-					description: 'Commit Autor'.magenta,
+					description: 'Commit Author'.magenta,
 					required: true
 				},
 				pivotalEmail:{
