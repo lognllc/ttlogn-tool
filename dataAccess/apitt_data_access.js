@@ -6,6 +6,7 @@ var prettyjson = require('prettyjson'),
 
 var HOST_DEVELOPMENT = 'http://ec2-54-226-94-0.compute-1.amazonaws.com',
 	HOST = 'http://ec2-54-90-229-12.compute-1.amazonaws.com',
+	// HOST = 'http://10.0.1.80:3000',
 	DEVELOPMENT = 'development',
 	TT_ENV = 'TT_ENV',
 	APP_JSON = 'application/json';
