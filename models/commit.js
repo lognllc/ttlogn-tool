@@ -6,9 +6,7 @@ var path = require('path'),
 	moment = require('moment-timezone'),
 	RSVP = require('rsvp');
 
-var NUMBER_COMMITS = 10,
-	FORMATHOUR = /[^(]+\(\d+h\)/g,
-	DIGITOS = /\d+/g;
+var NUMBER_COMMITS = 10;
 
 var limitDate = new Date();
 
