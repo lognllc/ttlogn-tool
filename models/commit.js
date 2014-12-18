@@ -21,7 +21,6 @@ var commit = {
 	pbranch: branch of a repo
 	get commits of a branch */
 	getCommits: function(prepo, pbranch){
-		
 		var promise = new RSVP.Promise(function(resolve, reject){
 			var date = moment(),
 				numberCommits = 0,
@@ -34,20 +33,14 @@ var commit = {
 				function (callback) {
 					repo = git(prepo.path);
 					branch = pbranch.name;
-					//console.log(pbranch);
-
+					
 					repo.commits(branch, NUMBER_COMMITS, skip, function(err, commits){
-						if(err){
-							colog.log(colog.colorRed(err));
-						}
-						else{
-							//console.log(pbranch);
+						if(!err){
 							pbranch.commits = pbranch.commits.concat(commits);
 							numberArray = commits.length - 1;
 							date = _.last(commits).committed_date;
 							skip += NUMBER_COMMITS;
-							//console.log(date);
-
+		
 							if(moment(limitDate).isAfter(date) || numberArray !== (NUMBER_COMMITS - 1)) continueWhile = false;
 						}
 						callback(err);
@@ -61,7 +54,8 @@ var commit = {
 					return ret; },
 				function (err) {
 					if(err){
-						reject(err);
+						colog.log(colog.colorRed(err));
+						resolve();
 						return false;
 					}
 					resolve();
@@ -82,9 +76,10 @@ var commit = {
 				});
 			});
 
-			RSVP.all(promises).then(function(posts){
+			RSVP.all(promises).then(function(){
 				resolve();
 			}).catch(function(reason){
+				console.log('entre!!');
 				colog.log(colog.colorRed(reason));
 				reject(reason);
 			});
@@ -115,7 +110,6 @@ var commit = {
 				objectBrach = {};
 					
 			if(_.isArray(prepo.configBranches)){
-				//console.log('entre branches');
 				_.each(prepo.configBranches, function(value){
 					objectBrach = {
 						name: value.branch,
@@ -124,7 +118,6 @@ var commit = {
 						commits: []
 					};
 					prepo.branches.push(objectBrach);
-		//				console.log(item.branches);
 				});
 				resolve();
 			}
